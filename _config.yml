@@ -1,5 +1,5 @@
 # Info about you
-name: Marcos Benício de A. Alonso
+name: Marcos Benício
 position: M.sc in Physics 
 email: marcosbenicio0102@gmail.com
 company_name: none
@@ -9,17 +9,17 @@ place_name: Niterói, RJ
 # Blog info
 title: Marcos Benício
 description: Blog
-url: https://brendanhasz.github.io/github-io-blog-template/
+url: https://marcosbenicio.github.io/
 main_github_io: false
 long_description: >-
     Hi!  Welcome to the my blog.
 
 # Social links
 github_url: https://github.com/marcosbenicio
-linkedin_url: linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b
+linkedin_url: https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b
 social:
   links:
-    - linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b
+    - https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b
     - https://github.com/marcosbenicio
 
 # Images + files
