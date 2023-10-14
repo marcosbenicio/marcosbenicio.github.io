@@ -1,12 +1,9 @@
----
----
-
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab');
 
 body{
   font-family: 'Roboto Slab', sans-serif;
   margin: 0px;
-  color: #{{ site.colors.text }};
+  color: #282828;
 }
 
 .col3 {
@@ -117,14 +114,14 @@ body{
 
 .post_tag {
   display: inline-block;
-  background: #{{ site.colors.tag }};
+  background: #dbefdc;
   padding: 0.3rem 0.5rem;
   margin: 0.25rem;
   border-radius: 5px;
 }
 
 .post_tag:hover {
-  background: #{{ site.colors.tag_hover }};
+  background: #93cf95;
 }
 
 .col1 img, span {
@@ -136,8 +133,8 @@ body{
 }
 
 .header {
-  background-color: #{{ site.colors.header_background }};
-  color: #{{ site.colors.header_text }};
+  background-color: #2b422b;
+  color: #dbefdc;
 }
 
 .header h1, a {
@@ -146,19 +143,19 @@ body{
 }
 
 .header a {
-  color: #{{ site.colors.header_text }};
+  color: #dbefdc;
 }
 
 .header a:hover {
-  color: #{{ site.colors.header_link_hover }};
+  color: #93cf95;
 }
 
 .content a {
-  color: #{{ site.colors.links }};
+  color: #459c48;
 }
 
 .content a:visited {
-  color: #{{ site.colors.links_visited }};
+  color: #357a38;
 }
 
 .content {
@@ -170,44 +167,44 @@ body{
 }
 
 /* Dark mode */
-{% unless site.color_mode == "light" %}
 
-{% if site.color_mode == "auto" %}
+
+
 @media (prefers-color-scheme: dark) {
-{% endif %}
+
 
   body {
-    background-color: #{{ site.colors_dark.background }};
-    color: #{{ site.colors_dark.text }};
+    background-color: #333;
+    color: #DEE5E9;
   }
 
   .header {
-    background-color: #{{ site.colors_dark.header_background }};
-    color: #{{ site.colors_dark.header_text }};
+    background-color: #3A527B;
+    color: #9dd2f5;
   }
 
   .header a {
-    color: #{{ site.colors_dark.header_link }};
+    color: #9dd2f5;
   }
 
   .header a:hover {
-    color: #{{ site.colors_dark.header_link_hover }};
+    color: #6A80A1;
   }
 
   .content a {
-    color: #{{ site.colors_dark.links }};
+    color: #9dd2f5;
   }
 
   .content a:visited {
-    color: #{{ site.colors_dark.links_visited }};
+    color: #4A6079;
   }
 
   .post_tag {
-    background: #{{ site.colors_dark.tag }};
+    background: #2A4569;
   }
 
   .post_tag:hover {
-    background: #{{ site.colors_dark.tag_hover }};
+    background: #3A5579;
   }
 
   .language-python.highlighter-rouge {
@@ -226,11 +223,11 @@ body{
     background: #272822;
   }
 
-{% if site.color_mode == "auto" %}
-}
-{% endif %}
 
-{% endunless %}
+}
+
+
+
 
 /* Large screen widths */
 @media print, screen and (min-width: 1240px) {

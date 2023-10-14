@@ -10,7 +10,7 @@ place_name: Niterói, RJ
 title: Marcos Benício
 description: Blog
 url: https://marcosbenicio.github.io/
-main_github_io: false
+main_github_io: true
 long_description: >-
     Hi!  Welcome to the my blog.
 
@@ -33,7 +33,7 @@ plugins:
   - jekyll-seo-tag
 highlighter: rouge
 color_mode: auto  # auto, light, or dark
-comments: false
+comments: true
 disqus_shortname: none
 syntax_highlight_stylesheet: syntax_highlight.css
 
@@ -49,14 +49,57 @@ colors:
   links_visited: 357a38
 
 # Colors - dark mode
+#colors_dark:
+  #background: 333
+  #text: ccc
+  #tag: 2e6830
+  #tag_hover: 93cf95
+  #header_background: 232 
+  #header_text: 93cf95
+  #header_link: 93cf95
+  #header_link_hover: 459c48
+  #links: 459c48
+  #links_visited: 357a38
+
+#colors_dark:
+#  background: 333
+#  text: DEDED6
+#  tag: 9A5E56
+#  tag_hover: BB6E67
+#  header_background: A44640
+#  header_text: E5E2D8
+#  header_link: F2BBA7
+#  header_link_hover: BB6864
+#  links: C0867A
+#  links_visited: A65F59
+
+#colors_dark:
+#  background: 333
+#  text: DEE5E9
+#  tag: 4A6E9A
+#  tag_hover: 6A8EBB
+#  header_background: 3A527B
+#  header_text: E9ECF0
+#  header_link: 8BAAD2
+#  header_link_hover: 678CB4
+#  links: 6A87B1
+#  links_visited: 576D95
+
 colors_dark:
   background: 333
-  text: ccc
-  tag: 2e6830
-  tag_hover: 93cf95
-  header_background: 232
-  header_text: 93cf95
-  header_link: 93cf95
-  header_link_hover: 459c48
-  links: 459c48
-  links_visited: 357a38
+  text: DEE5E9
+  tag: 2A4569       
+  tag_hover: 3A5579 
+  header_background: 3A527B
+  header_text: 9dd2f5 #AEBDC7  
+  header_link: 9dd2f5 #5A7089 
+  header_link_hover: 6A80A1  
+  links: 9dd2f5      
+  links_visited: 4A6079  
+
+
+
+
+
+ 
+

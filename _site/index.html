@@ -1,31 +1,21 @@
 <!DOCTYPE html>
 
-{% comment %}
-Get assets path
-{% endcomment %}
-{% if site.main_github_io %}
-  {% assign assets = "/assets" %}
-{% else %}
-  {% assign assets = "assets" %}
-{% endif %}
 
-<html lang="{{ site.lang | default: "en-US" }}">
+
+
+<html lang="en-US">
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% if page.img_url %}
-    <meta property="og:image" content="{{ page.img_url }}"/>
-    {% else %}
-    <meta property="og:image" content="{{ assets }}/img/blog_og_image.png"/>
+    
+    <meta property="og:image" content="/assets/img/blog_og_image.png"/>
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="628" />
-    {% endif %}
-    {% unless site.main_github_io %}
-    <base href="{{ site.url }}">
-    {% endunless %}
-    <link rel="stylesheet" type="text/css" href="{{ assets }}/css/{{ site.syntax_highlight_stylesheet }}">
-    <link rel="stylesheet" type="text/css" href="{{ assets }}/css/main.css">
+    
+    
+    <link rel="stylesheet" type="text/css" href="/assets/css/syntax_highlight.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
     <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="atom.xml" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
     <script>
@@ -42,7 +32,23 @@ Get assets path
       }
     </script>
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-    {% seo %}
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Marcos Benício | Blog</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Marcos Benício" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Blog" />
+<meta property="og:description" content="Blog" />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
+<meta property="og:site_name" content="Marcos Benício" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Marcos Benício" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","description":"Blog","headline":"Marcos Benício","name":"Marcos Benício","publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/img/profile_photo.png"}},"sameAs":["https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b","https://github.com/marcosbenicio"],"url":"http://localhost:4000/"}</script>
+<!-- End Jekyll SEO tag -->
+
   </head>
   <body onload="show_tag_section('all_posts')">
 
@@ -53,33 +59,33 @@ Get assets path
 
         <!-- Name -->
         <div class="name_group">
-          <h1><a href="">{{ site.name }}</a></h1>
+          <h1><a href="">Marcos Benício</a></h1>
         </div>
 
-        <a href=""><img src="{{ site.logo }}" alt="Logo" class="center_img" ></a>
+        <a href=""><img src="assets/img/profile_photo.png" alt="Logo" class="center_img" ></a>
 
         <!-- Position + company -->
         <div class="link_group">
 
           <div class="row">
               <div class="col1">
-                <span> {{ site.position }}</span>
+                <span> M.sc in Physics</span>
               </div>
           </div>
 
           <div class="row">
-            <!-- <a href="{{ site.company_url }}"-->
+            <!-- <a href=""-->
               <div class="col1">
-                <img src="{{ assets }}/img/brazil_icon.png" height="30" width="30">
-                <!-- <span> {{ site.company_name }} </span>-->
+                <img src="/assets/img/brazil_icon.png" height="30" width="30">
+                <!-- <span>  </span>-->
               </div>
             </a>
           </div>
 
           <div class="row">
             <div class="col1">
-              <img src="{{ assets }}/img/place_icon_light.png" height="16" width="16">
-              <span> {{ site.place_name }} </span>
+              <img src="/assets/img/place_icon_light.png" height="16" width="16">
+              <span> Niterói, RJ </span>
             </div>
           </div>
 
@@ -89,30 +95,30 @@ Get assets path
         <div class="link_group">
 
           <div class="row">
-            <a href="{{ site.github_url }}">
+            <a href="https://github.com/marcosbenicio">
               <div class="col2">
-                <img src="{{ assets }}/img/github_icon_light.png" height="16" width="16">
+                <img src="/assets/img/github_icon_light.png" height="16" width="16">
                 <span> Github </span>
               </div>
             </a>
-            <a href="{{ site.linkedin_url }}">
+            <a href="https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b">
               <div class="col2">
-                <img src="{{ assets }}/img/linkedin_icon_light.png" height="16" width="16">
+                <img src="/assets/img/linkedin_icon_light.png" height="16" width="16">
                 <span> LinkedIn </span>
               </div>
             </a>
           </div>
 
           <div class="row">
-            <a href="mailto:{{ site.email }}">
+            <a href="mailto:marcosbenicio0102@gmail.com">
               <div class="col2">
-                <img src="{{ assets }}/img/email_icon_light.png" height="16" width="16">
+                <img src="/assets/img/email_icon_light.png" height="16" width="16">
                 <span> Email </span>
               </div>
             </a>
-            <a href="{{ site.resume_url }}">
+            <a href="assets/files/resume.pdf">
               <div class="col2">
-                <img src="{{ assets }}/img/cv_icon_light.png" height="16" width="16">
+                <img src="/assets/img/cv_icon_light.png" height="16" width="16">
                 <span> Resume </span>
               </div>
             </a>
@@ -130,11 +136,11 @@ Get assets path
           <div class="name_header_box">
             <div class="name_header_img">
               <a href="">
-                <img src="{{ site.logo }}" alt="Logo" height="60">
+                <img src="assets/img/profile_photo.png" alt="Logo" height="60">
               </a>
             </div>
             <div class="name_header_name">
-              <h1><a href="">{{ site.name }}</a></h1>
+              <h1><a href="">Marcos Benício</a></h1>
             </div>
           </div>
         </div>
@@ -143,14 +149,14 @@ Get assets path
         <div class="small_header_box">
           <div class="row">
             <div class="col1">
-              <span> {{ site.position }} </span>
+              <span> M.sc in Physics </span>
             </div>
           </div>
           <div class="row">
             <div class="col1">
-             <!-- <a href="{{ site.company_url }}"> -->
-                  <img src="{{ assets }}/img/brazil_icon.png" height="30" width="30">
-                  <!-- <span> {{ site.company_name }} </span> -->
+             <!-- <a href=""> -->
+                  <img src="/assets/img/brazil_icon.png" height="30" width="30">
+                  <!-- <span>  </span> -->
               </a>
             </div>
           </div>
@@ -159,30 +165,30 @@ Get assets path
         <!-- Badges/links -->
         <div class="small_header_box">
                 <div class="row">
-                  <a href="{{ site.github_url }}">
+                  <a href="https://github.com/marcosbenicio">
                     <div class="col2">
-                      <img src="{{ assets }}/img/github_icon_light.png" height="16" width="16">
+                      <img src="/assets/img/github_icon_light.png" height="16" width="16">
                       <span> Github </span>
                     </div>
                   </a>
-                  <a href="{{ site.linkedin_url }}">
+                  <a href="https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b">
                     <div class="col2">
-                      <img src="{{ assets }}/img/linkedin_icon_light.png" height="16" width="16">
+                      <img src="/assets/img/linkedin_icon_light.png" height="16" width="16">
                       <span> LinkedIn </span>
                     </div>
                   </a>
                 </div>
 
                 <div class="row">
-                  <a href="mailto:{{ site.email }}">
+                  <a href="mailto:marcosbenicio0102@gmail.com">
                     <div class="col2">
-                      <img src="{{ assets }}/img/email_icon_light.png" height="16" width="16">
+                      <img src="/assets/img/email_icon_light.png" height="16" width="16">
                       <span> Email </span>
                     </div>
                   </a>
-                  <a href="{{ site.resume_url }}">
+                  <a href="assets/files/resume.pdf">
                     <div class="col2">
-                      <img src="{{ assets }}/img/cv_icon_light.png" height="16" width="16">
+                      <img src="/assets/img/cv_icon_light.png" height="16" width="16">
                       <span> Resume </span>
                     </div>
                   </a>
@@ -196,7 +202,38 @@ Get assets path
     <!-- Page content -->
     <div class="content">
 
-      {{ content }}
+      <div>
+
+  <p>Hi!  Welcome to the my blog.</p>
+
+  
+  
+  
+  
+
+  
+  
+  
+
+  
+  
+
+  <p>
+  <h2> Tags </h2>
+  <a onclick="show_tag_section('all_posts')" style="cursor: pointer;" class="post_tag"> All Posts </a>
+  
+  </p>
+
+  <div id="all_posts">
+  <h2> All Posts </h2>
+  
+  </div>
+
+  
+
+</div>
+
+
 
     </div>
 
