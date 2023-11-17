@@ -1,3 +1,3 @@
 # marcosbenicio.github.io
 
-The template used in my blog is from [brendanhasz/github-io-blog-template](https://github.com/brendanhasz/github-io-blog-template) 
+Inspired on the this blog template: [brendanhasz/github-io-blog-template](https://github.com/brendanhasz/github-io-blog-template) 
