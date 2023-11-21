@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+
+
+
+
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta property="og:image" content="assets/img/post1/venn-diagram-intersection.png"/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/assets/css/syntax_highlight.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="atom.xml" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    <script>
+      function show_tag_section(tag) {
+        // Hide all other tag divs
+        document.getElementById('all_posts').style.display = 'none';
+        var tag_divs = document.getElementsByClassName('by_tag');
+        var i;
+        for (var i = 0; i < tag_divs.length; i++) {
+          tag_divs[i].style.display = 'none';
+        }
+        // Show the one we want
+        document.getElementById(tag).style.display = 'block';
+      }
+    </script>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Probabilities | Marcos Benício</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Probabilities" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Longer description of post 2" />
+<meta property="og:description" content="Longer description of post 2" />
+<link rel="canonical" href="http://localhost:4000/2023/11/21/probability.html" />
+<meta property="og:url" content="http://localhost:4000/2023/11/21/probability.html" />
+<meta property="og:site_name" content="Marcos Benício" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-11-21T00:00:00-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Probabilities" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-11-21T00:00:00-03:00","datePublished":"2023-11-21T00:00:00-03:00","description":"Longer description of post 2","headline":"Probabilities","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/11/21/probability.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/img/profile_photo.png"}},"url":"http://localhost:4000/2023/11/21/probability.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body onload="show_tag_section('all_posts')">
+
+    <div class="header">
+
+      <!-- Large header banner on left for large display widths -->
+      <div class="big_header">
+
+        <!-- Name -->
+        <div class="name_group">
+          <h1><a href="">Marcos Benício</a></h1>
+        </div>
+
+        <a href=""><img src="assets/img/profile_photo.png" alt="Logo" class="center_img" ></a>
+
+        <!-- Position + company -->
+        <div class="link_group">
+
+          <div class="row">
+              <div class="col1">
+                <span> M.sc in Physics</span>
+              </div>
+          </div>
+
+          <div class="row">
+            <!-- <a href=""-->
+              <div class="col1">
+                <img src="/assets/img/brazil_icon.png" height="30" width="30">
+                <!-- <span>  </span>-->
+              </div>
+            </a>
+          </div>
+
+          <div class="row">
+            <div class="col1">
+              <img src="/assets/img/place_icon_light.png" height="16" width="16">
+              <span> Niterói, RJ </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Badges/links -->
+        <div class="link_group">
+
+          <div class="row">
+            <a href="https://github.com/marcosbenicio">
+              <div class="col2">
+                <img src="/assets/img/github_icon_light.png" height="16" width="16">
+                <span> Github </span>
+              </div>
+            </a>
+            <a href="https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b">
+              <div class="col2">
+                <img src="/assets/img/linkedin_icon_light.png" height="16" width="16">
+                <span> LinkedIn </span>
+              </div>
+            </a>
+          </div>
+
+          <div class="row">
+            <a href="mailto:marcosbenicio0102@gmail.com">
+              <div class="col2">
+                <img src="/assets/img/email_icon_light.png" height="16" width="16">
+                <span> Email </span>
+              </div>
+            </a>
+            <a href="assets/files/resume.pdf">
+              <div class="col2">
+                <img src="/assets/img/cv_icon_light.png" height="16" width="16">
+                <span> Resume </span>
+              </div>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Smaller header banner on top for small display widths -->
+      <div class="small_header">
+
+        <!-- Name -->
+        <div class="small_header_box">
+          <div class="name_header_box">
+            <div class="name_header_img">
+              <a href="">
+                <img src="assets/img/profile_photo.png" alt="Logo" height="60">
+              </a>
+            </div>
+            <div class="name_header_name">
+              <h1><a href="">Marcos Benício</a></h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- Position + Company -->
+        <div class="small_header_box">
+          <div class="row">
+            <div class="col1">
+              <span> M.sc in Physics </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col1">
+             <!-- <a href=""> -->
+                  <img src="/assets/img/brazil_icon.png" height="30" width="30">
+                  <!-- <span>  </span> -->
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges/links -->
+        <div class="small_header_box">
+                <div class="row">
+                  <a href="https://github.com/marcosbenicio">
+                    <div class="col2">
+                      <img src="/assets/img/github_icon_light.png" height="16" width="16">
+                      <span> Github </span>
+                    </div>
+                  </a>
+                  <a href="https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b">
+                    <div class="col2">
+                      <img src="/assets/img/linkedin_icon_light.png" height="16" width="16">
+                      <span> LinkedIn </span>
+                    </div>
+                  </a>
+                </div>
+
+                <div class="row">
+                  <a href="mailto:marcosbenicio0102@gmail.com">
+                    <div class="col2">
+                      <img src="/assets/img/email_icon_light.png" height="16" width="16">
+                      <span> Email </span>
+                    </div>
+                  </a>
+                  <a href="assets/files/resume.pdf">
+                    <div class="col2">
+                      <img src="/assets/img/cv_icon_light.png" height="16" width="16">
+                      <span> Resume </span>
+                    </div>
+                  </a>
+                </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Page content -->
+    <div class="content">
+
+      <h1>Probabilities</h1>
+<p class="meta">21 Nov 2023 - Tags: Probability and Bayes</p>
+
+<div class="button_container">
+  
+  
+  
+</div>
+
+<div class="post">
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+</code></pre></div></div>
+
+<h1 id="probabilities"><strong>Probabilities</strong></h1>
+
+<h2 id="ordinary-probability"><strong>Ordinary Probability</strong></h2>
+
+<p><strong>Classical Probability</strong></p>
+
+<p>Consider the classic experiment of flipping a fair coin, which has two distinct and mutually exclusive outcomes: “heads” <strong>or</strong> “tails”. The various factors influencing the outcome of the experiment are too numerous to take into account. Therefore the outcome of the experiment is said to be random, given our ignorance about all possible factors influencing the outcome. Everyone would certainly agree that the probability of getting heads and the probability of getting tails both equal $\frac{1}{2}$. Intuitively, this answer is based on the idea that two outcomes are equally likely or equiprobable, because of the coin’s symmetric design.</p>
+
+<p>When dealing with experiments that have a finite and defined number of mutually exclusive and equiprobable outcomes, such as our coin toss, we can specify an event, denoted as $A$, which represents a set of outcomes (e.g., the coin landing on ‘heads’). The probability of event $A$ happening, $P(A)$, is then defined by the proportion of outcomes favorable to $A$ relative to the total number of possible outcomes:</p>
+
+\[P(A) = \frac{N(A)}{N}\]
+
+<p>where $N$ is the total number of outcomes of the experiment and $N(A)$ is the number of outcomes leading to the occurrence of the event $A$. This priori approach to probability is based on theoretical reasoning and logical deduction, rather than empirical evidence, and assumes all possible outcomes are known and equally likely.</p>
+
+<p>This approach is not the ideal one for data science, where often we cannot assume that all outcomes are known and equally likely. In real-world scenarios, we typically have to rely on observed data to estimate probabilities. This is where the frequentist interpretation of probability comes into play, which is based in the empirical analysis of events.</p>
+
+<p><strong>Frequentist Probability</strong></p>
+
+<p>In contrast to the classical interpretation, frequentist probability states that as an experiment is repeated a large number of times, it will exhibit a remarkable consistency in behavior, which allows us to assign a precise meaning to the concept of probability, not only in cases with equiprobable outcomes but also in the most general situations. Let $n$ be the total number of trials in the experiment, and let $n(A)$ be the number of trials in which $A$ occurs. Then the proportion</p>
+
+\[\frac{n(A)}{n}\]
+
+<p>is called the relative frequency of the event $A$ in the given series of trials. It turns out that the relative frequencies observed in different series of trials are approximately the same for a large $n$, clustering about some constant called the probability of the event A. More precisely, this means that</p>
+
+\[P(A) = \lim_{n \to \infty} \frac{n(A)}{n}\]
+
+<p>For equiprobable events, such as flipping a fair coin, the frequentist probability approaches the classical probability as the number of trials increases:</p>
+
+\[P(A) = \lim_{n \to \infty} \frac{n(A)}{n}  \sim \frac{N(A)}{N}\]
+
+<p>This relationship illustrates that under the condition of equiprobability, the empirical frequentist approach converges with the theoretical classical approach. To illustrate this, consider the following simulation of 2000 coin tosses trials to demonstrate this convergence.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">red</span>  <span class="o">=</span> <span class="sh">'</span><span class="s">#BE3232</span><span class="sh">'</span>
+<span class="n">blue</span> <span class="o">=</span> <span class="sh">'</span><span class="s">#3A527B</span><span class="sh">'</span>
+<span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">seed</span><span class="p">(</span><span class="mi">46</span><span class="p">)</span>
+
+<span class="c1"># Number of trials in the experiment
+</span><span class="n">num_trials</span> <span class="o">=</span> <span class="mi">2000</span>
+
+<span class="c1"># Simulate coin flips
+</span><span class="n">flips</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">choice</span><span class="p">([</span><span class="sh">'</span><span class="s">heads</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">tails</span><span class="sh">'</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">num_trials</span><span class="p">)</span>
+
+<span class="c1"># Calculate the relative frequencies
+</span><span class="n">heads_cumulative</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">cumsum</span><span class="p">(</span><span class="n">flips</span> <span class="o">==</span> <span class="sh">'</span><span class="s">heads</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">tails_cumulative</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">cumsum</span><span class="p">(</span><span class="n">flips</span> <span class="o">==</span> <span class="sh">'</span><span class="s">tails</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">trials</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_trials</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Frequencies for head and tails
+</span><span class="n">freq_heads</span> <span class="o">=</span> <span class="n">heads_cumulative</span> <span class="o">/</span> <span class="n">trials</span>
+<span class="n">freq_tails</span> <span class="o">=</span> <span class="n">tails_cumulative</span> <span class="o">/</span> <span class="n">trials</span>
+
+<span class="c1"># Plot the results
+</span><span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">trials</span><span class="p">,</span> <span class="n">freq_heads</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">'</span><span class="s">Heads</span><span class="sh">'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">red</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">trials</span><span class="p">,</span> <span class="n">freq_tails</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">'</span><span class="s">Tails</span><span class="sh">'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">blue</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">axhline</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sh">'</span><span class="s">red</span><span class="sh">'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="sh">'</span><span class="s">--</span><span class="sh">'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sh">'</span><span class="s">Classical Probability</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">'</span><span class="s">Number of Trials</span><span class="sh">'</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">'</span><span class="s">Relative Frequency</span><span class="sh">'</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_trials</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">title</span><span class="p">(</span><span class="sh">'</span><span class="s">Convergence of Relative Frequency to Probability</span><span class="sh">'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">grid</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">show</span><span class="p">()</span>
+
+</code></pre></div></div>
+
+<p><img src="01probability_files/01probability_4_0.png" alt="png" /></p>
+
+<p><strong>Exemple</strong></p>
+
+<p>Let’s explore the General Social Survey (GSS) dataset to determine the probability of randomly selecting a banking worker. In this dataset, the industry in which a respondent works is denoted by the <code class="language-plaintext highlighter-rouge">indus10</code> feature, with the code for “Banking and related activities” being 6870.</p>
+
+<p><strong>Dataset Features</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">caseid</code>: Unique identifier for each respondent.</li>
+  <li><code class="language-plaintext highlighter-rouge">year</code>: The year in which the respondent was surveyed.</li>
+  <li><code class="language-plaintext highlighter-rouge">age</code>: The age of the respondent at the time of the survey.</li>
+  <li><code class="language-plaintext highlighter-rouge">sex</code>: The sex of the respondent (male or female).</li>
+  <li><code class="language-plaintext highlighter-rouge">polviews</code>: The respondent’s political views, scaled from liberal to conservative.</li>
+  <li><code class="language-plaintext highlighter-rouge">partyid</code>: The respondent’s political party affiliation, categorized as Democratic, Republican, or Independent.</li>
+  <li><code class="language-plaintext highlighter-rouge">indus10</code>: Industry code representing the respondent’s field of work.</li>
+</ul>
+
+<p>To calculate the probability of randomly choosing a banking worker from this dataset, we would count the number of respondents whose <code class="language-plaintext highlighter-rouge">indus10</code> code is 6870 and divide that by the total number of respondents in the dataset. This can be expressed mathematically as:</p>
+
+\[P(\text{Banker}) = \frac{N(\text{indus10} = 6870)}{N}\]
+
+<p>where $N(\text{indus10} = 6870)$ is the number of banking workers in the dataset and $N$ is the total number of respondents in the dataset.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># General Social Survey data
+</span><span class="n">gss</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="sh">'</span><span class="s">data/gss_bayes.csv</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">gss</span><span class="p">.</span><span class="nf">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>caseid</th>
+      <th>year</th>
+      <th>age</th>
+      <th>sex</th>
+      <th>polviews</th>
+      <th>partyid</th>
+      <th>indus10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>1974</td>
+      <td>21.0</td>
+      <td>1</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>4970.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1974</td>
+      <td>41.0</td>
+      <td>1</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>9160.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>5</td>
+      <td>1974</td>
+      <td>58.0</td>
+      <td>2</td>
+      <td>6.0</td>
+      <td>1.0</td>
+      <td>2670.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define the ordinary probability
+</span><span class="k">def</span> <span class="nf">prob</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Calculate the probability of an event.</span><span class="sh">"""</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">event</span><span class="p">.</span><span class="nf">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">N</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Banking and related activities
+</span><span class="n">banker</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">indus10</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6870</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(banker) = </span><span class="sh">"</span><span class="p">,</span> <span class="nf">prob</span><span class="p">(</span><span class="n">banker</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>P(banker) =  0.014769730168391155
+</code></pre></div></div>
+
+<p>We can see that about $1.5\%$ of the respondents work in banking, so if we choose a random person from the dataset, the probability they are a banker is about $1.5\%$.</p>
+
+<h2 id="joint-probability"><strong>Joint Probability</strong></h2>
+
+<p>Joint probability is the probability of two or more events happening at the same time. For two events, $A$ and $B$, the joint probability is mathematically represented as:</p>
+
+\[P(A \cap B) = P(A \text{ and } B)\]
+
+<p>In practical terms, it answers questions such as: “What is the probability that event $A$ happen while event $B$ also happens?” We can think of this in terms of sets, where both events $A$ and $B$ are considered a set of outcomes for a given experiment. The intersection set $A \cap B$ represents the outcomes where both events $A$ and $B$ happens simultaneously.</p>
+
+<center><img src="figures/venn-diagram-intersection.png" width="500" height="300" /></center>
+
+<p>In this illustration, $\Omega$ is known as the sample space of all possible outcomes from the experiment. As subsets of the sample space $\Omega$, we have the sets of outcomes leading to events $A$ and $B$, and their intersection when both events happen in the same trial for this experiment.</p>
+
+<p>Let’s consider an experiment with an equiprobable and finite number of outcomes. Let $N$ denote the total number of trials in the experiment. Suppose $N(A)$ and $N(B)$ represent the number of trials where events $A$ and $B$ happen, respectively, and $N(A \cap B)$ represents the number of trials that both events $A$ and $B$ happen together ( intersection set). In this scenario, the joint probability can be expressed as:</p>
+
+\[P(A \cap B) = \frac{N(A \cap B)}{N}\]
+
+<p>If we are considering more than two events, say $A$, $B$, and $C$, the joint probability can be generalized further as:</p>
+
+\[P(A \cap B \cap C) = P(A \text{ and } B \text{ and } C)\]
+
+<p>This concept is extendable to any number of events, providing a robust tool to evaluate the probability of several interconnected events happening simultaneously.</p>
+
+<p>When the events are mutually exclusive, meaning that they cannot happen together in the same trial, the joint probability is zero</p>
+
+<center><img src="figures/venn-diagram-null.png" width="500" height="300" /></center>
+
+<p>In this case, as illustrated, the sets for events $A$ and $B$ have an empty intersection set $A \cap B = \emptyset$, hence the joint probability must be zero:</p>
+
+\[P(A \cap B) = 0\]
+
+<p><strong>Example</strong></p>
+
+<p>Let’s explore the the probability of selecting a respondent who is both a banker and a Democrat from the General Social Survey (GSS) dataset. Here, the occupation of the respondent is encoded in the <code class="language-plaintext highlighter-rouge">indus10</code> feature, where the code for “Banking and related activities” 6870. Similarly, the <code class="language-plaintext highlighter-rouge">partyid</code> feature encodes the political affiliation of the respondent, with codes ranging from 0 to 7.</p>
+
+<p><code class="language-plaintext highlighter-rouge">partyid</code></p>
+
+<ul>
+  <li>0 Strong democrat</li>
+  <li>1 Not strong democrat</li>
+  <li>2 Independent, near democrat</li>
+  <li>3 Independent</li>
+  <li>4 Independent, near republican</li>
+  <li>5 Not strong republican</li>
+  <li>6 Strong republican</li>
+  <li>7 Other party</li>
+</ul>
+
+<p>To calculate the probability of randomly selecting a respondent who is a banker and also identifies as a Democrat (strong or not strong), we would identify the intersection set of respondents whose <code class="language-plaintext highlighter-rouge">indus10</code> code indicates they are bankers and whose <code class="language-plaintext highlighter-rouge">partyid</code> is either 0 or 1. This gives the joint probability of this two events happen simultaneously:</p>
+
+\[P(\text{Banker and Democrat}) = \frac{N\bigg((\text{indus10} = 6870) \cap (\text{partyid} \leq 1)\bigg)}{N}\]
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Banking and related activities
+</span><span class="n">banker</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">indus10</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6870</span><span class="p">)</span>
+
+<span class="c1"># Banking and related activities
+</span><span class="n">democrat</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">partyid</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(democrat and banker) =</span><span class="sh">"</span><span class="p">,</span> <span class="nf">prob</span><span class="p">(</span><span class="n">banker</span> <span class="o">&amp;</span> <span class="n">democrat</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>P(democrat and banker) = 0.004686548995739501
+</code></pre></div></div>
+
+<p>The data reveals that $P(\text{Banker and Democrat}) = 0.0047 $ (or 0.47%) and $P(\text{Banker}) = 0.015 $ (or 1.5%), it confirms that the subset of bankers who are Democrats is less than the overall proportion of bankers in the dataset, as not all bankers are Democrats.</p>
+
+<h2 id="conditional-probability"><strong>Conditional Probability</strong></h2>
+
+<p>Conditional probability helps us understand the relationship between two events, $A$ and $B$. In particular, it describes the probability of event $A$ given that event $B$ has already happened. The conditional probability of event $A$ given event $B$ is defined as:</p>
+
+\[P(A|B) = \frac{P(A \cap B)}{P(B)}.\]
+
+<p>Here, $P(A \cap B)$ represents the joint probability, which means the chance of two events happening simultaneously (or at same trial in a experiment). Suppose we conduct a random experiment with a equiprobable and finite number of outcomes. Let $N$ represent the total number of trials, $N(B)$ be the number of trials resulting in event $B$, and $N(A \cap B)$ be the number of trials where both $A$ and $B$ happen together. In this case, the probability of $B$ and the joint probability $A \cap B$ can be expressed as:</p>
+
+\[P(B) = \frac{N(B)}{N}, ~~~~~~P(A \cap B) = \frac{N(A \cap B)}{N},\]
+
+<p>Using these expressions, we can rewrite the conditional probability of $A$ given $B$ as:</p>
+
+\[P(A|B) = \frac{N(A \cap B)}{N(B)}.\]
+
+<p>This equation essentially calculates the proportion of trials where both $A$ and $B$ happen (joint probability) out of the trials where event $B$ occurs.</p>
+
+<p>When the event $A$ implies in $B$ ($B$ is subset of $A$: $B \subset A$ ), meaning that the events always happen together in the same trial, the conditional probability is one</p>
+
+<center><img src="figures/venn-diagram-subset.png" width="500" height="300" /></center>
+
+<p>In this case, as illustrated, the set $B$ is subset of $A$, which implies a $100\%$ chance of event $A$ happening given that event $B$ happen:</p>
+
+\[P(A|B) = 1\]
+
+<p><strong>Example</strong></p>
+
+<p>Let’s examine the probability of selecting a respondent who is a Democrat, given their political views are liberal. In the GSS dataset, respondents’ political views are classified under the <code class="language-plaintext highlighter-rouge">polviews</code> feature, with the codes for being liberal as</p>
+
+<p><code class="language-plaintext highlighter-rouge">polviews</code></p>
+
+<ul>
+  <li>1 Extremely liberal</li>
+  <li>2 Liberal</li>
+  <li>3 Slightly liberal</li>
+</ul>
+
+<p>and for democrats as</p>
+
+<p><code class="language-plaintext highlighter-rouge">partyid</code></p>
+
+<ul>
+  <li>0 Strong democrat</li>
+  <li>1 Not strong democrat</li>
+  <li>2 Independent, near democrat</li>
+</ul>
+
+<p>To compute the conditional probability of a respondent being a Democrat given that they are liberal is given by</p>
+
+\[P(\text{Democrat} | \text{Liberal}) = \frac{N\bigg((\text{polviews} = 2) \cap (\text{partyid} \leq 1)\bigg)}{N(\text{polviews} = 2)}\]
+
+<p>where $N(\text{polviews} = 2) \cap (\text{partyid} \leq 1)$ is the number of respondents who are both liberal and Democrat, and $N(\text{polviews} = 2)$ is the total number of liberal respondents in the dataset.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Propositions
+# set of liberal respondents
+</span><span class="n">liberal</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">polviews</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="c1"># set of bankers by industry code
+</span><span class="n">banker</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">indus10</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6870</span><span class="p">)</span>
+<span class="c1"># set of Democrats and strong Democrats
+</span><span class="n">democrat</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">partyid</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># subset that includes only the respondents who are both liberal and Democrats
+</span><span class="n">liberal_democrats</span> <span class="o">=</span> <span class="n">democrat</span><span class="p">[</span><span class="n">liberal</span><span class="p">]</span>
+<span class="n">liberal_democrats</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>8         True
+17        True
+18       False
+24        True
+28       False
+         ...  
+49267     True
+49271     True
+49278     True
+49279     True
+49285     True
+Name: partyid, Length: 13493, dtype: bool
+</code></pre></div></div>
+
+<p>This essentially gives the intersection of the two sets, yielding a data series of booleans that are True only where someone is both liberal and a democrat and False otherwise.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define the conditional probability
+</span><span class="k">def</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">given</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">
+    Calculate the conditional probability of an event given a condition.
+    The function prob() is used to compute the probability, where prob is previously defined to calculate
+    the probability of the occurrence of an event.
+    </span><span class="sh">"""</span>
+
+    <span class="c1"># Probability of Sample space to only instances where the given condition is true
+</span>    <span class="k">return</span> <span class="nf">prob</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">given</span><span class="p">])</span>
+
+<span class="c1"># Method 1: Using subset of liberal and Democrats to restrict sample space.
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">p(liberal|democrat) = </span><span class="sh">"</span><span class="p">,</span> <span class="nf">prob</span><span class="p">(</span><span class="n">liberal_democrats</span><span class="p">))</span>
+
+<span class="c1"># Method 2: Using explicit Boolean conditions to restrict sample space.
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">p(liberal|democrat) = </span><span class="sh">"</span><span class="p">,</span> <span class="nf">prob</span><span class="p">(</span><span class="n">liberal</span> <span class="o">&amp;</span> <span class="n">democrat</span><span class="p">)</span> <span class="o">/</span> <span class="nf">prob</span><span class="p">(</span><span class="n">liberal</span><span class="p">))</span>
+
+<span class="c1"># Method 3: Using subset of liberal and Democrats calculated inside the function by the given condition.
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">p(liberal|democrat) = </span><span class="sh">"</span><span class="p">,</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">democrat</span><span class="p">,</span> <span class="n">given</span> <span class="o">=</span> <span class="n">liberal</span><span class="p">))</span>
+
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>p(liberal|democrat) =  0.7046616764248128
+p(liberal|democrat) =  0.7046616764248128
+p(liberal|democrat) =  0.7046616764248128
+</code></pre></div></div>
+
+<p>As we can observe, <strong>ordinary probability</strong> considers the probability of an event happening over the entire sample space $\Omega$ ( entire set of possible outcomes). On the other hand, <strong>conditional probability</strong> restricts this context by considering the probability of an event under a specific condition or set of conditions. It refines our expectations about an event by taking into account additional information that restricts the sample space $\Omega$ to a small region — the “given” condition.</p>
+
+<p>This approach can be extended to account for multiple conditions simultaneously. This chain of conditions leads to scenarios where various factors intersect, allowing for more complex probability questions. It’s the mathematical equivalent of saying, “Given this and that, what are the probabilities of something else happening?”</p>
+
+<p>For example, what is the probability of selecting a Democrat given that he is a Liberal and a Banker? Or, what is the probability of selecting a Liberal given that he is a Banker and a Democrat?</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># conditional probability of being a democrat given being liberal and a banker
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">p(Democrat|Liberal and Banker) = </span><span class="sh">"</span><span class="p">,</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">democrat</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="n">liberal</span> <span class="o">&amp;</span> <span class="n">banker</span><span class="p">))</span>
+
+<span class="c1"># conditional probability of being liberal and a banker given being a democrat
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">p(Liberal and Banker|Democrat) = </span><span class="sh">"</span><span class="p">,</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">liberal</span> <span class="o">&amp;</span> <span class="n">banker</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="n">democrat</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>p(Democrat|Liberal and Banker) =  0.6441717791411042
+p(Liberal and Banker|Democrat) =  0.004333470903838217
+</code></pre></div></div>
+
+<h2 id="addition-law-for-probability"><strong>Addition Law for Probability</strong></h2>
+
+<p>Consider two mutually exclusive events $A_1$ and $A_2$ associated with the outcomes of a random experiment, and let $A = A_1 \bigcup A_2$ be the union of the two events. If events $A_1$ and $A_2$ are mutually exclusive, by definition, they cannot happen simultaneously. This implies that the intersection of these two events must be $A_1 \bigcap A_2 = \emptyset$. If $A$ happen in a trial, it means that either event $A_1$ has happened, or event $A_2$ has happened, but not both since $A_1$ and $A_2$ are mutually exclusive. We can see this in the following figure for the sets $A_1$ and $A_2$:</p>
+
+<center><img src="figures/venn-diagram-null-mutually-exclusive.png" width="500" height="300" /></center>
+
+<p>The union of the events $A_1 \bigcup A_2$ includes all the outcomes of both events, without any overlap. So, when counting the number of outcomes in $A$, we are essentially counting the number of outcomes in $A_1$ and $A_2$ separately and then adding them together. Therefore, we can write:</p>
+
+\[\frac{N(A)}{N} = \frac{N(A_1)}{N} + \frac{N(A_2)}{N}\]
+
+<p>where $N$ is the total number of trials in the experiment, and $N(A)$, $N(A_1)$, $N(A_2)$ are the total number of trials leading to events $A$, $A_1$, and $A_2$, respectively.</p>
+
+<p>For a sufficiently large number of trials $N$, the relative frequencies $\frac{N(A)}{N}$, $\frac{N(A_1)}{N}$, $\frac{N(A_2)}{N}$ will coincide with the corresponding probabilities $P(A)$, $P(A_1)$, $P(A_2)$. We get:</p>
+
+\[P(A) = P(A_1) + P(A_2)\]
+
+<p>Similarly, if events $A_1$, $A_2$, and $A_3$ are mutually exclusive, it means that no two of these events can happen simultaneously. This implies that their pairwise intersections are empty: $A_1 \bigcap A_2 = \emptyset$, $A_2 \bigcap A_3 = \emptyset$, and $A_1 \bigcap A_3 = \emptyset$. As a result, the union of events $A_1$ and $A_2$ is also mutually exclusive with $A_3$. For the probability, this can be expressed as:</p>
+
+\[P(A_1 \bigcup A_2 \bigcup A_3) = P(A_1 \bigcup A_2) + P(A_3)\]
+
+<p>Since $A_1$ and $A_2$ are mutually exclusive, we get:</p>
+
+\[P(A_1 \bigcup A_2 \bigcup A_3) =  P(A_1) + P(A_2) + P(A_3)\]
+
+<p>More generally, given $N$ mutually exclusive events $A_1$, $A_2$, $\cdots$, $A_n$, we have the formula:</p>
+
+\[P(\bigcup_{k=1}^{n}A_{k}) = \sum_{k=1}^{n} P(A_{k})\]
+
+<p><strong>Example</strong></p>
+
+<p>We are interested in finding the probability that a randomly selected respondent is <strong>either a liberal Democrat or a conservative Republican</strong>. To do this, we will identify and use two mutually exclusive events based on the respondents’ political party affiliations (<code class="language-plaintext highlighter-rouge">partyid</code>) and views (<code class="language-plaintext highlighter-rouge">polviews</code>).</p>
+
+<p>for the liberal and conservative party affiliations the code are :</p>
+
+<p><code class="language-plaintext highlighter-rouge">partyid</code></p>
+
+<ul>
+  <li>1 Extremely liberal</li>
+  <li>2 Liberal</li>
+  <li>3 Slightly liberal</li>
+  <li>5 Slightly conservative</li>
+  <li>6 Conservative</li>
+  <li>7 Extremely conservative</li>
+</ul>
+
+<p>For the political view of democrat and republican we have:</p>
+
+<p><code class="language-plaintext highlighter-rouge">polviews</code></p>
+
+<ul>
+  <li>0 Strong democrat</li>
+  <li>1 Not strong democrat</li>
+  <li>2 Independent, near democrat</li>
+  <li>4 Independent, near republican</li>
+  <li>5 Not strong republican</li>
+  <li>6 Strong republican</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Political view
+</span><span class="n">liberal</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">polviews</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">conservative</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">polviews</span><span class="sh">'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Party affiliations
+</span><span class="n">democrat</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">partyid</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">republican</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">partyid</span><span class="sh">'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># Intersections of partyid and polviews
+</span><span class="n">liberal_democrat</span> <span class="o">=</span> <span class="n">liberal</span> <span class="o">&amp;</span> <span class="n">democrat</span>
+<span class="n">conservative_republican</span> <span class="o">=</span> <span class="n">conservative</span> <span class="o">&amp;</span> <span class="n">republican</span>
+
+<span class="c1"># Intersection of mutually exclusive set of events --&gt; Empty set
+</span><span class="n">empty_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">liberal_democrat</span> <span class="o">&amp;</span> <span class="n">conservative_republican</span><span class="p">).</span><span class="nf">sum</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span> <span class="sh">"</span><span class="s">liberal democrat &amp; conservative republican = </span><span class="sh">"</span><span class="p">,</span> <span class="n">empty_set</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>liberal democrat &amp; conservative republican =  0
+</code></pre></div></div>
+
+<p>The probability of randomly selecting either a liberal democrat or a conservative republican is given by:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Total probability of either a liberal democrat or a conservative republican
+</span><span class="n">p</span> <span class="o">=</span> <span class="nf">prob</span><span class="p">(</span><span class="n">liberal_democrat</span><span class="p">)</span> <span class="o">+</span> <span class="nf">prob</span><span class="p">(</span><span class="n">conservative_republican</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Total Probability =</span><span class="sh">'</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Total Probability = 0.3445120714140799
+</code></pre></div></div>
+
+<h3 id="addition-law-for-conditional-probability"><strong>Addition Law for Conditional Probability</strong></h3>
+
+<p>If $A_1, \cdots, A_n$ are mutually exclusive events, with union $A = \bigcup_{k=1}^{n}A_{k}$, then the addition law for conditional probability is
+  $P(A|B) = \sum_{k=1}^{n} P(A_k|B)$.</p>
+
+<p><strong>Proof</strong>:</p>
+
+<p>Given that $A_1, \cdots, A_n$ are mutually exclusive, we have:</p>
+
+\[A \cap B = \bigcup_{k=1}^{n}(A_{k}\cap B)\]
+
+<p>This represents the union of each intersection of $A_k \cap B$ for each $k = 1,2,…n$. By the addition law:</p>
+
+\[P(\bigcup_{k=1}^{n}(A_{k}\cap B)) = \sum_{k=1}^{n} P(A_{k}\cap B)\]
+
+<p>Dividing by $P(B)$, we get:</p>
+
+\[\frac{P(\bigcup_{k=1}^{n}(A_{k}\cap B))}{P(B)} = \sum_{k=1}^{n} \frac{P(A_{k}\cap B)}{P(B)}\]
+
+<p>Thus,</p>
+
+\[P(A|B) = \sum_{k=1}^{n} P(A_k|B) ~~ \square\]
+
+<p><strong>Example</strong></p>
+
+<p>Respondents were asked about their age and their political party affiliation. Let’s focus on two age groups: those younger than 30 years old, and those between 30 and 40 years old. What is the probability that a respondent falls into one of two age categories, given that they identify as a Democrat?</p>
+
+<p>Here, the union of two mutually exclusive events $A_1$ and $A_2$ to create a new event that we can call “age group”. This “age group” event $A$ encompasses all the possible outcomes for a respondent’s age being less than 30 or between 30 and 40, and it can be formally defined as</p>
+
+\[A = A_1 \cup A_2\]
+
+<p>where</p>
+<ul>
+  <li>$A_1$: The event where the respondent is younger than 30 years old</li>
+  <li>$A_2$: The event where the respondent is between 30 and 40 years old</li>
+</ul>
+
+<p>using the addition law for conditional probability, where $B$ is the event that the respondent identifies as a Democrat we can get the following result:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define mutually exclusive age groups
+</span><span class="n">less_30</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">between_30_40</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">age</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">40</span><span class="p">)</span>
+
+<span class="c1"># Define Democrats set
+</span><span class="n">democrat</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">partyid</span><span class="sh">'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> 
+
+<span class="c1"># Mutually exclusive events
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Age groups set are mutually exclusive = {} </span><span class="se">\n</span><span class="sh">"</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span> <span class="p">(</span><span class="n">less_30</span> <span class="o">&amp;</span> <span class="n">between_30_40</span><span class="p">).</span><span class="nf">sum</span><span class="p">())</span> <span class="p">)</span>
+
+<span class="c1"># Calculate conditional probabilities
+</span><span class="n">p_age_group_given_democrat</span> <span class="o">=</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">less_30</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="n">democrat</span><span class="p">)</span> <span class="o">+</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">between_30_40</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="n">democrat</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(Age Group | Democrat) = </span><span class="sh">"</span><span class="p">,</span> <span class="n">p_age_group_given_democrat</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Age groups set are mutually exclusive = 0 
+
+P(Age Group | Democrat) =  0.39638841189829943
+</code></pre></div></div>
+
+<h2 id="law-of-total-probability"><strong>Law of Total Probability</strong></h2>
+
+<p>Suppose we have a complete set of mutually exclusive and exhaustive events $B_1, \cdots, B_n$, meaning only one of these events can happen at a time, and their union covers the entire sample space. We can find the ordinary probability of event $A$ happening using the total probability formula:</p>
+
+\[P(A) = \sum_k P(A|B_k)P(B_k)\]
+
+<p>As we see before Mutually exclusive events are events that cannot happen simultaneously. On the other hand, exhaustive events are events that, when considered their union, cover the entire sample space $\Omega$. When a set of events is both mutually exclusive and exhaustive, it means that they cover all possible outcomes without overlapping.</p>
+
+<p>To better understand mutually exclusive and exhaustive events, consider the example of rolling a fair six-sided die. The sample space for this experiment is the set of outcomes ${1, 2, 3, 4, 5, 6}$. We can define the events as follows:</p>
+
+<ul>
+  <li>Event $B_1$: The die shows an odd number (outcomes: ${1, 3, 5}$)</li>
+  <li>Event $B_2$: The die shows an even number (outcomes: ${2, 4, 6}$)</li>
+</ul>
+
+<p>The events $B_1$ and $B_2$ are mutually exclusive, because no outcome can be both odd and even simultaneously. Furthermore, these events are exhaustive, because together they cover the entire sample space.</p>
+
+<p><strong>Proof:</strong></p>
+
+<p>Consider $\Omega$ as the sample space. If $B_1, \cdots, B_n$ are all the possible mutually exclusive and exhaustive events. If their union covers the entire sample space, then:</p>
+
+\[\bigcup_k B_k= \Omega\]
+
+<p>Consequently, event $A$ can be expressed as the union of its intersections with each of the mutually exclusive events $B_k$:</p>
+
+\[A = \bigcup_k (A \cap B_k)\]
+
+<p>Since the events $A \cap B_k$ are mutually exclusive, we can apply the addition rule of probability:</p>
+
+\[P(A) = P(\bigcup_k (A \cap B_k)) = \sum_k P(A \cap B_k)\]
+
+<p>Now we can rewrite the probability of the intersection using conditional probability:</p>
+
+\[P(A) = \sum_k P(A \cap B_k) = \sum_k P(A |B_k)P(B_k)~~~~ \square\]
+
+<p>This proof demonstrates how we can find the probability of an event $A$ happening by considering its relationship with a set of mutually exclusive and exhaustive events $B_1, \cdots, B_n$.</p>
+
+<p><strong>Example</strong></p>
+
+<p>Let’s compute the probability that a respondent is a banker using the law of total probability.</p>
+
+<p>Using the ordinary probability, we have:</p>
+
+\[P(\text{banker}) = \frac{N(\text{banker})}{N}\]
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define 'banker' as respondents with the industry code for banking
+</span><span class="n">banker</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">indus10</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6870</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(banker) = </span><span class="sh">"</span><span class="p">,</span> <span class="nf">prob</span><span class="p">(</span><span class="n">banker</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>P(banker) =  0.014769730168391155
+</code></pre></div></div>
+
+<p>To apply the law of total probability, we need a mutually exclusive and exhaustive set that partitions the sample space. In this dataset, the categories of ‘male’ and ‘female’ serve as such a partition:</p>
+
+\[P(\text{banker}) = P(\text{banker}|\text{male})P(\text{male}) + P(\text{banker}|\text{female})P(\text{female})\]
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define 'male' and 'female' sets
+</span><span class="n">male</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">sex</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">female</span> <span class="o">=</span> <span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">sex</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Calculate conditional probabilities
+</span><span class="n">p</span> <span class="o">=</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">banker</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="n">male</span><span class="p">)</span> <span class="o">*</span> <span class="nf">prob</span><span class="p">(</span><span class="n">male</span><span class="p">)</span> <span class="o">+</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">banker</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="n">female</span><span class="p">)</span> <span class="o">*</span> <span class="nf">prob</span><span class="p">(</span><span class="n">female</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(banker) = </span><span class="sh">"</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>P(banker) =  0.014769730168391153
+</code></pre></div></div>
+
+<p>We can subdivide the sample space further by considering the <code class="language-plaintext highlighter-rouge">polviews</code> feature, which categorizes respondents’ political views. Since <code class="language-plaintext highlighter-rouge">polviews</code> contains seven distinct categories, each mutually exclusive and collectively exhaustive, we can use them to compute the total probability:</p>
+
+\[P(\text{banker}) = \sum^{7}_{i=1} P(\text{banker}|\text{polviews} = i)P(\text{polviews} = i)\]
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Compute the total probability across political views
+</span><span class="n">p</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="nf">prob</span><span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">polviews</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="nf">conditional</span><span class="p">(</span><span class="n">banker</span><span class="p">,</span> <span class="n">given</span><span class="o">=</span><span class="p">(</span><span class="n">gss</span><span class="p">[</span><span class="sh">'</span><span class="s">polviews</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s"> P(banker) = </span><span class="sh">"</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> P(banker) =  0.014769730168391157
+</code></pre></div></div>
+
+<p>This shows how we can partition the sample space $\Omega$ using polviews, ensuring that all possible outcomes are considered when computing the total probability.</p>
+
+<h1 id="bayess-theorem"><strong>Bayes’s Theorem</strong></h1>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Given two events A and B, Bayes’ theorem relates the conditional probability of A given B ($P(A</td>
+      <td>B)$) to the conditional probability of B given A ($P(B</td>
+      <td>A)$), along with the individual probabilities of A ($P(A)$) and B ($P(B)$):</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <tbody>
+    <tr>
+      <td>​$$P(A</td>
+      <td>B) = \frac{P(B</td>
+      <td>A) \cdot P(A)}{P(B)} = \frac{P(B</td>
+      <td>A) \cdot P(A)}{\sum_k P(B</td>
+      <td>A_k)P(A_k)} $$</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>where:</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>$P(A</td>
+          <td>B)$: is the <strong>posterior probability</strong>. It represents the probability of event A happening, given that event B has happened. This is what we’re trying to find using Bayes’ theorem. It reflects our updated belief about event A after taking into account the new information provided by event B.</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>$P(B</td>
+          <td>A)$: is the <strong>likelihood</strong>. It represents the probability of event B happening, given that event A has happened. This is often a known value or can be estimated from available data. It tells us how likely it is to observe event B when event A is true.</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>$P(A)$: is the <strong>prior probability</strong>. It represents the probability of event A happening before taking into account any new information from event B. This is our initial belief about event A and can be based on previous data, expert opinion, or assumptions.</p>
+  </li>
+  <li>$P(B)$: is the <strong>total probability or evidence</strong>. It represents the overall probability of event B happening, regardless of whether event A happens or not. This value can be calculated using the <strong>law of total probability</strong>, which takes into account both the probabilities of B happening when A happens and when A doesn’t happen. Specifically, if we have a finite set of mutually exclusive and exhaustive events $A_1, \cdots, A_n$, then the probability of event B can be expressed as:
+\(P(B) = \sum_k P(B|A_k)P(A_k)\)
+    <ul>
+      <li><strong>Mutually exclusive:</strong> The events $A_k$ do not happen simultaneously. For any pair of events $A_i$ and $A_j$, if $i \neq j$, then $P(A_i \cap A_j) = 0$.</li>
+      <li><strong>Exhaustive:</strong> The union of all events $A_k$ covers the entire sample space, meaning that at least one of the events $A_k$ must happen. Mathematically, $\bigcup_k A_k = \Omega$, where $\Omega$ is the sample space.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>$\textbf{proof}:$</p>
+
+<p>For event A given event B, the conditional probability is defined as:</p>
+
+\[P(A|B) = \frac{P(A \bigcap B)}{P(B)}\]
+
+<p>Likewise, the conditional probability of event B given event A is expressed as:
+\(P(B|A) = \frac{P(A \bigcap B)}{P(A)}\)</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Our objective is to derive Bayes’ theorem, which connects $P(A</td>
+      <td>B)$ and $P(B</td>
+      <td>A)$. To achieve this, we first isolate $P(A \cap B)$ in the second equation::</td>
+    </tr>
+    <tr>
+      <td>$$P(A \bigcap B) = P(B</td>
+      <td>A) \cdot P(A)$$</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Next, substitute this expression for $P(A \cap B)$ into the first equation:
+\(P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}~~~~\square\)</p>
+
+<h2 id="interpretations-of-bayess-theorem"><strong>Interpretations of Bayes’s Theorem</strong></h2>
+
+<p><strong>Bayes’s Rule as Cause and Effect</strong></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>At the core of Bayes’ rule is the capability to invert conditional probabilities. Suppose we know the probability of an effect given a cause, $P(B</td>
+      <td>A)$, and we’re curious about the probability of the cause given the effect, $P(A</td>
+      <td>B)$. Bayes’ theorem enables this inversion, effectively allowing us to transition between the probabilities of cause and effect.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Bayes’s Rule to update Beliefs ( Bayesian update)</strong></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Beyond inverting conditional probabilities, Bayes’ theorem also can be used as a way of updating beliefs with new data. Here, the key is the notion of the “prior” and the “posterior”. The prior belief, $P(H)$, represents what initially we think about the hypothesis $H$. As new data $D$ becomes available, we update this belief to get a posterior belief, $P(H</td>
+      <td>D)$. In this context, the theorem is formulated as:</td>
+    </tr>
+  </tbody>
+</table>
+
+\[P(H|D) = \frac{P(H)P(D|H)}{P(D)}\]
+
+<p>Each term in this equation is defined as follows:</p>
+<ul>
+  <li>$ P(H) $: The prior probability of the hypothesis before observing the data.</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>$ P(H</td>
+          <td>D) $: The posterior probability of the hypothesis after observing the data.</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>$ P(D</td>
+          <td>H) $: The likelihood of observing the data under the hypothesis.</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>$ P(D) $: The total probability of observing the data under any hypothesis.</li>
+</ul>
+
+<p>Calculating the total probability of the data, $ P(D) $, can be challenging since it represents the probability of the data under all possible hypotheses. To accurately apply the law of total probability, we must use a set of hypotheses that are mutually exclusive and collectively exhaustive:</p>
+<ul>
+  <li>Mutually exclusive: only one hypothesis can be true.</li>
+  <li>Collectively exhaustive: at least one of the hypotheses must be true.</li>
+</ul>
+
+<p>Under these conditions, we can compute $ P(D) $ using the law of total probability. For two hypotheses, $ H_1 $ and $ H_2 $, this is calculated as:</p>
+
+\[P(D) = P(H_1)P(D|H_1) + P(H_2)P(D|H_2)\]
+
+<p>For any number of hypotheses, the formula generalizes to:</p>
+
+\[P(D) = \sum_i P(H_i)P(D|H_i)\]
+
+<h2 id="bayess-applications"><strong>Bayes’s Applications</strong></h2>
+<h3 id="urn-problem"><strong>Urn problem</strong></h3>
+
+<p>Imagine a scenario involving two urns, each containing a mixture of blue and red balls:</p>
+
+<ul>
+  <li>Urn 1 contains 30 blue balls and 10 red balls.</li>
+  <li>Urn 2 contains 20 blue balls and 20 red balls.</li>
+</ul>
+
+<p>Now suppose we choose one of the urns at random and, without looking, choose a ball at random. If the ball is blue, what is the probability that it came from urn 1?</p>
+
+<p><strong>bayes’s as cause-and-effect</strong></p>
+
+<p>To solve this problem, we can employ a cause-and-effect framework of bayes theorem. More specifically, our goal is to determine the probability that Urn 1 was the chosen urn, given that a blue ball was selected:</p>
+
+\[P(\text{urn 1}|\text{blue})\]
+
+<p>However, the information provided only gives us the reverse probabilities: the likelihood of drawing a blue ball given that we chose from Urn 1 or Urn 2:</p>
+
+\[P(\text{blue}|\text{urn 1})\]
+
+\[P(\text{blue}|\text{urn 2})\]
+
+<p>With these probabilities, we can employ Bayes’ theorem to compute the desired probability as follows:</p>
+
+\[P(\text{urn 1}|\text{blue}) =  \frac{P(\text{blue}|\text{urn 1})P(\text{urn 1})}{P(\text{blue})}\]
+
+<p>To calculate the total probability, $P(\text{Blue})$, of selecting a blue ball, we employ the law of total probability. This law allows us to partition the sample space into distinct subsets, selecting from Urn 1 and Urn 2—and compute the overall probability by summing the probabilities of each case:</p>
+
+\[P(\text{blue}) = P(\text{blue}|\text{urn 1})P(\text{urn 1}) + P(\text{blue}|\text{urn 2})P(\text{urn 2})\]
+
+<p>In this context, it’s important to note that the conditions of mutually exclusive and exhaustive sets are satisfied. The events are mutually exclusive because a ball can only be selected from one urn at a time, and they are exhaustive because there are no other urns from which the ball could be selected.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Blue:0 and Red:1
+</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sh">'</span><span class="s">urn</span><span class="sh">'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="sh">'</span><span class="s">color</span><span class="sh">'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="sh">'</span><span class="s">count</span><span class="sh">'</span><span class="p">:</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">df</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>urn</th>
+      <th>color</th>
+      <th>count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>30</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>0</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>1</td>
+      <td>20</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">blue</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">color</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="n">urn1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">urn</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">urn2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sh">'</span><span class="s">urn</span><span class="sh">'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+
+<span class="c1"># Number of blue balls in urn 1 and urn 2
+</span><span class="n">N_blue_urn1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">blue</span> <span class="o">&amp;</span> <span class="n">urn1</span><span class="p">][</span><span class="sh">'</span><span class="s">count</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">()</span>
+<span class="n">N_blue_urn2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">blue</span> <span class="o">&amp;</span> <span class="n">urn2</span><span class="p">][</span><span class="sh">'</span><span class="s">count</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">()</span>
+<span class="c1"># Total number of blue balls
+</span><span class="n">N_blue</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">blue</span><span class="p">][</span><span class="sh">'</span><span class="s">count</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">()</span> 
+
+<span class="n">N_urn1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">urn1</span><span class="p">][</span><span class="sh">'</span><span class="s">count</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">()</span>
+<span class="n">N_urn2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">urn2</span><span class="p">][</span><span class="sh">'</span><span class="s">count</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">()</span>
+
+<span class="c1"># Conditional probabilities of getting a blue ball given the urn
+</span><span class="n">P_blue_urn1</span> <span class="o">=</span> <span class="n">N_blue_urn1</span><span class="o">/</span><span class="n">N_urn1</span>
+<span class="n">P_blue_urn2</span> <span class="o">=</span> <span class="n">N_blue_urn2</span><span class="o">/</span><span class="n">N_urn2</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(blue|urn1) = </span><span class="sh">"</span><span class="p">,</span> <span class="n">P_blue_urn1</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(blue|urn2) = </span><span class="sh">"</span><span class="p">,</span> <span class="n">P_blue_urn2</span><span class="p">)</span>
+
+<span class="c1"># Prior probabilities for each urn
+</span><span class="n">P_urn1</span> <span class="o">=</span> <span class="n">P_urn2</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span>
+
+<span class="c1"># Total probability of getting a blue ball
+</span><span class="n">P_blue</span> <span class="o">=</span> <span class="n">P_blue_urn1</span><span class="o">*</span><span class="n">P_urn1</span> <span class="o">+</span> <span class="n">P_blue_urn2</span><span class="o">*</span><span class="n">P_urn2</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(blue) = </span><span class="sh">"</span><span class="p">,</span> <span class="n">P_blue</span><span class="p">)</span>
+
+<span class="c1"># Bayes' rule
+</span><span class="n">p_urn1_blue</span> <span class="o">=</span> <span class="n">P_blue_urn1</span><span class="o">*</span><span class="n">P_urn1</span> <span class="o">/</span> <span class="n">P_blue</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">P(urn1|blue) = </span><span class="sh">"</span><span class="p">,</span> <span class="n">p_urn1_blue</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>P(blue|urn1) =  0.75
+P(blue|urn2) =  0.5
+P(blue) =  0.625
+P(urn1|blue) =  0.6
+</code></pre></div></div>
+
+<p><strong>Bayesian update</strong></p>
+
+<p>To solve this problem, we can employ a cause-and-effect framework of bayes theorem</p>
+
+<p>We can employ know the Bayesian update framework for this same problem. In this case, we apply the Bayesian update framework to get access to our belief about which urn the blue ball came from, after observing that the selected ball is indeed blue.</p>
+
+<p>To begin with, we have our prior beliefs, represented by the prior probabilities $P(\text{urn 1})$ and $P(\text{urn 2})$, which, in the absence of any additional information, are both $1/2$, reflecting an equal chance of choosing either urn.</p>
+
+<p>A convenient tool for doing a Bayesian update is a Bayes table:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">Bowl 1</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">Bowl 2</span><span class="sh">'</span><span class="p">])</span>
+
+<span class="c1">#  P(urn1) and P(urn2)
+</span><span class="n">table</span><span class="p">[</span><span class="sh">'</span><span class="s">prior</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span>
+
+<span class="c1"># P(urn1|blue) and P(urn2|blue)
+</span><span class="n">table</span><span class="p">[</span><span class="sh">'</span><span class="s">likelihood</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span>
+<span class="n">table</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prior</th>
+      <th>likelihood</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Bowl 1</th>
+      <td>0.5</td>
+      <td>0.75</td>
+    </tr>
+    <tr>
+      <th>Bowl 2</th>
+      <td>0.5</td>
+      <td>0.50</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>The likelihood are not required to sum to 1, <strong>as they are not mutually exclusive and exhaustive events</strong>. Each likelihood is calculated independently for each urn, based on the composition of balls within that specific urn. Now we multiply the priors by the likelihoods:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">table</span><span class="p">[</span><span class="sh">'</span><span class="s">unnormalized_posterior</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="sh">'</span><span class="s">prior</span><span class="sh">'</span><span class="p">]</span> <span class="o">*</span> <span class="n">table</span><span class="p">[</span><span class="sh">'</span><span class="s">likelihood</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">table</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prior</th>
+      <th>likelihood</th>
+      <th>unnormalized_posterior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Bowl 1</th>
+      <td>0.5</td>
+      <td>0.75</td>
+      <td>0.375</td>
+    </tr>
+    <tr>
+      <th>Bowl 2</th>
+      <td>0.5</td>
+      <td>0.50</td>
+      <td>0.250</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>For normalizing the posterior probabilities, we have a couple of alternatives. We could compute the total probability $P(D)$ as before, or directly sum the unnormalized posterior probabilities and divide each by this sum, ensuring a valid probability distribution for the updated beliefs. This process is called “normalization”, which is why the total probability of the data is also called the “normalizing constant”.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">P_data</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="sh">'</span><span class="s">unnormalized_posterior</span><span class="sh">'</span><span class="p">].</span><span class="nf">sum</span><span class="p">()</span>
+<span class="n">table</span><span class="p">[</span><span class="sh">'</span><span class="s">posterior</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="sh">'</span><span class="s">unnormalized_posterior</span><span class="sh">'</span><span class="p">]</span> <span class="o">/</span> <span class="n">P_data</span>
+<span class="n">table</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prior</th>
+      <th>likelihood</th>
+      <th>unnormalized_posterior</th>
+      <th>posterior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Bowl 1</th>
+      <td>0.5</td>
+      <td>0.75</td>
+      <td>0.375</td>
+      <td>0.6</td>
+    </tr>
+    <tr>
+      <th>Bowl 2</th>
+      <td>0.5</td>
+      <td>0.50</td>
+      <td>0.250</td>
+      <td>0.4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>We find that the posterior probability for Urn 1 is 0.6. This aligns with the result derived explicitly using Bayes’s theorem. Additionally, we also find the posterior probability for Urn 2 , which is 0.4.</p>
+
+
+  
+
+</div>
+
+
+    </div>
+
+  </body>
+</html>

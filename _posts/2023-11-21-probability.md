@@ -1,10 +1,10 @@
 ---
 layout: post
 title: "Probabilities"
-date: 21-11-2023
-description: " "
-github_url: https://github.com/marcosbenicio/probability_post
-img_url: assets/img/post1/img1.svg
+date: 2023-11-21
+description: "Longer description of post 2"
+github_url: 
+img_url: assets/img/post1/venn-diagram-intersection.png
 tags: [Probability, Bayes]
 ---
 
