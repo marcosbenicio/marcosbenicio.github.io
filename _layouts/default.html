@@ -27,7 +27,19 @@ Get assets path
     <link rel="stylesheet" type="text/css" href="{{ assets }}/css/{{ site.syntax_highlight_stylesheet }}">
     <link rel="stylesheet" type="text/css" href="{{ assets }}/css/main.css">
     <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="atom.xml" />
+
+    <!-- MathJax Configuration -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']],
+            processEscapes: true
+          }
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
     <script>
       function show_tag_section(tag) {
         // Hide all other tag divs
@@ -53,10 +65,14 @@ Get assets path
 
         <!-- Name -->
         <div class="name_group">
-          <h1><a href="">{{ site.name }}</a></h1>
+          <h1><a href="/">{{ site.name }}</a></h1>
         </div>
 
-        <a href=""><img src="{{ site.logo }}" alt="Logo" class="center_img" ></a>
+        <!-- <a href=""><img src="{{ site.logo }}" alt="Logo" class="center_img" ></a>-->
+        <a href="/"><img src="{{ site.logo }}" alt="Logo" class="center_img" ></a>
+        <!--<a href=""><img src="{{ assets }}/img/profile_photo.png" alt="Logo" class="center_img" ></a>-->
+
+
 
         <!-- Position + company -->
         <div class="link_group">
@@ -129,12 +145,12 @@ Get assets path
         <div class="small_header_box">
           <div class="name_header_box">
             <div class="name_header_img">
-              <a href="">
+              <a href="/">
                 <img src="{{ site.logo }}" alt="Logo" height="60">
               </a>
             </div>
             <div class="name_header_name">
-              <h1><a href="">{{ site.name }}</a></h1>
+              <h1><a href="/">{{ site.name }}</a></h1>
             </div>
           </div>
         </div>

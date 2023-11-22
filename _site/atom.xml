@@ -4,7 +4,7 @@
 	<title>Marcos Benício</title>
 	<link href="http://localhost:4000/atom.xml" rel="self"/>
 	<link href="http://localhost:4000"/>
-	<updated>2023-11-21T12:06:34-03:00</updated>
+	<updated>2023-11-22T18:52:34-03:00</updated>
 	<id>http://localhost:4000/blog</id>
 	<author>
 		<name>Marcos Benício</name>
@@ -13,24 +13,145 @@
 
 	
 		<entry>
-			<title>Probabilities</title>
-			<link href="http://localhost:4000/2023/11/21/probability.html"/>
-			<updated>2023-11-21T00:00:00-03:00</updated>
-			<id>http://localhost:4000/2023/11/21/probability</id>
-			<content type="html">&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+			<title>Probabilities and Bayes Rule</title>
+			<link href="http://localhost:4000/2023/11/22/probability.html"/>
+			<updated>2023-11-22T00:00:00-03:00</updated>
+			<id>http://localhost:4000/2023/11/22/probability</id>
+			<content type="html">&lt;p&gt;Here, I explain the basics of probabilities and Bayes’ rule, aiming to provide an intuitive understanding of probabilities through the concept of set theory. Each section includes an example to illustrate practical comprehension of probabilities.&lt;/p&gt;
+
+&lt;h1&gt;Outline&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;#ordinary-probability&quot;&gt;Ordinary Probability&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#joint-probability&quot;&gt;Joint Probability&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#conditional-probability&quot;&gt;Conditional Probability&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#addition-law-for-probability&quot;&gt;Addition Law for Probability&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#addition-law-for-conditional-probability&quot;&gt;Addition Law for Conditional Probability&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#law-of-total-probability&quot;&gt;Law of Total Probability&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#bayess-theorem&quot;&gt;Bayes’s Theorem&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#interpretations-of-bayess-theorem&quot;&gt;Interpretations of Bayes’s Theorem&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#bayess-applications&quot;&gt;Bayes’s Applications&lt;/a&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#urn-problem&quot;&gt;Urn problem&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1&gt;Data&lt;/h1&gt;
+
+&lt;p&gt;First let’s import the necessaries packages and download the General Social Survey (GSS) dataset:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;url_part1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;https://raw.githubusercontent.com/&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;url_part2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;marcosbenicio/marcosbenicio.github.io/main/_posts/notebooks/01probabilities/data/gss.csv&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;full_url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url_part1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url_part2&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wget&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;full_url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;O&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;csv&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h1 id=&quot;probabilities&quot;&gt;&lt;strong&gt;Probabilities&lt;/strong&gt;&lt;/h1&gt;
+&lt;p&gt;The General Social Survey (GSS) is a sociological survey that has been collecting data on American society since 1974. The dataset contains responses from over 49,290 individuals and includes the following features:&lt;/p&gt;
 
-&lt;h2 id=&quot;ordinary-probability&quot;&gt;&lt;strong&gt;Ordinary Probability&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Dataset Features&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;caseid&lt;/code&gt;: Unique identifier for each respondent.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year&lt;/code&gt;: The year in which the respondent was surveyed.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;age&lt;/code&gt;: The age of the respondent at the time of the survey.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sex&lt;/code&gt;: The sex of the respondent (male or female).&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;polviews&lt;/code&gt;: The respondent’s political views, scaled from liberal to conservative.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partyid&lt;/code&gt;: The respondent’s political party affiliation, categorized as Democratic, Republican, or Independent.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;indus10&lt;/code&gt;: Industry code representing the respondent’s field of work.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# General Social Survey data
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;data/gss.csv&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div&gt;
+&lt;style scoped=&quot;&quot;&gt;
+  .dataframe tbody tr th:only-of-type {
+      vertical-align: middle;
+  }
+  .dataframe tbody tr th {
+      vertical-align: top;
+      padding: 10px; /* Increase padding for more space within cells */
+  }
+  .dataframe thead th {
+      text-align: center; /* Change to center if that&apos;s your preference */
+      padding: 10px; /* Consistent padding with tbody cells */
+  }
+  .dataframe td, .dataframe th {
+      border: 1px solid #ddd; /* Optional: adds a border to each cell */
+      padding: 10px; /* Increase padding for more space within cells */
+  }
+  /* Optional: Add more spacing between rows for clarity */
+  .dataframe tr {
+      height: 50px; /* Adjust the height to give more space between rows */
+  }
+&lt;/style&gt;
+&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&quot;text-align: right;&quot;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;caseid&lt;/th&gt;
+      &lt;th&gt;year&lt;/th&gt;
+      &lt;th&gt;age&lt;/th&gt;
+      &lt;th&gt;sex&lt;/th&gt;
+      &lt;th&gt;polviews&lt;/th&gt;
+      &lt;th&gt;partyid&lt;/th&gt;
+      &lt;th&gt;indus10&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th&gt;0&lt;/th&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;1974&lt;/td&gt;
+      &lt;td&gt;21.0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;4.0&lt;/td&gt;
+      &lt;td&gt;2.0&lt;/td&gt;
+      &lt;td&gt;4970.0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;1&lt;/th&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;1974&lt;/td&gt;
+      &lt;td&gt;41.0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;5.0&lt;/td&gt;
+      &lt;td&gt;0.0&lt;/td&gt;
+      &lt;td&gt;9160.0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;2&lt;/th&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;1974&lt;/td&gt;
+      &lt;td&gt;58.0&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;6.0&lt;/td&gt;
+      &lt;td&gt;1.0&lt;/td&gt;
+      &lt;td&gt;2670.0&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;h1 id=&quot;ordinary-probability&quot;&gt;&lt;strong&gt;Ordinary Probability&lt;/strong&gt;&lt;/h1&gt;
 
 &lt;p&gt;&lt;strong&gt;Classical Probability&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;Consider the classic experiment of flipping a fair coin, which has two distinct and mutually exclusive outcomes: “heads” &lt;strong&gt;or&lt;/strong&gt; “tails”. The various factors influencing the outcome of the experiment are too numerous to take into account. Therefore the outcome of the experiment is said to be random, given our ignorance about all possible factors influencing the outcome. Everyone would certainly agree that the probability of getting heads and the probability of getting tails both equal $\frac{1}{2}$. Intuitively, this answer is based on the idea that two outcomes are equally likely or equiprobable, because of the coin’s symmetric design.&lt;/p&gt;
 
-&lt;p&gt;When dealing with experiments that have a finite and defined number of mutually exclusive and equiprobable outcomes, such as our coin toss, we can specify an event, denoted as $A$, which represents a set of outcomes (e.g., the coin landing on ‘heads’). The probability of event $A$ happening, $P(A)$, is then defined by the proportion of outcomes favorable to $A$ relative to the total number of possible outcomes:&lt;/p&gt;
+&lt;p&gt;When dealing with experiments that have a finite and defined number of mutually exclusive and equiprobable outcomes, such as our coin toss, we can specify an event, denoted as $A$, which represents a set of outcomes (e.g., the coin landing on ‘heads’). The probability of event $A$ happening, $ P(A) $, is then defined by the proportion of outcomes favorable to $ A $ relative to the total number of possible outcomes:&lt;/p&gt;
 
 \[P(A) = \frac{N(A)}{N}\]
 
@@ -89,96 +210,21 @@
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;01probability_files/01probability_4_0.png&quot; alt=&quot;png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post1/large-number-prob.png&quot; alt=&quot;intersection&quot; width=&quot;800&quot; height=&quot;400&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Exemple&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;Let’s explore the General Social Survey (GSS) dataset to determine the probability of randomly selecting a banking worker. In this dataset, the industry in which a respondent works is denoted by the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;indus10&lt;/code&gt; feature, with the code for “Banking and related activities” being 6870.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Dataset Features&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;caseid&lt;/code&gt;: Unique identifier for each respondent.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;year&lt;/code&gt;: The year in which the respondent was surveyed.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;age&lt;/code&gt;: The age of the respondent at the time of the survey.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sex&lt;/code&gt;: The sex of the respondent (male or female).&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;polviews&lt;/code&gt;: The respondent’s political views, scaled from liberal to conservative.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partyid&lt;/code&gt;: The respondent’s political party affiliation, categorized as Democratic, Republican, or Independent.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;indus10&lt;/code&gt;: Industry code representing the respondent’s field of work.&lt;/li&gt;
-&lt;/ul&gt;
 
 &lt;p&gt;To calculate the probability of randomly choosing a banking worker from this dataset, we would count the number of respondents whose &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;indus10&lt;/code&gt; code is 6870 and divide that by the total number of respondents in the dataset. This can be expressed mathematically as:&lt;/p&gt;
 
 \[P(\text{Banker}) = \frac{N(\text{indus10} = 6870)}{N}\]
 
 &lt;p&gt;where $N(\text{indus10} = 6870)$ is the number of banking workers in the dataset and $N$ is the total number of respondents in the dataset.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# General Social Survey data
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;data/gss_bayes.csv&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;gss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div&gt;
-&lt;style scoped=&quot;&quot;&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
-&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
-  &lt;thead&gt;
-    &lt;tr style=&quot;text-align: right;&quot;&gt;
-      &lt;th&gt;&lt;/th&gt;
-      &lt;th&gt;caseid&lt;/th&gt;
-      &lt;th&gt;year&lt;/th&gt;
-      &lt;th&gt;age&lt;/th&gt;
-      &lt;th&gt;sex&lt;/th&gt;
-      &lt;th&gt;polviews&lt;/th&gt;
-      &lt;th&gt;partyid&lt;/th&gt;
-      &lt;th&gt;indus10&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;th&gt;0&lt;/th&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;1974&lt;/td&gt;
-      &lt;td&gt;21.0&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;4.0&lt;/td&gt;
-      &lt;td&gt;2.0&lt;/td&gt;
-      &lt;td&gt;4970.0&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;th&gt;1&lt;/th&gt;
-      &lt;td&gt;2&lt;/td&gt;
-      &lt;td&gt;1974&lt;/td&gt;
-      &lt;td&gt;41.0&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;5.0&lt;/td&gt;
-      &lt;td&gt;0.0&lt;/td&gt;
-      &lt;td&gt;9160.0&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;th&gt;2&lt;/th&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;1974&lt;/td&gt;
-      &lt;td&gt;58.0&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-      &lt;td&gt;6.0&lt;/td&gt;
-      &lt;td&gt;1.0&lt;/td&gt;
-      &lt;td&gt;2670.0&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# Define the ordinary probability
 &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
@@ -198,7 +244,7 @@
 
 &lt;p&gt;We can see that about $1.5\%$ of the respondents work in banking, so if we choose a random person from the dataset, the probability they are a banker is about $1.5\%$.&lt;/p&gt;
 
-&lt;h2 id=&quot;joint-probability&quot;&gt;&lt;strong&gt;Joint Probability&lt;/strong&gt;&lt;/h2&gt;
+&lt;h1 id=&quot;joint-probability&quot;&gt;&lt;strong&gt;Joint Probability&lt;/strong&gt;&lt;/h1&gt;
 
 &lt;p&gt;Joint probability is the probability of two or more events happening at the same time. For two events, $A$ and $B$, the joint probability is mathematically represented as:&lt;/p&gt;
 
@@ -206,7 +252,11 @@
 
 &lt;p&gt;In practical terms, it answers questions such as: “What is the probability that event $A$ happen while event $B$ also happens?” We can think of this in terms of sets, where both events $A$ and $B$ are considered a set of outcomes for a given experiment. The intersection set $A \cap B$ represents the outcomes where both events $A$ and $B$ happens simultaneously.&lt;/p&gt;
 
-&lt;center&gt;&lt;img src=&quot;figures/venn-diagram-intersection.png&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt;&lt;/center&gt;
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post1/venn-diagram-intersection.png&quot; alt=&quot;intersection&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt;
+&lt;/center&gt;
+&lt;/p&gt;
 
 &lt;p&gt;In this illustration, $\Omega$ is known as the sample space of all possible outcomes from the experiment. As subsets of the sample space $\Omega$, we have the sets of outcomes leading to events $A$ and $B$, and their intersection when both events happen in the same trial for this experiment.&lt;/p&gt;
 
@@ -222,7 +272,11 @@
 
 &lt;p&gt;When the events are mutually exclusive, meaning that they cannot happen together in the same trial, the joint probability is zero&lt;/p&gt;
 
-&lt;center&gt;&lt;img src=&quot;figures/venn-diagram-null.png&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt;&lt;/center&gt;
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post1/venn-diagram-null.png&quot; alt=&quot;intersection&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
 
 &lt;p&gt;In this case, as illustrated, the sets for events $A$ and $B$ have an empty intersection set $A \cap B = \emptyset$, hence the joint probability must be zero:&lt;/p&gt;
 
@@ -263,11 +317,11 @@
 
 &lt;p&gt;The data reveals that $P(\text{Banker and Democrat}) = 0.0047 $ (or 0.47%) and $P(\text{Banker}) = 0.015 $ (or 1.5%), it confirms that the subset of bankers who are Democrats is less than the overall proportion of bankers in the dataset, as not all bankers are Democrats.&lt;/p&gt;
 
-&lt;h2 id=&quot;conditional-probability&quot;&gt;&lt;strong&gt;Conditional Probability&lt;/strong&gt;&lt;/h2&gt;
+&lt;h1 id=&quot;conditional-probability&quot;&gt;&lt;strong&gt;Conditional Probability&lt;/strong&gt;&lt;/h1&gt;
 
 &lt;p&gt;Conditional probability helps us understand the relationship between two events, $A$ and $B$. In particular, it describes the probability of event $A$ given that event $B$ has already happened. The conditional probability of event $A$ given event $B$ is defined as:&lt;/p&gt;
 
-\[P(A|B) = \frac{P(A \cap B)}{P(B)}.\]
+\[P(A\mid  B) = \frac{P(A \cap B)}{P(B)}.\]
 
 &lt;p&gt;Here, $P(A \cap B)$ represents the joint probability, which means the chance of two events happening simultaneously (or at same trial in a experiment). Suppose we conduct a random experiment with a equiprobable and finite number of outcomes. Let $N$ represent the total number of trials, $N(B)$ be the number of trials resulting in event $B$, and $N(A \cap B)$ be the number of trials where both $A$ and $B$ happen together. In this case, the probability of $B$ and the joint probability $A \cap B$ can be expressed as:&lt;/p&gt;
 
@@ -275,17 +329,21 @@
 
 &lt;p&gt;Using these expressions, we can rewrite the conditional probability of $A$ given $B$ as:&lt;/p&gt;
 
-\[P(A|B) = \frac{N(A \cap B)}{N(B)}.\]
+\[P(A\mid  B) = \frac{N(A \cap B)}{N(B)}.\]
 
 &lt;p&gt;This equation essentially calculates the proportion of trials where both $A$ and $B$ happen (joint probability) out of the trials where event $B$ occurs.&lt;/p&gt;
 
 &lt;p&gt;When the event $A$ implies in $B$ ($B$ is subset of $A$: $B \subset A$ ), meaning that the events always happen together in the same trial, the conditional probability is one&lt;/p&gt;
 
-&lt;center&gt;&lt;img src=&quot;figures/venn-diagram-subset.png&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt;&lt;/center&gt;
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post1/venn-diagram-subset.png&quot; alt=&quot;intersection&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
 
-&lt;p&gt;In this case, as illustrated, the set $B$ is subset of $A$, which implies a $100\%$ chance of event $A$ happening given that event $B$ happen:&lt;/p&gt;
+&lt;p&gt;In this case, as illustrated, the set $B$ is subset of $A$, which implies a $100\%$ chance of event $A$ happening given that event $B$ happen (since we are given that $B$ is inside $A$):&lt;/p&gt;
 
-\[P(A|B) = 1\]
+\[P(A \mid  B) = 1\]
 
 &lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
 
@@ -311,7 +369,7 @@
 
 &lt;p&gt;To compute the conditional probability of a respondent being a Democrat given that they are liberal is given by&lt;/p&gt;
 
-\[P(\text{Democrat} | \text{Liberal}) = \frac{N\bigg((\text{polviews} = 2) \cap (\text{partyid} \leq 1)\bigg)}{N(\text{polviews} = 2)}\]
+\[P(\text{Democrat} \mid  \text{Liberal}) = \frac{N\bigg((\text{polviews} = 2) \cap (\text{partyid} \leq 1)\bigg)}{N(\text{polviews} = 2)}\]
 
 &lt;p&gt;where $N(\text{polviews} = 2) \cap (\text{partyid} \leq 1)$ is the number of respondents who are both liberal and Democrat, and $N(\text{polviews} = 2)$ is the total number of liberal respondents in the dataset.&lt;/p&gt;
 
@@ -356,19 +414,19 @@ Name: partyid, Length: 13493, dtype: bool
 &lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;given&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;# Method 1: Using subset of liberal and Democrats to restrict sample space.
-&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(liberal|democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal_democrats&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(liberal | democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal_democrats&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;# Method 2: Using explicit Boolean conditions to restrict sample space.
-&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(liberal|democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(liberal | democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;# Method 3: Using subset of liberal and Democrats calculated inside the function by the given condition.
-&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(liberal|democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(liberal | democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;p(liberal|democrat) =  0.7046616764248128
-p(liberal|democrat) =  0.7046616764248128
-p(liberal|democrat) =  0.7046616764248128
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;p(liberal | democrat) =  0.7046616764248128
+p(liberal | democrat) =  0.7046616764248128
+p(liberal | democrat) =  0.7046616764248128
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;As we can observe, &lt;strong&gt;ordinary probability&lt;/strong&gt; considers the probability of an event happening over the entire sample space $\Omega$ ( entire set of possible outcomes). On the other hand, &lt;strong&gt;conditional probability&lt;/strong&gt; restricts this context by considering the probability of an event under a specific condition or set of conditions. It refines our expectations about an event by taking into account additional information that restricts the sample space $\Omega$ to a small region — the “given” condition.&lt;/p&gt;
@@ -378,21 +436,25 @@ p(liberal|democrat) =  0.7046616764248128
 &lt;p&gt;For example, what is the probability of selecting a Democrat given that he is a Liberal and a Banker? Or, what is the probability of selecting a Liberal given that he is a Banker and a Democrat?&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# conditional probability of being a democrat given being liberal and a banker
-&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(Democrat|Liberal and Banker) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;banker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(Democrat | Liberal and Banker) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;banker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;# conditional probability of being liberal and a banker given being a democrat
-&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(Liberal and Banker|Democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;banker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;p(Liberal and Banker | Democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;liberal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;banker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;p(Democrat|Liberal and Banker) =  0.6441717791411042
-p(Liberal and Banker|Democrat) =  0.004333470903838217
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;p(Democrat | Liberal and Banker) =  0.6441717791411042
+p(Liberal and Banker | Democrat) =  0.004333470903838217
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h2 id=&quot;addition-law-for-probability&quot;&gt;&lt;strong&gt;Addition Law for Probability&lt;/strong&gt;&lt;/h2&gt;
+&lt;h1 id=&quot;addition-law-for-probability&quot;&gt;&lt;strong&gt;Addition Law for Probability&lt;/strong&gt;&lt;/h1&gt;
 
 &lt;p&gt;Consider two mutually exclusive events $A_1$ and $A_2$ associated with the outcomes of a random experiment, and let $A = A_1 \bigcup A_2$ be the union of the two events. If events $A_1$ and $A_2$ are mutually exclusive, by definition, they cannot happen simultaneously. This implies that the intersection of these two events must be $A_1 \bigcap A_2 = \emptyset$. If $A$ happen in a trial, it means that either event $A_1$ has happened, or event $A_2$ has happened, but not both since $A_1$ and $A_2$ are mutually exclusive. We can see this in the following figure for the sets $A_1$ and $A_2$:&lt;/p&gt;
 
-&lt;center&gt;&lt;img src=&quot;figures/venn-diagram-null-mutually-exclusive.png&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt;&lt;/center&gt;
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post1/venn-diagram-null-mutually-exclusive.png&quot; alt=&quot;intersection&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
 
 &lt;p&gt;The union of the events $A_1 \bigcup A_2$ includes all the outcomes of both events, without any overlap. So, when counting the number of outcomes in $A$, we are essentially counting the number of outcomes in $A_1$ and $A_2$ separately and then adding them together. Therefore, we can write:&lt;/p&gt;
 
@@ -476,10 +538,10 @@ p(Liberal and Banker|Democrat) =  0.004333470903838217
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Total Probability = 0.3445120714140799
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h3 id=&quot;addition-law-for-conditional-probability&quot;&gt;&lt;strong&gt;Addition Law for Conditional Probability&lt;/strong&gt;&lt;/h3&gt;
+&lt;h2 id=&quot;addition-law-for-conditional-probability&quot;&gt;&lt;strong&gt;Addition Law for Conditional Probability&lt;/strong&gt;&lt;/h2&gt;
 
 &lt;p&gt;If $A_1, \cdots, A_n$ are mutually exclusive events, with union $A = \bigcup_{k=1}^{n}A_{k}$, then the addition law for conditional probability is
-  $P(A|B) = \sum_{k=1}^{n} P(A_k|B)$.&lt;/p&gt;
+  $P(A\mid B) = \sum_{k=1}^{n} P(A_k\mid  B)$.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Proof&lt;/strong&gt;:&lt;/p&gt;
 
@@ -497,7 +559,7 @@ p(Liberal and Banker|Democrat) =  0.004333470903838217
 
 &lt;p&gt;Thus,&lt;/p&gt;
 
-\[P(A|B) = \sum_{k=1}^{n} P(A_k|B) ~~ \square\]
+\[P(A\mid B) = \sum_{k=1}^{n} P(A_k\mid B) ~~ \square\]
 
 &lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
 
@@ -528,7 +590,7 @@ p(Liberal and Banker|Democrat) =  0.004333470903838217
 &lt;span class=&quot;c1&quot;&gt;# Calculate conditional probabilities
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p_age_group_given_democrat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;less_30&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;between_30_40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;P(Age Group | Democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_age_group_given_democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;P(Age Group |  Democrat) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_age_group_given_democrat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Age groups set are mutually exclusive = 0 
@@ -540,7 +602,7 @@ P(Age Group | Democrat) =  0.39638841189829943
 
 &lt;p&gt;Suppose we have a complete set of mutually exclusive and exhaustive events $B_1, \cdots, B_n$, meaning only one of these events can happen at a time, and their union covers the entire sample space. We can find the ordinary probability of event $A$ happening using the total probability formula:&lt;/p&gt;
 
-\[P(A) = \sum_k P(A|B_k)P(B_k)\]
+\[P(A) = \sum_k P(A\mid  B_k)P(B_k)\]
 
 &lt;p&gt;As we see before Mutually exclusive events are events that cannot happen simultaneously. On the other hand, exhaustive events are events that, when considered their union, cover the entire sample space $\Omega$. When a set of events is both mutually exclusive and exhaustive, it means that they cover all possible outcomes without overlapping.&lt;/p&gt;
 
@@ -569,7 +631,7 @@ P(Age Group | Democrat) =  0.39638841189829943
 
 &lt;p&gt;Now we can rewrite the probability of the intersection using conditional probability:&lt;/p&gt;
 
-\[P(A) = \sum_k P(A \cap B_k) = \sum_k P(A |B_k)P(B_k)~~~~ \square\]
+\[P(A) = \sum_k P(A \cap B_k) = \sum_k P(A \mid  B_k)P(B_k)~~~~ \square\]
 
 &lt;p&gt;This proof demonstrates how we can find the probability of an event $A$ happening by considering its relationship with a set of mutually exclusive and exhaustive events $B_1, \cdots, B_n$.&lt;/p&gt;
 
@@ -591,7 +653,7 @@ P(Age Group | Democrat) =  0.39638841189829943
 
 &lt;p&gt;To apply the law of total probability, we need a mutually exclusive and exhaustive set that partitions the sample space. In this dataset, the categories of ‘male’ and ‘female’ serve as such a partition:&lt;/p&gt;
 
-\[P(\text{banker}) = P(\text{banker}|\text{male})P(\text{male}) + P(\text{banker}|\text{female})P(\text{female})\]
+\[P(\text{banker}) = P(\text{banker}\mid \text{male})P(\text{male}) + P(\text{banker}\mid \text{female})P(\text{female})\]
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# Define &apos;male&apos; and &apos;female&apos; sets
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;male&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;sex&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -607,7 +669,7 @@ P(Age Group | Democrat) =  0.39638841189829943
 
 &lt;p&gt;We can subdivide the sample space further by considering the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;polviews&lt;/code&gt; feature, which categorizes respondents’ political views. Since &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;polviews&lt;/code&gt; contains seven distinct categories, each mutually exclusive and collectively exhaustive, we can use them to compute the total probability:&lt;/p&gt;
 
-\[P(\text{banker}) = \sum^{7}_{i=1} P(\text{banker}|\text{polviews} = i)P(\text{polviews} = i)\]
+\[P(\text{banker}) = \sum^{7}_{i=1} P(\text{banker}\mid \text{polviews} = i)P(\text{polviews} = i)\]
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# Compute the total probability across political views
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;prob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;polviews&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conditional&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;banker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;given&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;polviews&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
@@ -621,56 +683,29 @@ P(Age Group | Democrat) =  0.39638841189829943
 
 &lt;h1 id=&quot;bayess-theorem&quot;&gt;&lt;strong&gt;Bayes’s Theorem&lt;/strong&gt;&lt;/h1&gt;
 
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Given two events A and B, Bayes’ theorem relates the conditional probability of A given B ($P(A&lt;/td&gt;
-      &lt;td&gt;B)$) to the conditional probability of B given A ($P(B&lt;/td&gt;
-      &lt;td&gt;A)$), along with the individual probabilities of A ($P(A)$) and B ($P(B)$):&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
+&lt;p&gt;Given two events A and B, Bayes’ theorem relates the conditional probability of A given B, i.e. $P(A\mid  B)$, to the conditional probability of B given A, i.e. $P(B\mid  A)$, along with the individual probabilities $P(A)$ and $P(B)$:&lt;/p&gt;
 
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;​$$P(A&lt;/td&gt;
-      &lt;td&gt;B) = \frac{P(B&lt;/td&gt;
-      &lt;td&gt;A) \cdot P(A)}{P(B)} = \frac{P(B&lt;/td&gt;
-      &lt;td&gt;A) \cdot P(A)}{\sum_k P(B&lt;/td&gt;
-      &lt;td&gt;A_k)P(A_k)} $$&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
+\[\begin{equation*}
+P(A\mid B) = \frac{P(B\mid  A) \cdot P(A)}{P(B)} = \frac{P(B\mid A) \cdot P(A)}{\sum_k P(B\mid A_k)P(A_k)}
+\end{equation*}\]
 
 &lt;p&gt;where:&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;
-    &lt;table&gt;
-      &lt;tbody&gt;
-        &lt;tr&gt;
-          &lt;td&gt;$P(A&lt;/td&gt;
-          &lt;td&gt;B)$: is the &lt;strong&gt;posterior probability&lt;/strong&gt;. It represents the probability of event A happening, given that event B has happened. This is what we’re trying to find using Bayes’ theorem. It reflects our updated belief about event A after taking into account the new information provided by event B.&lt;/td&gt;
-        &lt;/tr&gt;
-      &lt;/tbody&gt;
-    &lt;/table&gt;
+    &lt;p&gt;$P(A\mid B)$: is the &lt;strong&gt;posterior probability&lt;/strong&gt;. It represents the probability of event A happening, given that event B has happened. This is what we’re trying to find using Bayes’ theorem. It reflects our updated belief about event A after taking into account the new information provided by event B.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
-    &lt;table&gt;
-      &lt;tbody&gt;
-        &lt;tr&gt;
-          &lt;td&gt;$P(B&lt;/td&gt;
-          &lt;td&gt;A)$: is the &lt;strong&gt;likelihood&lt;/strong&gt;. It represents the probability of event B happening, given that event A has happened. This is often a known value or can be estimated from available data. It tells us how likely it is to observe event B when event A is true.&lt;/td&gt;
-        &lt;/tr&gt;
-      &lt;/tbody&gt;
-    &lt;/table&gt;
+    &lt;p&gt;$P(B\mid A)$: is the &lt;strong&gt;likelihood&lt;/strong&gt;. It represents the probability of event B happening, given that event A has happened. This is often a known value or can be estimated from available data. It tells us how likely it is to observe event B when event A is true.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;$P(A)$: is the &lt;strong&gt;prior probability&lt;/strong&gt;. It represents the probability of event A happening before taking into account any new information from event B. This is our initial belief about event A and can be based on previous data, expert opinion, or assumptions.&lt;/p&gt;
   &lt;/li&gt;
-  &lt;li&gt;$P(B)$: is the &lt;strong&gt;total probability or evidence&lt;/strong&gt;. It represents the overall probability of event B happening, regardless of whether event A happens or not. This value can be calculated using the &lt;strong&gt;law of total probability&lt;/strong&gt;, which takes into account both the probabilities of B happening when A happens and when A doesn’t happen. Specifically, if we have a finite set of mutually exclusive and exhaustive events $A_1, \cdots, A_n$, then the probability of event B can be expressed as:
-\(P(B) = \sum_k P(B|A_k)P(A_k)\)
+  &lt;li&gt;
+    &lt;p&gt;$P(B)$: is the &lt;strong&gt;total probability or evidence&lt;/strong&gt;. It represents the overall probability of event B happening, regardless of whether event A happens or not. This value can be calculated using the &lt;strong&gt;law of total probability&lt;/strong&gt;, which takes into account both the probabilities of B happening when A happens and when A doesn’t happen. Specifically, if we have a finite set of mutually exclusive and exhaustive events $A_1, \cdots, A_n$, then the probability of event B can be expressed as:&lt;/p&gt;
+
+\[P(B) = \sum_k P(B\mid A_k)P(A_k)\]
+
     &lt;ul&gt;
       &lt;li&gt;&lt;strong&gt;Mutually exclusive:&lt;/strong&gt; The events $A_k$ do not happen simultaneously. For any pair of events $A_i$ and $A_j$, if $i \neq j$, then $P(A_i \cap A_j) = 0$.&lt;/li&gt;
       &lt;li&gt;&lt;strong&gt;Exhaustive:&lt;/strong&gt; The union of all events $A_k$ covers the entire sample space, meaning that at least one of the events $A_k$ must happen. Mathematically, $\bigcup_k A_k = \Omega$, where $\Omega$ is the sample space.&lt;/li&gt;
@@ -678,83 +713,41 @@ P(Age Group | Democrat) =  0.39638841189829943
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;$\textbf{proof}:$&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Proof:&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;For event A given event B, the conditional probability is defined as:&lt;/p&gt;
 
-\[P(A|B) = \frac{P(A \bigcap B)}{P(B)}\]
+\[P(A\mid B) = \frac{P(A \bigcap B)}{P(B)}\]
 
-&lt;p&gt;Likewise, the conditional probability of event B given event A is expressed as:
-\(P(B|A) = \frac{P(A \bigcap B)}{P(A)}\)&lt;/p&gt;
+&lt;p&gt;Likewise, the conditional probability of event B given event A is expressed as:&lt;/p&gt;
 
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Our objective is to derive Bayes’ theorem, which connects $P(A&lt;/td&gt;
-      &lt;td&gt;B)$ and $P(B&lt;/td&gt;
-      &lt;td&gt;A)$. To achieve this, we first isolate $P(A \cap B)$ in the second equation::&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;$$P(A \bigcap B) = P(B&lt;/td&gt;
-      &lt;td&gt;A) \cdot P(A)$$&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
+\[P(B\mid A) = \frac{P(A \bigcap B)}{P(A)}\]
 
-&lt;p&gt;Next, substitute this expression for $P(A \cap B)$ into the first equation:
-\(P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}~~~~\square\)&lt;/p&gt;
+&lt;p&gt;Our objective is to derive Bayes’ theorem, which connects $P(A\mid B)$ and $P(B\mid A)$. To achieve this, we first isolate $P(A\cap B)$ in the second equation:&lt;/p&gt;
+
+\[P(A \bigcap B) = P(B\mid A) \cdot P(A)\]
+
+&lt;p&gt;Next, substitute this expression for $P(A \cap B)$ into the first equation:&lt;/p&gt;
+
+\[P(A\mid B) = \frac{P(B\mid A) \cdot P(A)}{P(B)}~~~~\square\]
 
 &lt;h2 id=&quot;interpretations-of-bayess-theorem&quot;&gt;&lt;strong&gt;Interpretations of Bayes’s Theorem&lt;/strong&gt;&lt;/h2&gt;
 
 &lt;p&gt;&lt;strong&gt;Bayes’s Rule as Cause and Effect&lt;/strong&gt;&lt;/p&gt;
 
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;At the core of Bayes’ rule is the capability to invert conditional probabilities. Suppose we know the probability of an effect given a cause, $P(B&lt;/td&gt;
-      &lt;td&gt;A)$, and we’re curious about the probability of the cause given the effect, $P(A&lt;/td&gt;
-      &lt;td&gt;B)$. Bayes’ theorem enables this inversion, effectively allowing us to transition between the probabilities of cause and effect.&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
+&lt;p&gt;At the core of Bayes’ rule is the capability to invert conditional probabilities. Suppose we know the probability of an effect given a cause, $P(B\mid A)$, and we’re curious about the probability of the cause given the effect, $P(A\mid B)$. Bayes’ theorem enables this inversion, effectively allowing us to transition between the probabilities of cause and effect.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Bayes’s Rule to update Beliefs ( Bayesian update)&lt;/strong&gt;&lt;/p&gt;
 
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Beyond inverting conditional probabilities, Bayes’ theorem also can be used as a way of updating beliefs with new data. Here, the key is the notion of the “prior” and the “posterior”. The prior belief, $P(H)$, represents what initially we think about the hypothesis $H$. As new data $D$ becomes available, we update this belief to get a posterior belief, $P(H&lt;/td&gt;
-      &lt;td&gt;D)$. In this context, the theorem is formulated as:&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
+&lt;p&gt;Beyond inverting conditional probabilities, Bayes’ theorem also can be used as a way of updating beliefs with new data. Here, the key is the notion of the “prior” and the “posterior”. The prior belief, $P(H)$, represents what initially we think about the hypothesis $H$. As new data $D$ becomes available, we update this belief to get a posterior belief, $P(H\mid D)$. In this context, the theorem is formulated as:&lt;/p&gt;
 
-\[P(H|D) = \frac{P(H)P(D|H)}{P(D)}\]
+\[P(H\mid D) = \frac{P(H)P(D\mid H)}{P(D)}\]
 
 &lt;p&gt;Each term in this equation is defined as follows:&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;$ P(H) $: The prior probability of the hypothesis before observing the data.&lt;/li&gt;
-  &lt;li&gt;
-    &lt;table&gt;
-      &lt;tbody&gt;
-        &lt;tr&gt;
-          &lt;td&gt;$ P(H&lt;/td&gt;
-          &lt;td&gt;D) $: The posterior probability of the hypothesis after observing the data.&lt;/td&gt;
-        &lt;/tr&gt;
-      &lt;/tbody&gt;
-    &lt;/table&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;table&gt;
-      &lt;tbody&gt;
-        &lt;tr&gt;
-          &lt;td&gt;$ P(D&lt;/td&gt;
-          &lt;td&gt;H) $: The likelihood of observing the data under the hypothesis.&lt;/td&gt;
-        &lt;/tr&gt;
-      &lt;/tbody&gt;
-    &lt;/table&gt;
-  &lt;/li&gt;
+  &lt;li&gt;$ P(H\mid D) $: The posterior probability of the hypothesis after observing the data.&lt;/li&gt;
+  &lt;li&gt;$ P(D\mid H) $: The likelihood of observing the data under the hypothesis.&lt;/li&gt;
   &lt;li&gt;$ P(D) $: The total probability of observing the data under any hypothesis.&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -766,11 +759,11 @@ P(Age Group | Democrat) =  0.39638841189829943
 
 &lt;p&gt;Under these conditions, we can compute $ P(D) $ using the law of total probability. For two hypotheses, $ H_1 $ and $ H_2 $, this is calculated as:&lt;/p&gt;
 
-\[P(D) = P(H_1)P(D|H_1) + P(H_2)P(D|H_2)\]
+\[P(D) = P(H_1)P(D\mid H_1) + P(H_2)P(D\mid H_2)\]
 
 &lt;p&gt;For any number of hypotheses, the formula generalizes to:&lt;/p&gt;
 
-\[P(D) = \sum_i P(H_i)P(D|H_i)\]
+\[P(D) = \sum_i P(H_i)P(D\mid H_i)\]
 
 &lt;h2 id=&quot;bayess-applications&quot;&gt;&lt;strong&gt;Bayes’s Applications&lt;/strong&gt;&lt;/h2&gt;
 &lt;h3 id=&quot;urn-problem&quot;&gt;&lt;strong&gt;Urn problem&lt;/strong&gt;&lt;/h3&gt;
@@ -788,21 +781,21 @@ P(Age Group | Democrat) =  0.39638841189829943
 
 &lt;p&gt;To solve this problem, we can employ a cause-and-effect framework of bayes theorem. More specifically, our goal is to determine the probability that Urn 1 was the chosen urn, given that a blue ball was selected:&lt;/p&gt;
 
-\[P(\text{urn 1}|\text{blue})\]
+\[P(\text{urn 1}\mid \text{blue})\]
 
 &lt;p&gt;However, the information provided only gives us the reverse probabilities: the likelihood of drawing a blue ball given that we chose from Urn 1 or Urn 2:&lt;/p&gt;
 
-\[P(\text{blue}|\text{urn 1})\]
+\[P(\text{blue}\mid \text{urn 1})\]
 
-\[P(\text{blue}|\text{urn 2})\]
+\[P(\text{blue}\mid \text{urn 2})\]
 
 &lt;p&gt;With these probabilities, we can employ Bayes’ theorem to compute the desired probability as follows:&lt;/p&gt;
 
-\[P(\text{urn 1}|\text{blue}) =  \frac{P(\text{blue}|\text{urn 1})P(\text{urn 1})}{P(\text{blue})}\]
+\[P(\text{urn 1}\mid \text{blue}) =  \frac{P(\text{blue}\mid \text{urn 1})P(\text{urn 1})}{P(\text{blue})}\]
 
 &lt;p&gt;To calculate the total probability, $P(\text{Blue})$, of selecting a blue ball, we employ the law of total probability. This law allows us to partition the sample space into distinct subsets, selecting from Urn 1 and Urn 2—and compute the overall probability by summing the probabilities of each case:&lt;/p&gt;
 
-\[P(\text{blue}) = P(\text{blue}|\text{urn 1})P(\text{urn 1}) + P(\text{blue}|\text{urn 2})P(\text{urn 2})\]
+\[P(\text{blue}) = P(\text{blue}\mid \text{urn 1})P(\text{urn 1}) + P(\text{blue}\mid \text{urn 2})P(\text{urn 2})\]
 
 &lt;p&gt;In this context, it’s important to note that the conditions of mutually exclusive and exhaustive sets are satisfied. The events are mutually exclusive because a ball can only be selected from one urn at a time, and they are exhaustive because there are no other urns from which the ball could be selected.&lt;/p&gt;
 
@@ -818,19 +811,6 @@ P(Age Group | Democrat) =  0.39638841189829943
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div&gt;
-&lt;style scoped=&quot;&quot;&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
 &lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
   &lt;thead&gt;
     &lt;tr style=&quot;text-align: right;&quot;&gt;
@@ -885,8 +865,8 @@ P(Age Group | Democrat) =  0.39638841189829943
 &lt;span class=&quot;c1&quot;&gt;# Conditional probabilities of getting a blue ball given the urn
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P_blue_urn1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N_blue_urn1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N_urn1&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;P_blue_urn2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N_blue_urn2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N_urn2&lt;/span&gt;
-&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;P(blue|urn1) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P_blue_urn1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;P(blue|urn2) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P_blue_urn2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;P(blue| urn1) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P_blue_urn1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;P(blue| urn2) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P_blue_urn2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;# Prior probabilities for each urn
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P_urn1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P_urn2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
@@ -897,13 +877,13 @@ P(Age Group | Democrat) =  0.39638841189829943
 
 &lt;span class=&quot;c1&quot;&gt;# Bayes&apos; rule
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p_urn1_blue&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P_blue_urn1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P_urn1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P_blue&lt;/span&gt;
-&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;P(urn1|blue) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_urn1_blue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;P(urn1| blue) = &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p_urn1_blue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;P(blue|urn1) =  0.75
-P(blue|urn2) =  0.5
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;P(blue | urn1) =  0.75
+P(blue | urn2) =  0.5
 P(blue) =  0.625
-P(urn1|blue) =  0.6
+P(urn1 | blue) =  0.6
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;strong&gt;Bayesian update&lt;/strong&gt;&lt;/p&gt;
@@ -921,25 +901,12 @@ P(urn1|blue) =  0.6
 &lt;span class=&quot;c1&quot;&gt;#  P(urn1) and P(urn2)
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;prior&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
 
-&lt;span class=&quot;c1&quot;&gt;# P(urn1|blue) and P(urn2|blue)
+&lt;span class=&quot;c1&quot;&gt;# P(urn1| blue) and P(urn2| blue)
 &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;likelihood&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.75&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;table&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div&gt;
-&lt;style scoped=&quot;&quot;&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
 &lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
   &lt;thead&gt;
     &lt;tr style=&quot;text-align: right;&quot;&gt;
@@ -970,19 +937,6 @@ P(urn1|blue) =  0.6
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div&gt;
-&lt;style scoped=&quot;&quot;&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
 &lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
   &lt;thead&gt;
     &lt;tr style=&quot;text-align: right;&quot;&gt;
@@ -1017,19 +971,6 @@ P(urn1|blue) =  0.6
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div&gt;
-&lt;style scoped=&quot;&quot;&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
 &lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
   &lt;thead&gt;
     &lt;tr style=&quot;text-align: right;&quot;&gt;
@@ -1049,7 +990,7 @@ P(urn1|blue) =  0.6
       &lt;td&gt;0.6&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;th&gt;Bowl 2&lt;/th&gt;
+      &lt;th&gt;Bowl 2 &lt;/th&gt;
       &lt;td&gt;0.5&lt;/td&gt;
       &lt;td&gt;0.50&lt;/td&gt;
       &lt;td&gt;0.250&lt;/td&gt;
@@ -1060,6 +1001,17 @@ P(urn1|blue) =  0.6
 &lt;/div&gt;
 
 &lt;p&gt;We find that the posterior probability for Urn 1 is 0.6. This aligns with the result derived explicitly using Bayes’s theorem. Additionally, we also find the posterior probability for Urn 2 , which is 0.4.&lt;/p&gt;
+
+&lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://books.google.com.br/books?hl=en&amp;amp;lr=&amp;amp;id=Vh4vEAAAQBAJ&amp;amp;oi=fnd&amp;amp;pg=PR2&amp;amp;dq=think+bayes&amp;amp;ots=HG5iCqfEg2&amp;amp;sig=UjHZkrmSTCog7cZTTwU0z7lyQAc&amp;amp;redir_esc=y#v=onepage&amp;amp;q=think%20bayes&amp;amp;f=false&quot;&gt;Downey, A. B. (2021). Think Bayes. “ O’Reilly Media, Inc.”&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://books.google.com.br/books?hl=en&amp;amp;lr=&amp;amp;id=9XPCAgAAQBAJ&amp;amp;oi=fnd&amp;amp;pg=PA1&amp;amp;dq=Probability+Theory:+A+Concise+Course&amp;amp;ots=ZOt4qBZLiD&amp;amp;sig=EbI_xUv9ph_HHrMX-HLGkgcnek4&amp;amp;redir_esc=y#v=onepage&amp;amp;q=Probability%20Theory%3A%20A%20Concise%20Course&amp;amp;f=false&quot;&gt;Rozanov, Y. A. (2013). Probability theory: a concise course. Courier Corporation.&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 </content>
 		</entry>
 	

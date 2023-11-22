@@ -11,8 +11,9 @@ title: Marcos Benício
 description: Blog
 url: https://marcosbenicio.github.io/
 main_github_io: true
-long_description: >-
-    Hi!  Welcome to the my blog.
+long_description: "Welcome to my blog! Here I talk about mathematics, physics, deep learning and machine learning.  
+You can find some articles about these concepts. 
+I hope you enjoy and don't forget to leave a reaction or comment at the end of the posts! This helps me to improve the content."
 
 # Social links
 github_url: https://github.com/marcosbenicio
@@ -23,9 +24,9 @@ social:
     - https://github.com/marcosbenicio
 
 # Images + files
-logo: assets/img/profile_photo.png
-cv_url: assets/files/cv.pdf
-resume_url: assets/files/resume.pdf
+logo: /assets/img/profile_photo.png
+cv_url: /assets/files/cv.pdf
+resume_url: /assets/files/resume.pdf
 
 # Blog settings
 markdown: kramdown
@@ -35,7 +36,11 @@ highlighter: rouge
 color_mode: auto  # auto, light, or dark
 comments: true
 disqus_shortname: none
+mathjax:
+  enable: true
+  src: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 syntax_highlight_stylesheet: syntax_highlight.css
+
 
 # Colors - light mode
 colors:

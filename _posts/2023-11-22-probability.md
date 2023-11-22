@@ -1,28 +1,140 @@
 ---
 layout: post
-title: "Probabilities"
-date: 2023-11-21
-description: "Longer description of post 2"
-github_url: 
-img_url: assets/img/post1/venn-diagram-intersection.png
+date: 2023-11-22
 tags: [Probability, Bayes]
+title: "Probabilities and Bayes Rule"
+description: "Here, I explain the basics of probabilities and Bayes' rule, aiming to provide an intuitive understanding of probabilities through the concept of set theory. Each section includes an example to illustrate practical comprehension of probabilities."
+github_url: https://github.com/marcosbenicio/marcosbenicio.github.io/blob/main/_posts/notebooks/01probabilities/01probability.ipynb
+img_url: /assets/img/post1/venn-diagram-intersection.png
+language: python
+comments: true
 ---
+
+Here, I explain the basics of probabilities and Bayes' rule, aiming to provide an intuitive understanding of probabilities through the concept of set theory. Each section includes an example to illustrate practical comprehension of probabilities.
+
+<h1>Outline</h1> 
+
+- [Ordinary Probability](#ordinary-probability)
+- [Joint Probability](#joint-probability)
+- [Conditional Probability](#conditional-probability)
+- [Addition Law for Probability](#addition-law-for-probability)
+  - [Addition Law for Conditional Probability](#addition-law-for-conditional-probability)
+  - [Law of Total Probability](#law-of-total-probability)
+- [Bayes's Theorem](#bayess-theorem)
+  - [Interpretations of Bayes's Theorem](#interpretations-of-bayess-theorem)
+  - [Bayes's Applications](#bayess-applications)
+    - [Urn problem](#urn-problem)
+
+<h1>Data</h1> 
+
+First let’s import the necessaries packages and download the General Social Survey (GSS) dataset:
 
 ```python
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+url_part1 = "https://raw.githubusercontent.com/"
+url_part2 = "marcosbenicio/marcosbenicio.github.io/main/_posts/notebooks/01probabilities/data/gss.csv"
+full_url = url_part1 + url_part2
+!wget {full_url} -O gss.csv
 ```
 
-# **Probabilities**
+The General Social Survey (GSS) is a sociological survey that has been collecting data on American society since 1974. The dataset contains responses from over 49,290 individuals and includes the following features:
 
-## **Ordinary Probability**
+**Dataset Features**
+
+- `caseid`: Unique identifier for each respondent.
+- `year`: The year in which the respondent was surveyed.
+- `age`: The age of the respondent at the time of the survey.
+- `sex`: The sex of the respondent (male or female).
+- `polviews`: The respondent's political views, scaled from liberal to conservative.
+- `partyid`: The respondent's political party affiliation, categorized as Democratic, Republican, or Independent.
+- `indus10`: Industry code representing the respondent's field of work.
+
+```python
+# General Social Survey data
+gss = pd.read_csv('data/gss.csv')
+gss.head(3)
+```
+<div>
+<style scoped>
+  .dataframe tbody tr th:only-of-type {
+      vertical-align: middle;
+  }
+  .dataframe tbody tr th {
+      vertical-align: top;
+      padding: 10px; /* Increase padding for more space within cells */
+  }
+  .dataframe thead th {
+      text-align: center; /* Change to center if that's your preference */
+      padding: 10px; /* Consistent padding with tbody cells */
+  }
+  .dataframe td, .dataframe th {
+      border: 1px solid #ddd; /* Optional: adds a border to each cell */
+      padding: 10px; /* Increase padding for more space within cells */
+  }
+  /* Optional: Add more spacing between rows for clarity */
+  .dataframe tr {
+      height: 50px; /* Adjust the height to give more space between rows */
+  }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>caseid</th>
+      <th>year</th>
+      <th>age</th>
+      <th>sex</th>
+      <th>polviews</th>
+      <th>partyid</th>
+      <th>indus10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>1974</td>
+      <td>21.0</td>
+      <td>1</td>
+      <td>4.0</td>
+      <td>2.0</td>
+      <td>4970.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1974</td>
+      <td>41.0</td>
+      <td>1</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>9160.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>5</td>
+      <td>1974</td>
+      <td>58.0</td>
+      <td>2</td>
+      <td>6.0</td>
+      <td>1.0</td>
+      <td>2670.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+# **Ordinary Probability**
 
 **Classical Probability**
 
 Consider the classic experiment of flipping a fair coin, which has two distinct and mutually exclusive outcomes: "heads" **or** "tails". The various factors influencing the outcome of the experiment are too numerous to take into account. Therefore the outcome of the experiment is said to be random, given our ignorance about all possible factors influencing the outcome. Everyone would certainly agree that the probability of getting heads and the probability of getting tails both equal $\frac{1}{2}$. Intuitively, this answer is based on the idea that two outcomes are equally likely or equiprobable, because of the coin’s symmetric design. 
 
-When dealing with experiments that have a finite and defined number of mutually exclusive and equiprobable outcomes, such as our coin toss, we can specify an event, denoted as $A$, which represents a set of outcomes (e.g., the coin landing on 'heads'). The probability of event $A$ happening, $P(A)$, is then defined by the proportion of outcomes favorable to $A$ relative to the total number of possible outcomes:
+When dealing with experiments that have a finite and defined number of mutually exclusive and equiprobable outcomes, such as our coin toss, we can specify an event, denoted as $A$, which represents a set of outcomes (e.g., the coin landing on 'heads'). The probability of event $A$ happening, $ P(A) $, is then defined by the proportion of outcomes favorable to $ A $ relative to the total number of possible outcomes:
 
 $$P(A) = \frac{N(A)}{N}$$
 
@@ -83,25 +195,16 @@ plt.show()
 
 ```
 
-
-    
-![png](01probability_files/01probability_4_0.png)
-    
+<p>
+<center>
+<img src="/assets/img/post1/large-number-prob.png" alt="intersection" width="800" height="400"> 
+</center>
+</p>    
 
 
 **Exemple**
 
 Let's explore the General Social Survey (GSS) dataset to determine the probability of randomly selecting a banking worker. In this dataset, the industry in which a respondent works is denoted by the `indus10` feature, with the code for "Banking and related activities" being 6870.
-
-**Dataset Features**
-
-- `caseid`: Unique identifier for each respondent.
-- `year`: The year in which the respondent was surveyed.
-- `age`: The age of the respondent at the time of the survey.
-- `sex`: The sex of the respondent (male or female).
-- `polviews`: The respondent's political views, scaled from liberal to conservative.
-- `partyid`: The respondent's political party affiliation, categorized as Democratic, Republican, or Independent.
-- `indus10`: Industry code representing the respondent's field of work.
 
 To calculate the probability of randomly choosing a banking worker from this dataset, we would count the number of respondents whose `indus10` code is 6870 and divide that by the total number of respondents in the dataset. This can be expressed mathematically as:
 
@@ -109,80 +212,6 @@ $$ P(\text{Banker}) = \frac{N(\text{indus10} = 6870)}{N} $$
 
 
 where $N(\text{indus10} = 6870)$ is the number of banking workers in the dataset and $N$ is the total number of respondents in the dataset.
-
-
-```python
-# General Social Survey data
-gss = pd.read_csv('data/gss_bayes.csv')
-gss.head(3)
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>caseid</th>
-      <th>year</th>
-      <th>age</th>
-      <th>sex</th>
-      <th>polviews</th>
-      <th>partyid</th>
-      <th>indus10</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>1974</td>
-      <td>21.0</td>
-      <td>1</td>
-      <td>4.0</td>
-      <td>2.0</td>
-      <td>4970.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>1974</td>
-      <td>41.0</td>
-      <td>1</td>
-      <td>5.0</td>
-      <td>0.0</td>
-      <td>9160.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>5</td>
-      <td>1974</td>
-      <td>58.0</td>
-      <td>2</td>
-      <td>6.0</td>
-      <td>1.0</td>
-      <td>2670.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
 
 
 ```python
@@ -206,7 +235,7 @@ print("P(banker) = ", prob(banker))
 
 We can see that about $1.5\%$ of the respondents work in banking, so if we choose a random person from the dataset, the probability they are a banker is about $1.5\%$.
 
-## **Joint Probability**
+# **Joint Probability**
 
 Joint probability is the probability of two or more events happening at the same time. For two events, $A$ and $B$, the joint probability is mathematically represented as:
 
@@ -216,7 +245,13 @@ $$
 
 In practical terms, it answers questions such as: "What is the probability that event $A$ happen while event $B$ also happens?" We can think of this in terms of sets, where both events $A$ and $B$ are considered a set of outcomes for a given experiment. The intersection set $A \cap B$ represents the outcomes where both events $A$ and $B$ happens simultaneously.
 
-  <center><img src = "figures/venn-diagram-intersection.png" width="500" height="300"/></center>
+
+
+<p>
+<center>
+<img src="/assets/img/post1/venn-diagram-intersection.png" alt="intersection" width="500" height="300">
+</center>
+</p>
 
 In this illustration, $\Omega$ is known as the sample space of all possible outcomes from the experiment. As subsets of the sample space $\Omega$, we have the sets of outcomes leading to events $A$ and $B$, and their intersection when both events happen in the same trial for this experiment.
 
@@ -236,8 +271,11 @@ This concept is extendable to any number of events, providing a robust tool to e
 
 When the events are mutually exclusive, meaning that they cannot happen together in the same trial, the joint probability is zero 
 
-  <center><img src = "figures/venn-diagram-null.png" width="500" height="300"/></center>
-
+<p>
+<center>
+<img src="/assets/img/post1/venn-diagram-null.png" alt="intersection" width="500" height="300"> 
+</center>
+</p>  
 
 In this case, as illustrated, the sets for events $A$ and $B$ have an empty intersection set $A \cap B = \emptyset$, hence the joint probability must be zero:
 
@@ -281,11 +319,11 @@ print("P(democrat and banker) =", prob(banker & democrat))
 
 The data reveals that $P(\text{Banker and Democrat}) = 0.0047 $ (or 0.47%) and $P(\text{Banker}) = 0.015 $ (or 1.5%), it confirms that the subset of bankers who are Democrats is less than the overall proportion of bankers in the dataset, as not all bankers are Democrats.
 
-## **Conditional Probability**
+# **Conditional Probability**
 
 Conditional probability helps us understand the relationship between two events, $A$ and $B$. In particular, it describes the probability of event $A$ given that event $B$ has already happened. The conditional probability of event $A$ given event $B$ is defined as:
 
-$$P(A|B) = \frac{P(A \cap B)}{P(B)}.$$
+$$P(A\mid  B) = \frac{P(A \cap B)}{P(B)}.$$
 
 Here, $P(A \cap B)$ represents the joint probability, which means the chance of two events happening simultaneously (or at same trial in a experiment). Suppose we conduct a random experiment with a equiprobable and finite number of outcomes. Let $N$ represent the total number of trials, $N(B)$ be the number of trials resulting in event $B$, and $N(A \cap B)$ be the number of trials where both $A$ and $B$ happen together. In this case, the probability of $B$ and the joint probability $A \cap B$ can be expressed as:
 
@@ -293,17 +331,22 @@ $$P(B) = \frac{N(B)}{N}, ~~~~~~P(A \cap B) = \frac{N(A \cap B)}{N},$$
 
 Using these expressions, we can rewrite the conditional probability of $A$ given $B$ as:
 
-$$P(A|B) = \frac{N(A \cap B)}{N(B)}.$$
+$$P(A\mid  B) = \frac{N(A \cap B)}{N(B)}.$$
 
 This equation essentially calculates the proportion of trials where both $A$ and $B$ happen (joint probability) out of the trials where event $B$ occurs.
 
 When the event $A$ implies in $B$ ($B$ is subset of $A$: $B \subset A$ ), meaning that the events always happen together in the same trial, the conditional probability is one
 
-<center><img src = "figures/venn-diagram-subset.png" width="500" height="300"/></center>
+<p>
+<center>
+<img src="/assets/img/post1/venn-diagram-subset.png" alt="intersection" width="500" height="300"> 
+</center>
+</p> 
 
-In this case, as illustrated, the set $B$ is subset of $A$, which implies a $100\%$ chance of event $A$ happening given that event $B$ happen:
 
-$$P(A|B) = 1$$ 
+In this case, as illustrated, the set $B$ is subset of $A$, which implies a $100\%$ chance of event $A$ happening given that event $B$ happen (since we are given that $B$ is inside $A$):
+
+$$P(A \mid  B) = 1$$ 
 
 **Example**
 
@@ -326,7 +369,7 @@ and for democrats as
 
 To compute the conditional probability of a respondent being a Democrat given that they are liberal is given by
 
-$$ P(\text{Democrat} | \text{Liberal}) = \frac{N\bigg((\text{polviews} = 2) \cap (\text{partyid} \leq 1)\bigg)}{N(\text{polviews} = 2)} $$
+$$ P(\text{Democrat} \mid  \text{Liberal}) = \frac{N\bigg((\text{polviews} = 2) \cap (\text{partyid} \leq 1)\bigg)}{N(\text{polviews} = 2)} $$
 
 where $N(\text{polviews} = 2) \cap (\text{partyid} \leq 1)$ is the number of respondents who are both liberal and Democrat, and $N(\text{polviews} = 2)$ is the total number of liberal respondents in the dataset.
 
@@ -379,19 +422,19 @@ def conditional(event, given):
     return prob(event[given])
 
 # Method 1: Using subset of liberal and Democrats to restrict sample space.
-print("p(liberal|democrat) = ", prob(liberal_democrats))
+print("p(liberal | democrat) = ", prob(liberal_democrats))
 
 # Method 2: Using explicit Boolean conditions to restrict sample space.
-print("p(liberal|democrat) = ", prob(liberal & democrat) / prob(liberal))
+print("p(liberal | democrat) = ", prob(liberal & democrat) / prob(liberal))
 
 # Method 3: Using subset of liberal and Democrats calculated inside the function by the given condition.
-print("p(liberal|democrat) = ", conditional(democrat, given = liberal))
+print("p(liberal | democrat) = ", conditional(democrat, given = liberal))
 
 ```
 
-    p(liberal|democrat) =  0.7046616764248128
-    p(liberal|democrat) =  0.7046616764248128
-    p(liberal|democrat) =  0.7046616764248128
+    p(liberal | democrat) =  0.7046616764248128
+    p(liberal | democrat) =  0.7046616764248128
+    p(liberal | democrat) =  0.7046616764248128
 
 
 As we can observe, **ordinary probability** considers the probability of an event happening over the entire sample space $\Omega$ ( entire set of possible outcomes). On the other hand, **conditional probability** restricts this context by considering the probability of an event under a specific condition or set of conditions. It refines our expectations about an event by taking into account additional information that restricts the sample space $\Omega$ to a small region — the "given" condition.
@@ -404,21 +447,27 @@ For example, what is the probability of selecting a Democrat given that he is a 
 
 ```python
 # conditional probability of being a democrat given being liberal and a banker
-print("p(Democrat|Liberal and Banker) = ", conditional(democrat, given=liberal & banker))
+print("p(Democrat | Liberal and Banker) = ", conditional(democrat, given=liberal & banker))
 
 # conditional probability of being liberal and a banker given being a democrat
-print("p(Liberal and Banker|Democrat) = ", conditional(liberal & banker, given=democrat))
+print("p(Liberal and Banker | Democrat) = ", conditional(liberal & banker, given=democrat))
 ```
 
-    p(Democrat|Liberal and Banker) =  0.6441717791411042
-    p(Liberal and Banker|Democrat) =  0.004333470903838217
+    p(Democrat | Liberal and Banker) =  0.6441717791411042
+    p(Liberal and Banker | Democrat) =  0.004333470903838217
 
 
-## **Addition Law for Probability**
+# **Addition Law for Probability**
 
 Consider two mutually exclusive events $A_1$ and $A_2$ associated with the outcomes of a random experiment, and let $A = A_1 \bigcup A_2$ be the union of the two events. If events $A_1$ and $A_2$ are mutually exclusive, by definition, they cannot happen simultaneously. This implies that the intersection of these two events must be $A_1 \bigcap A_2 = \emptyset$. If $A$ happen in a trial, it means that either event $A_1$ has happened, or event $A_2$ has happened, but not both since $A_1$ and $A_2$ are mutually exclusive. We can see this in the following figure for the sets $A_1$ and $A_2$:
 
-<center><img src = "figures/venn-diagram-null-mutually-exclusive.png" width="500" height="300"/></center>
+
+<p>
+<center>
+<img src="/assets/img/post1/venn-diagram-null-mutually-exclusive.png" alt="intersection" width="500" height="300"> 
+</center>
+</p> 
+
 
 The union of the events $A_1 \bigcup A_2$ includes all the outcomes of both events, without any overlap. So, when counting the number of outcomes in $A$, we are essentially counting the number of outcomes in $A_1$ and $A_2$ separately and then adding them together. Therefore, we can write:
 
@@ -516,10 +565,10 @@ print('Total Probability =', p)
     Total Probability = 0.3445120714140799
 
 
-### **Addition Law for Conditional Probability**
+## **Addition Law for Conditional Probability**
 
 If $A_1, \cdots, A_n$ are mutually exclusive events, with union $A = \bigcup_{k=1}^{n}A_{k}$, then the addition law for conditional probability is
-  $P(A|B) = \sum_{k=1}^{n} P(A_k|B)$.
+  $P(A\mid B) = \sum_{k=1}^{n} P(A_k\mid  B)$.
 
 **Proof**:
   
@@ -537,7 +586,7 @@ $$\frac{P(\bigcup_{k=1}^{n}(A_{k}\cap B))}{P(B)} = \sum_{k=1}^{n} \frac{P(A_{k}\
 
 Thus,
 
-$$P(A|B) = \sum_{k=1}^{n} P(A_k|B) ~~ \square$$
+$$P(A\mid B) = \sum_{k=1}^{n} P(A_k\mid B) ~~ \square$$
 
 **Example**
 
@@ -571,7 +620,7 @@ print("Age groups set are mutually exclusive = {} \n".format( (less_30 & between
 # Calculate conditional probabilities
 p_age_group_given_democrat = conditional(less_30, given=democrat) + conditional(between_30_40, given=democrat)
 
-print("P(Age Group | Democrat) = ", p_age_group_given_democrat)
+print("P(Age Group |  Democrat) = ", p_age_group_given_democrat)
 ```
 
     Age groups set are mutually exclusive = 0 
@@ -583,7 +632,7 @@ print("P(Age Group | Democrat) = ", p_age_group_given_democrat)
 
 Suppose we have a complete set of mutually exclusive and exhaustive events $B_1, \cdots, B_n$, meaning only one of these events can happen at a time, and their union covers the entire sample space. We can find the ordinary probability of event $A$ happening using the total probability formula:
 
-$$P(A) = \sum_k P(A|B_k)P(B_k)$$
+$$P(A) = \sum_k P(A\mid  B_k)P(B_k)$$
 
 As we see before Mutually exclusive events are events that cannot happen simultaneously. On the other hand, exhaustive events are events that, when considered their union, cover the entire sample space $\Omega$. When a set of events is both mutually exclusive and exhaustive, it means that they cover all possible outcomes without overlapping.
 
@@ -610,7 +659,7 @@ $$P(A) = P(\bigcup_k (A \cap B_k)) = \sum_k P(A \cap B_k)$$
 
 Now we can rewrite the probability of the intersection using conditional probability:
 
-$$P(A) = \sum_k P(A \cap B_k) = \sum_k P(A |B_k)P(B_k)~~~~ \square$$
+$$P(A) = \sum_k P(A \cap B_k) = \sum_k P(A \mid  B_k)P(B_k)~~~~ \square$$
 
 
 This proof demonstrates how we can find the probability of an event $A$ happening by considering its relationship with a set of mutually exclusive and exhaustive events $B_1, \cdots, B_n$.
@@ -635,7 +684,7 @@ print("P(banker) = ", prob(banker))
 
 To apply the law of total probability, we need a mutually exclusive and exhaustive set that partitions the sample space. In this dataset, the categories of 'male' and 'female' serve as such a partition:
 
-$$P(\text{banker}) = P(\text{banker}|\text{male})P(\text{male}) + P(\text{banker}|\text{female})P(\text{female}) $$
+$$P(\text{banker}) = P(\text{banker}\mid \text{male})P(\text{male}) + P(\text{banker}\mid \text{female})P(\text{female}) $$
 
 
 ```python
@@ -653,7 +702,7 @@ print("P(banker) = ", p)
 
 We can subdivide the sample space further by considering the `polviews` feature, which categorizes respondents' political views. Since `polviews` contains seven distinct categories, each mutually exclusive and collectively exhaustive, we can use them to compute the total probability:
 
-$$P(\text{banker}) = \sum^{7}_{i=1} P(\text{banker}|\text{polviews} = i)P(\text{polviews} = i)$$
+$$P(\text{banker}) = \sum^{7}_{i=1} P(\text{banker}\mid \text{polviews} = i)P(\text{polviews} = i)$$
 
 
 
@@ -672,55 +721,67 @@ This shows how we can partition the sample space $\Omega$ using polviews, ensuri
 
 # **Bayes's Theorem**
 
-Given two events A and B, Bayes' theorem relates the conditional probability of A given B ($P(A|B)$) to the conditional probability of B given A ($P(B|A)$), along with the individual probabilities of A ($P(A)$) and B ($P(B)$):
+Given two events A and B, Bayes' theorem relates the conditional probability of A given B, i.e. $P(A\mid  B)$, to the conditional probability of B given A, i.e. $P(B\mid  A)$, along with the individual probabilities $P(A)$ and $P(B)$:
 
-​$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)} = \frac{P(B|A) \cdot P(A)}{\sum_k P(B|A_k)P(A_k)} $$
+
+$$
+\begin{equation*}
+P(A\mid B) = \frac{P(B\mid  A) \cdot P(A)}{P(B)} = \frac{P(B\mid A) \cdot P(A)}{\sum_k P(B\mid A_k)P(A_k)}
+\end{equation*}
+$$
 
 where:
 
-- $P(A|B)$: is the **posterior probability**. It represents the probability of event A happening, given that event B has happened. This is what we're trying to find using Bayes' theorem. It reflects our updated belief about event A after taking into account the new information provided by event B.
 
-- $P(B|A)$: is the **likelihood**. It represents the probability of event B happening, given that event A has happened. This is often a known value or can be estimated from available data. It tells us how likely it is to observe event B when event A is true.
+- $P(A\mid B)$: is the **posterior probability**. It represents the probability of event A happening, given that event B has happened. This is what we're trying to find using Bayes' theorem. It reflects our updated belief about event A after taking into account the new information provided by event B.
+
+
+- $P(B\mid A)$: is the **likelihood**. It represents the probability of event B happening, given that event A has happened. This is often a known value or can be estimated from available data. It tells us how likely it is to observe event B when event A is true.
 
 - $P(A)$: is the **prior probability**. It represents the probability of event A happening before taking into account any new information from event B. This is our initial belief about event A and can be based on previous data, expert opinion, or assumptions.
 
 - $P(B)$: is the **total probability or evidence**. It represents the overall probability of event B happening, regardless of whether event A happens or not. This value can be calculated using the **law of total probability**, which takes into account both the probabilities of B happening when A happens and when A doesn't happen. Specifically, if we have a finite set of mutually exclusive and exhaustive events $A_1, \cdots, A_n$, then the probability of event B can be expressed as:
-  $$P(B) = \sum_k P(B|A_k)P(A_k)$$
+
+  $$P(B) = \sum_k P(B\mid A_k)P(A_k)$$
+
   - **Mutually exclusive:** The events $A_k$ do not happen simultaneously. For any pair of events $A_i$ and $A_j$, if $i \neq j$, then $P(A_i \cap A_j) = 0$.
   - **Exhaustive:** The union of all events $A_k$ covers the entire sample space, meaning that at least one of the events $A_k$ must happen. Mathematically, $\bigcup_k A_k = \Omega$, where $\Omega$ is the sample space.
 
-$\textbf{proof}:$
+**Proof:**
 
 For event A given event B, the conditional probability is defined as:
 
-$$P(A|B) = \frac{P(A \bigcap B)}{P(B)}$$
+$$P(A\mid B) = \frac{P(A \bigcap B)}{P(B)}$$
 
 Likewise, the conditional probability of event B given event A is expressed as:
-$$P(B|A) = \frac{P(A \bigcap B)}{P(A)}$$
 
-Our objective is to derive Bayes' theorem, which connects $P(A|B)$ and $P(B|A)$. To achieve this, we first isolate $P(A \cap B)$ in the second equation::
-$$P(A \bigcap B) = P(B|A) \cdot P(A)$$
+$$P(B\mid A) = \frac{P(A \bigcap B)}{P(A)}$$
+
+Our objective is to derive Bayes' theorem, which connects $P(A\mid B)$ and $P(B\mid A)$. To achieve this, we first isolate $P(A\cap B)$ in the second equation:
+
+$$P(A \bigcap B) = P(B\mid A) \cdot P(A)$$
 
 Next, substitute this expression for $P(A \cap B)$ into the first equation:
-$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}~~~~\square$$
+
+$$P(A\mid B) = \frac{P(B\mid A) \cdot P(A)}{P(B)}~~~~\square$$
 
 ## **Interpretations of Bayes's Theorem**
 
 **Bayes's Rule as Cause and Effect**
 
-At the core of Bayes' rule is the capability to invert conditional probabilities. Suppose we know the probability of an effect given a cause, $P(B|A)$, and we're curious about the probability of the cause given the effect, $P(A|B)$. Bayes' theorem enables this inversion, effectively allowing us to transition between the probabilities of cause and effect.
+At the core of Bayes' rule is the capability to invert conditional probabilities. Suppose we know the probability of an effect given a cause, $P(B\mid A)$, and we're curious about the probability of the cause given the effect, $P(A\mid B)$. Bayes' theorem enables this inversion, effectively allowing us to transition between the probabilities of cause and effect.
 
 **Bayes's Rule to update Beliefs ( Bayesian update)**
 
-Beyond inverting conditional probabilities, Bayes' theorem also can be used as a way of updating beliefs with new data. Here, the key is the notion of the "prior" and the "posterior". The prior belief, $P(H)$, represents what initially we think about the hypothesis $H$. As new data $D$ becomes available, we update this belief to get a posterior belief, $P(H|D)$. In this context, the theorem is formulated as:
+Beyond inverting conditional probabilities, Bayes' theorem also can be used as a way of updating beliefs with new data. Here, the key is the notion of the "prior" and the "posterior". The prior belief, $P(H)$, represents what initially we think about the hypothesis $H$. As new data $D$ becomes available, we update this belief to get a posterior belief, $P(H\mid D)$. In this context, the theorem is formulated as:
 
 
-$$ P(H|D) = \frac{P(H)P(D|H)}{P(D)} $$
+$$ P(H\mid D) = \frac{P(H)P(D\mid H)}{P(D)} $$
 
 Each term in this equation is defined as follows:
 - $ P(H) $: The prior probability of the hypothesis before observing the data.
-- $ P(H|D) $: The posterior probability of the hypothesis after observing the data.
-- $ P(D|H) $: The likelihood of observing the data under the hypothesis.
+- $ P(H\mid D) $: The posterior probability of the hypothesis after observing the data.
+- $ P(D\mid H) $: The likelihood of observing the data under the hypothesis.
 - $ P(D) $: The total probability of observing the data under any hypothesis.
 
 Calculating the total probability of the data, $ P(D) $, can be challenging since it represents the probability of the data under all possible hypotheses. To accurately apply the law of total probability, we must use a set of hypotheses that are mutually exclusive and collectively exhaustive:
@@ -729,11 +790,11 @@ Calculating the total probability of the data, $ P(D) $, can be challenging sinc
 
 Under these conditions, we can compute $ P(D) $ using the law of total probability. For two hypotheses, $ H_1 $ and $ H_2 $, this is calculated as:
 
-$$ P(D) = P(H_1)P(D|H_1) + P(H_2)P(D|H_2) $$
+$$ P(D) = P(H_1)P(D\mid H_1) + P(H_2)P(D\mid H_2) $$
 
 For any number of hypotheses, the formula generalizes to:
 
-$$ P(D) = \sum_i P(H_i)P(D|H_i) $$
+$$ P(D) = \sum_i P(H_i)P(D\mid H_i) $$
 
 ## **Bayes's Applications**
 ### **Urn problem**
@@ -751,21 +812,21 @@ Now suppose we choose one of the urns at random and, without looking, choose a b
 
 To solve this problem, we can employ a cause-and-effect framework of bayes theorem. More specifically, our goal is to determine the probability that Urn 1 was the chosen urn, given that a blue ball was selected:
 
-$$P(\text{urn 1}|\text{blue})$$
+$$P(\text{urn 1}\mid \text{blue})$$
 
 However, the information provided only gives us the reverse probabilities: the likelihood of drawing a blue ball given that we chose from Urn 1 or Urn 2:
 
-$$P(\text{blue}|\text{urn 1})$$
+$$P(\text{blue}\mid \text{urn 1})$$
 
-$$P(\text{blue}|\text{urn 2})$$
+$$P(\text{blue}\mid \text{urn 2})$$
 
 With these probabilities, we can employ Bayes' theorem to compute the desired probability as follows:
 
-$$P(\text{urn 1}|\text{blue}) =  \frac{P(\text{blue}|\text{urn 1})P(\text{urn 1})}{P(\text{blue})}$$
+$$P(\text{urn 1}\mid \text{blue}) =  \frac{P(\text{blue}\mid \text{urn 1})P(\text{urn 1})}{P(\text{blue})}$$
 
 To calculate the total probability, $P(\text{Blue})$, of selecting a blue ball, we employ the law of total probability. This law allows us to partition the sample space into distinct subsets, selecting from Urn 1 and Urn 2—and compute the overall probability by summing the probabilities of each case:
 
-$$P(\text{blue}) = P(\text{blue}|\text{urn 1})P(\text{urn 1}) + P(\text{blue}|\text{urn 2})P(\text{urn 2})$$
+$$P(\text{blue}) = P(\text{blue}\mid \text{urn 1})P(\text{urn 1}) + P(\text{blue}\mid \text{urn 2})P(\text{urn 2})$$
 
 In this context, it's important to note that the conditions of mutually exclusive and exhaustive sets are satisfied. The events are mutually exclusive because a ball can only be selected from one urn at a time, and they are exhaustive because there are no other urns from which the ball could be selected.
 
@@ -786,19 +847,6 @@ df
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -857,8 +905,8 @@ N_urn2 = df[urn2]['count'].sum()
 # Conditional probabilities of getting a blue ball given the urn
 P_blue_urn1 = N_blue_urn1/N_urn1
 P_blue_urn2 = N_blue_urn2/N_urn2
-print("P(blue|urn1) = ", P_blue_urn1)
-print("P(blue|urn2) = ", P_blue_urn2)
+print("P(blue| urn1) = ", P_blue_urn1)
+print("P(blue| urn2) = ", P_blue_urn2)
 
 # Prior probabilities for each urn
 P_urn1 = P_urn2 = 1/2
@@ -869,13 +917,13 @@ print("P(blue) = ", P_blue)
 
 # Bayes' rule
 p_urn1_blue = P_blue_urn1*P_urn1 / P_blue
-print("P(urn1|blue) = ", p_urn1_blue)
+print("P(urn1| blue) = ", p_urn1_blue)
 ```
 
-    P(blue|urn1) =  0.75
-    P(blue|urn2) =  0.5
+    P(blue | urn1) =  0.75
+    P(blue | urn2) =  0.5
     P(blue) =  0.625
-    P(urn1|blue) =  0.6
+    P(urn1 | blue) =  0.6
 
 
 **Bayesian update**
@@ -895,7 +943,7 @@ table = pd.DataFrame(index=['Bowl 1', 'Bowl 2'])
 #  P(urn1) and P(urn2)
 table['prior'] = 1/2, 1/2
 
-# P(urn1|blue) and P(urn2|blue)
+# P(urn1| blue) and P(urn2| blue)
 table['likelihood'] = 0.75, 0.5
 table
 ```
@@ -904,19 +952,6 @@ table
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -940,8 +975,6 @@ table
 </table>
 </div>
 
-
-
 The likelihood are not required to sum to 1, **as they are not mutually exclusive and exhaustive events**. Each likelihood is calculated independently for each urn, based on the composition of balls within that specific urn. Now we multiply the priors by the likelihoods:
 
 
@@ -950,23 +983,7 @@ table['unnormalized_posterior'] = table['prior'] * table['likelihood']
 table
 ```
 
-
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -993,8 +1010,6 @@ table
 </table>
 </div>
 
-
-
 For normalizing the posterior probabilities, we have a couple of alternatives. We could compute the total probability $P(D)$ as before, or directly sum the unnormalized posterior probabilities and divide each by this sum, ensuring a valid probability distribution for the updated beliefs. This process is called “normalization”, which is why the total probability of the data is also called the “normalizing constant”.
 
 
@@ -1004,23 +1019,7 @@ table['posterior'] = table['unnormalized_posterior'] / P_data
 table
 ```
 
-
-
-
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -1040,7 +1039,7 @@ table
       <td>0.6</td>
     </tr>
     <tr>
-      <th>Bowl 2</th>
+      <th>Bowl 2 </th>
       <td>0.5</td>
       <td>0.50</td>
       <td>0.250</td>
@@ -1050,6 +1049,11 @@ table
 </table>
 </div>
 
-
-
 We find that the posterior probability for Urn 1 is 0.6. This aligns with the result derived explicitly using Bayes’s theorem. Additionally, we also find the posterior probability for Urn 2 , which is 0.4.
+
+
+# References
+
+- [Downey, A. B. (2021). Think Bayes. " O'Reilly Media, Inc."](https://books.google.com.br/books?hl=en&lr=&id=Vh4vEAAAQBAJ&oi=fnd&pg=PR2&dq=think+bayes&ots=HG5iCqfEg2&sig=UjHZkrmSTCog7cZTTwU0z7lyQAc&redir_esc=y#v=onepage&q=think%20bayes&f=false)
+
+- [Rozanov, Y. A. (2013). Probability theory: a concise course. Courier Corporation.](https://books.google.com.br/books?hl=en&lr=&id=9XPCAgAAQBAJ&oi=fnd&pg=PA1&dq=Probability+Theory:+A+Concise+Course&ots=ZOt4qBZLiD&sig=EbI_xUv9ph_HHrMX-HLGkgcnek4&redir_esc=y#v=onepage&q=Probability%20Theory%3A%20A%20Concise%20Course&f=false)
