@@ -267,7 +267,7 @@ body{
 /* Small screen widths */
 @media print, screen and (max-width: 1240px) {
   .header {
-    width: 100%;
+    width: 100vw; /* viewport width units */
   }
 
   div.big_header {
@@ -277,14 +277,17 @@ body{
   div.small_header {
     display: flex;
     justify-content: center; /* This will center the items inside the header */
-    padding: 10px; /* Adjust padding as needed */
+    padding: 1vw; /* viewport width units for padding */
   }
   
   .content {
-    max-width: 100%; /* This ensures that the content area is never wider than the screen */
+    width: 100vw; /* viewport width units */
+    min-width: 320px; /* minimum width to prevent content from becoming too small */
     position: relative;
-    padding: 0 15px; /* Add some padding to not touch the edges of the screen */
+    padding: 0 1vw; /* viewport width units for padding */
     box-sizing: border-box; /* This makes sure that padding is included in the width */
+    overflow-x: hidden; /* Prevent horizontal scroll */
   }
 }
+
 
