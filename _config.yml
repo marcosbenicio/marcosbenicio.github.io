@@ -11,9 +11,10 @@ title: Marcos Benício
 description: Blog
 url: https://marcosbenicio.github.io/
 main_github_io: true
-long_description: "Welcome to my blog! Here I talk about mathematics, physics, deep learning and machine learning.  
-You can find some articles about these concepts. 
-I hope you enjoy and don't forget to leave a reaction or comment at the end of the posts! This helps me to improve the content."
+long_description: "Hello World! Welcome to my blog, where I discuss mathematics, physics, deep learning, and machine learning.  
+You will find articles and discussions about these topics as well as projects I am actively working on. 
+I hope you enjoy it, and please feel free to leave a reaction or a comment at the end of the posts.  This helps me to improve the content."
+
 
 # Social links
 github_url: https://github.com/marcosbenicio
@@ -33,25 +34,27 @@ markdown: kramdown
 plugins:
   - jekyll-seo-tag
 highlighter: rouge
-color_mode: auto  # auto, light, or dark
+color_mode: dark  # auto, light, or dark
 comments: true
 disqus_shortname: none
 mathjax:
   enable: true
-  src: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  src: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML
 syntax_highlight_stylesheet: syntax_highlight.css
 
 
 # Colors - light mode
 colors:
-  text: 282828
-  tag: dbefdc
-  tag_hover: 93cf95
-  header_background: 2b422b
-  header_text: dbefdc
-  header_link_hover: 93cf95
-  links: 459c48
-  links_visited: 357a38
+  background: 333
+  text: DEE5E9
+  tag: 2A4569       
+  tag_hover: 3A5579 
+  header_background: 3A527B
+  header_text: 9dd2f5 #AEBDC7  
+  header_link: 9dd2f5 #5A7089 
+  header_link_hover: 6A80A1  
+  links: 9dd2f5      
+  links_visited: 4A6079 
 
 # Colors - dark mode
 #colors_dark:

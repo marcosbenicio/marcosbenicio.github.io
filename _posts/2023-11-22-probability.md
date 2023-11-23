@@ -34,6 +34,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Download dataset
 url_part1 = "https://raw.githubusercontent.com/"
 url_part2 = "marcosbenicio/marcosbenicio.github.io/main/_posts/notebooks/01probabilities/data/gss.csv"
 full_url = url_part1 + url_part2
