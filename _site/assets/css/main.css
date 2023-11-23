@@ -259,17 +259,25 @@ body{
 
 /* Small screen widths */
 @media print, screen and (max-width: 1240px) {
-
   .header {
     width: 100%;
   }
 
   div.big_header {
-    display:none;
+    display: none;
   }
 
   div.small_header {
-    display:flex;
+    display: flex;
+    justify-content: center; /* This will center the items inside the header */
+    padding: 10px; /* Adjust padding as needed */
   }
-
+  
+  .content {
+    max-width: 100%; /* This ensures that the content area is never wider than the screen */
+    position: relative;
+    padding: 0 15px; /* Add some padding to not touch the edges of the screen */
+    box-sizing: border-box; /* This makes sure that padding is included in the width */
+  }
 }
+
