@@ -460,7 +460,7 @@ print("p(Liberal and Banker | Democrat) = ", conditional(liberal & banker, given
 
 # **Addition Law for Probability**
 
-Consider two mutually exclusive events $A_1$ and $A_2$ associated with the outcomes of a random experiment, and let $A = A_1 \bigcup A_2$ be the union of the two events. If events $A_1$ and $A_2$ are mutually exclusive, by definition, they cannot happen simultaneously. This implies that the intersection of these two events must be $A_1 \bigcap A_2 = \emptyset$. If $A$ happen in a trial, it means that either event $A_1$ has happened, or event $A_2$ has happened, but not both since $A_1$ and $A_2$ are mutually exclusive. We can see this in the following figure for the sets $A_1$ and $A_2$:
+Consider two mutually exclusive events $A_1$ and $A_2$ associated with the outcomes of a random experiment, and let $A = A_1 \cup A_2$ be the union of the two events. If events $A_1$ and $A_2$ are mutually exclusive, by definition, they cannot happen simultaneously. This implies that the intersection of these two events must be $A_1 \cap A_2 = \emptyset$. If $A$ happen in a trial, it means that either event $A_1$ has happened, or event $A_2$ has happened, but not both since $A_1$ and $A_2$ are mutually exclusive. We can see this in the following figure for the sets $A_1$ and $A_2$:
 
 
 <p>
@@ -470,7 +470,7 @@ Consider two mutually exclusive events $A_1$ and $A_2$ associated with the outco
 </p> 
 
 
-The union of the events $A_1 \bigcup A_2$ includes all the outcomes of both events, without any overlap. So, when counting the number of outcomes in $A$, we are essentially counting the number of outcomes in $A_1$ and $A_2$ separately and then adding them together. Therefore, we can write:
+The union of the events $A_1 \cup A_2$ includes all the outcomes of both events, without any overlap. So, when counting the number of outcomes in $A$, we are essentially counting the number of outcomes in $A_1$ and $A_2$ separately and then adding them together. Therefore, we can write:
 
 $$
 \frac{N(A)}{N} = \frac{N(A_1)}{N} + \frac{N(A_2)}{N}
@@ -484,16 +484,16 @@ $$
 P(A) = P(A_1) + P(A_2)
 $$
 
-Similarly, if events $A_1$, $A_2$, and $A_3$ are mutually exclusive, it means that no two of these events can happen simultaneously. This implies that their pairwise intersections are empty: $A_1 \bigcap A_2 = \emptyset$, $A_2 \bigcap A_3 = \emptyset$, and $A_1 \bigcap A_3 = \emptyset$. As a result, the union of events $A_1$ and $A_2$ is also mutually exclusive with $A_3$. For the probability, this can be expressed as:
+Similarly, if events $A_1$, $A_2$, and $A_3$ are mutually exclusive, it means that no two of these events can happen simultaneously. This implies that their pairwise intersections are empty: $A_1 \cap A_2 = \emptyset$, $A_2 \cap A_3 = \emptyset$, and $A_1 \cap A_3 = \emptyset$. As a result, the union of events $A_1$ and $A_2$ is also mutually exclusive with $A_3$. For the probability, this can be expressed as:
 
 $$
-P(A_1 \bigcup A_2 \bigcup A_3) = P(A_1 \bigcup A_2) + P(A_3)
+P(A_1 \cup A_2 \cup A_3) = P(A_1 \cup A_2) + P(A_3)
 $$
 
 Since $A_1$ and $A_2$ are mutually exclusive, we get:
 
 $$
-P(A_1 \bigcup A_2 \bigcup A_3) =  P(A_1) + P(A_2) + P(A_3)
+P(A_1 \cup A_2 \cup A_3) =  P(A_1) + P(A_2) + P(A_3)
 $$
 
 More generally, given $N$ mutually exclusive events $A_1$, $A_2$, $\cdots$, $A_n$, we have the formula:
@@ -752,15 +752,15 @@ where:
 
 For event A given event B, the conditional probability is defined as:
 
-$$P(A\mid B) = \frac{P(A \bigcap B)}{P(B)}$$
+$$P(A\mid B) = \frac{P(A \cap B)}{P(B)}$$
 
 Likewise, the conditional probability of event B given event A is expressed as:
 
-$$P(B\mid A) = \frac{P(A \bigcap B)}{P(A)}$$
+$$P(B\mid A) = \frac{P(A \cap B)}{P(A)}$$
 
 Our objective is to derive Bayes' theorem, which connects $P(A\mid B)$ and $P(B\mid A)$. To achieve this, we first isolate $P(A\cap B)$ in the second equation:
 
-$$P(A \bigcap B) = P(B\mid A) \cdot P(A)$$
+$$P(A \cap B) = P(B\mid A) \cdot P(A)$$
 
 Next, substitute this expression for $P(A \cap B)$ into the first equation:
 
