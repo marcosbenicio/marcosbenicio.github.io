@@ -259,28 +259,19 @@ body{
 
 /* Small screen widths */
 @media print, screen and (max-width: 1240px) {
+
   .header {
-    width: 100vw; /* viewport width units */
+    width: 100%;
   }
 
   div.big_header {
-    display: none;
+    display:none;
   }
 
   div.small_header {
-    display: flex;
-    justify-content: center; /* This will center the items inside the header */
-    padding: 1vw; /* viewport width units for padding */
+    display:flex;
   }
-  
-  .content {
-    width: 100vw; /* viewport width units */
-    min-width: 320px; /* minimum width to prevent content from becoming too small */
-    position: relative;
-    padding: 0 1vw; /* viewport width units for padding */
-    box-sizing: border-box; /* This makes sure that padding is included in the width */
-    overflow-x: hidden; /* Prevent horizontal scroll */
-  }
+
 }
 
 
