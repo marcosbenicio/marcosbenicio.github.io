@@ -261,7 +261,7 @@ body{
 @media print, screen and (max-width: 1240px) {
 
   .header {
-    width: 200%;
+    width: 1240px;
     height: 200px;
   }
 
@@ -275,7 +275,7 @@ body{
   }
 
   .content {
-    width: 180%; /* Or any max-width that fits your design */
+    width: 1100px; /* Or any max-width that fits your design */
     margin-left: auto;
     margin-right: auto;
     position: relative; /* You don't need 'left' if you're using auto margins */
