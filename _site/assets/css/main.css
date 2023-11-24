@@ -261,7 +261,7 @@ body{
 @media print, screen and (max-width: 1240px) {
 
   .header {
-    width: 880px;
+    width: 200%;
     height: 200px;
   }
 
@@ -275,8 +275,8 @@ body{
   }
 
   .content {
-    width: 800px;
-    position: center;
+    width: 160%;
+    position: relative;
     left: calc(calc(100% - 350px)/2 - 400px + 350px);
   }
 
