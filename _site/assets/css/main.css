@@ -275,9 +275,10 @@ body{
   }
 
   .content {
-    width: 160%;
-    position: relative;
-    left: calc(calc(100% - 350px)/2 - 400px + 350px);
+    width: 180%; /* Or any max-width that fits your design */
+    margin-left: auto;
+    margin-right: auto;
+    position: relative; /* You don't need 'left' if you're using auto margins */
   }
 
 }
