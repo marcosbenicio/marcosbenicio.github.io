@@ -268,7 +268,8 @@ body{
 @media print, screen and (max-width: 1240px) {
 
   .header {
-    width: 100%;
+    width: 880px;
+    height: 200px;
   }
 
   div.big_header {
@@ -277,6 +278,13 @@ body{
 
   div.small_header {
     display:flex;
+    
+  }
+
+  .content {
+    width: 800px;
+    position: center;
+    left: calc(calc(100% - 350px)/2 - 400px + 350px);
   }
 
 }
