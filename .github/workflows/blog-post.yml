@@ -9,10 +9,17 @@ jobs:
     name: Update README with latest blog posts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: gautamkrishnar/blog-post-workflow@master
+      - name: Set up Node.js 16
+        uses: actions/setup-node@v2
         with:
-          max_post_count: 1
+          node-version: '16'
+      - uses: actions/checkout@v2
+      - name: Run blog post workflow
+        uses: gautamkrishnar/blog-post-workflow@master
+        with:
+          max_post_count: 5
           feed_list: "https://marcosbenicio.github.io/atom.xml"
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+
 
 
