@@ -1,3 +1,8 @@
+---
+layout: none
+---
+
+
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
@@ -11,14 +16,25 @@
 		<email>{{ site.email }}</email>
 	</author>
 
+	<!-- Debugging section -->
 	{% for post in site.posts %}
-		<entry>
-			<title>{{ post.title }}</title>
-			<link href="{{ site.url }}{{ post.url }}"/>
-			<updated>{{ post.date | date_to_xmlschema }}</updated>
-			<id>{{ site.url }}{{ post.id }}</id>
-			<content type="html">{{ post.content | xml_escape }}</content>
-		</entry>
+	<!--<debug> -->
+		<post_title>{{ post.title }}</post_title>
+		<raw_date>{{ post.date }}</raw_date>
+		<date_xmlschema>{{ post.date | date_to_xmlschema }}</date_xmlschema>
+	<!--</debug> -->
+	{% endfor %}
+	<!-- End Debugging section -->
+
+	{% for post in site.posts %}
+	<entry>
+		<title>{{ post.title }}</title>
+		<link href="{{ site.url }}{{ post.url }}"/>
+		<updated>{{ post.date | date_to_xmlschema }}</updated>
+		<id>{{ site.url }}{{ post.id }}</id>
+		<content type="html">{{ post.content | xml_escape }}</content>
+	</entry>
 	{% endfor %}
 
 </feed>
+
