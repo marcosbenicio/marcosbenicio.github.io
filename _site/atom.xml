@@ -4,7 +4,7 @@
 	<title>Marcos Benício</title>
 	<link href="http://localhost:4000/atom.xml" rel="self"/>
 	<link href="http://localhost:4000"/>
-	<updated>2023-11-27T23:22:00-03:00</updated>
+	<updated>2023-11-28T07:30:06-03:00</updated>
 	<id>http://localhost:4000/blog</id>
 	<author>
 		<name>Marcos Benício</name>
@@ -56,7 +56,7 @@
 
 &lt;h1 id=&quot;data&quot;&gt;&lt;strong&gt;Data&lt;/strong&gt;&lt;/h1&gt;
 
-&lt;p&gt;First let’s import the necessaries packages and download the dataset:&lt;/p&gt;
+&lt;p&gt;First, let’s import the necessary packages&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;environ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;TF_CPP_MIN_LOG_LEVEL&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt; 
@@ -77,9 +77,11 @@
 &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;keras.losses&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Loss&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Here I use the MNIST dataset, which contains images of handwritten digits from 0 to 9. The first column of the dataset contains the label of the image (i.e., the digit it represents), and the remaining 784 columns (28 x 28 pixels) contain the pixel values of the image.&lt;/p&gt;
+&lt;p&gt;Next, download the &lt;a href=&quot;https://github.com/marcosbenicio/marcosbenicio.github.io/tree/9c798b9f92c4e6195e2803155f2db8760dc3fc67/_posts/notebooks/02convolutional-neural-network/data&quot;&gt;MNIST Dataset&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;To visualize the images, we need to reshape the 784 columns into a 28 x 28 matrix and plot:&lt;/p&gt;
+&lt;p&gt;The MNIST dataset comprises images of handwritten digits from 0 to 9. In the dataset, the first column contains the label of the image (i.e., the digit it represents), while the remaining 784 columns (corresponding to 28 x 28 pixels) hold the pixel values of the image.&lt;/p&gt;
+
+&lt;p&gt;To visualize the images, we need to reshape the 784 columns back into a 28 x 28 pixel matrix and then plot them:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;show_img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     &lt;span class=&quot;c1&quot;&gt;# show figures in the dataset
@@ -607,7 +609,7 @@ x_{(i+k-1),j,m} &amp;amp; x_{(i+k-1),(j+1),m} &amp;amp; \cdots &amp;amp; x_{(i+k
         0 &amp;amp; -2 \\ 
         2 &amp;amp; 0 
     \end{bmatrix} 
-\end{bmatrix} \bigg) = 1 - 1 + 4 +2 -1 -2+ 2 = 5 
+\end{bmatrix} \bigg)  = 5 
 }\]
 
 \[{\small
@@ -1042,13 +1044,13 @@ Also, note that the pooling layer don’t uses any activation function, direct r
 
 &lt;h1 id=&quot;convolutional-neural-network-for-classification&quot;&gt;&lt;strong&gt;Convolutional Neural Network for Classification&lt;/strong&gt;&lt;/h1&gt;
 
-&lt;p&gt;Let’s create a classification model for the MNIST dataset to illustrate all the theory explained before. One possible approach for this classification model is to create two subclasses from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Model&lt;/code&gt; class: one for the convolutional and pooling layers, and another for the fully connected neural network layers. This modular design makes easier the customization of the CNN architecture to use with other kind of input images.&lt;/p&gt;
+&lt;p&gt;Let’s create a classification model for the MNIST dataset to illustrate all the theory explained before. One possible approach for this classification model is to create two subclasses from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Model&lt;/code&gt; class: one for the convolutional and pooling layers, and another for the fully connected neural network layers. This modular design makes the customization easier for the CNN architecture to use with other kinds of input images.&lt;/p&gt;
 
 &lt;p&gt;We can alternate &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Conv2D&lt;/code&gt; layers with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MaxPool2D&lt;/code&gt; layers. This arrangement enables the network to learn hierarchical features of increasing complexity and abstraction. It also reduces the spatial dimensionality of the feature maps, thereby improving the network’s computational efficiency.&lt;/p&gt;
 
-&lt;p&gt;Remember, the filter size in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Conv2D&lt;/code&gt; layer is a hyperparameter that determines the spatial extent of the filter kernel as it slides over the input image. Typically, the filter size is a small matrix, such as 3x3 or 5x5, which defines the receptive field size of the neurons in the layer. In contrast, the pool size in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MaxPooling2D&lt;/code&gt; layer specifies the dimensions of the pooling window, which moves over the input feature map in two dimensions and outputs the maximum value of each window.&lt;/p&gt;
+&lt;p&gt;Remember, the filter size in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Conv2D&lt;/code&gt; layer is a hyperparameter that determines the window size of the filter kernel as it slides over the input image matrix. Typically, the filter size is a small matrix, such as 3x3 or 5x5, which produces an output feature map that is passed to the next layer. In contrast, the pool size in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MaxPooling2D&lt;/code&gt; layer specifies the dimensions of the pooling window, which moves over the input feature map in two dimensions and outputs the maximum value of each window.&lt;/p&gt;
 
-&lt;p&gt;Now, let’s code the classification model in a modular fashion, using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Model&lt;/code&gt; class from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tf.keras&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;Now, let’s implement the classification model modularly using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Model&lt;/code&gt; class from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tf.keras&lt;/code&gt;:&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;CNN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
     

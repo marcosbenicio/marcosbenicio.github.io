@@ -257,7 +257,7 @@
 
 <h1 id="data"><strong>Data</strong></h1>
 
-<p>First let’s import the necessaries packages and download the dataset:</p>
+<p>First, let’s import the necessary packages</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
 <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">'</span><span class="s">TF_CPP_MIN_LOG_LEVEL</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">2</span><span class="sh">'</span> 
@@ -278,9 +278,11 @@
 <span class="kn">from</span> <span class="n">keras.losses</span> <span class="kn">import</span> <span class="n">Loss</span>
 </code></pre></div></div>
 
-<p>Here I use the MNIST dataset, which contains images of handwritten digits from 0 to 9. The first column of the dataset contains the label of the image (i.e., the digit it represents), and the remaining 784 columns (28 x 28 pixels) contain the pixel values of the image.</p>
+<p>Next, download the <a href="https://github.com/marcosbenicio/marcosbenicio.github.io/tree/9c798b9f92c4e6195e2803155f2db8760dc3fc67/_posts/notebooks/02convolutional-neural-network/data">MNIST Dataset</a>.</p>
 
-<p>To visualize the images, we need to reshape the 784 columns into a 28 x 28 matrix and plot:</p>
+<p>The MNIST dataset comprises images of handwritten digits from 0 to 9. In the dataset, the first column contains the label of the image (i.e., the digit it represents), while the remaining 784 columns (corresponding to 28 x 28 pixels) hold the pixel values of the image.</p>
+
+<p>To visualize the images, we need to reshape the 784 columns back into a 28 x 28 pixel matrix and then plot them:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show_img</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="c1"># show figures in the dataset
@@ -808,7 +810,7 @@ x_{(i+k-1),j,m} &amp; x_{(i+k-1),(j+1),m} &amp; \cdots &amp; x_{(i+k-1),(j+k-1),
         0 &amp; -2 \\ 
         2 &amp; 0 
     \end{bmatrix} 
-\end{bmatrix} \bigg) = 1 - 1 + 4 +2 -1 -2+ 2 = 5 
+\end{bmatrix} \bigg)  = 5 
 }\]
 
 \[{\small
@@ -1243,13 +1245,13 @@ Also, note that the pooling layer don’t uses any activation function, direct r
 
 <h1 id="convolutional-neural-network-for-classification"><strong>Convolutional Neural Network for Classification</strong></h1>
 
-<p>Let’s create a classification model for the MNIST dataset to illustrate all the theory explained before. One possible approach for this classification model is to create two subclasses from the <code class="language-plaintext highlighter-rouge">Model</code> class: one for the convolutional and pooling layers, and another for the fully connected neural network layers. This modular design makes easier the customization of the CNN architecture to use with other kind of input images.</p>
+<p>Let’s create a classification model for the MNIST dataset to illustrate all the theory explained before. One possible approach for this classification model is to create two subclasses from the <code class="language-plaintext highlighter-rouge">Model</code> class: one for the convolutional and pooling layers, and another for the fully connected neural network layers. This modular design makes the customization easier for the CNN architecture to use with other kinds of input images.</p>
 
 <p>We can alternate <code class="language-plaintext highlighter-rouge">Conv2D</code> layers with <code class="language-plaintext highlighter-rouge">MaxPool2D</code> layers. This arrangement enables the network to learn hierarchical features of increasing complexity and abstraction. It also reduces the spatial dimensionality of the feature maps, thereby improving the network’s computational efficiency.</p>
 
-<p>Remember, the filter size in a <code class="language-plaintext highlighter-rouge">Conv2D</code> layer is a hyperparameter that determines the spatial extent of the filter kernel as it slides over the input image. Typically, the filter size is a small matrix, such as 3x3 or 5x5, which defines the receptive field size of the neurons in the layer. In contrast, the pool size in a <code class="language-plaintext highlighter-rouge">MaxPooling2D</code> layer specifies the dimensions of the pooling window, which moves over the input feature map in two dimensions and outputs the maximum value of each window.</p>
+<p>Remember, the filter size in a <code class="language-plaintext highlighter-rouge">Conv2D</code> layer is a hyperparameter that determines the window size of the filter kernel as it slides over the input image matrix. Typically, the filter size is a small matrix, such as 3x3 or 5x5, which produces an output feature map that is passed to the next layer. In contrast, the pool size in a <code class="language-plaintext highlighter-rouge">MaxPooling2D</code> layer specifies the dimensions of the pooling window, which moves over the input feature map in two dimensions and outputs the maximum value of each window.</p>
 
-<p>Now, let’s code the classification model in a modular fashion, using the <code class="language-plaintext highlighter-rouge">Model</code> class from <code class="language-plaintext highlighter-rouge">tf.keras</code>:</p>
+<p>Now, let’s implement the classification model modularly using the <code class="language-plaintext highlighter-rouge">Model</code> class from <code class="language-plaintext highlighter-rouge">tf.keras</code>:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CNN</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     
