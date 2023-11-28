@@ -1013,8 +1013,10 @@ x_{(i+k-1),j,m} &amp; x_{(i+k-1),(j+1),m} &amp; \cdots &amp; x_{(i+k-1),(j+k-1),
      <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
 <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
 
-<span class="c1"># TensorFlow expects the filter to have a shape of [(depth, height, width), in_channels = 1, out_channels = 1]
-# Since our input has a single channel (in_channels = 1) and we want a single output channel ( out_channels = 1),
+<span class="c1"># TensorFlow expects the filter to have a shape of
+# [(depth, height, width), in_channels = 1, out_channels = 1]
+# Since our input has a single channel (in_channels = 1) and 
+# we want a single output channel ( out_channels = 1),
 # Add those dimensions to W
 </span><span class="n">W</span> <span class="o">=</span> <span class="n">W</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">W</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
 
