@@ -4,7 +4,7 @@
 	<title>Marcos Benício</title>
 	<link href="http://localhost:4000/atom.xml" rel="self"/>
 	<link href="http://localhost:4000"/>
-	<updated>2023-11-27T23:08:05-03:00</updated>
+	<updated>2023-11-27T23:13:23-03:00</updated>
 	<id>http://localhost:4000/blog</id>
 	<author>
 		<name>Marcos Benício</name>
@@ -660,7 +660,7 @@ x_{(i+k-1),j,m} &amp;amp; x_{(i+k-1),(j+1),m} &amp;amp; \cdots &amp;amp; x_{(i+k
     0 &amp;amp; 4 \\
     1 &amp;amp; 0
 \end{bmatrix}
-\end{bmatrix} \bigg) = -1 + 3 + 2 + 1 + 1 + 4 + 1 = 11 
+\end{bmatrix} \bigg)  = 11 
 }\]
 
 \[{\small
@@ -713,7 +713,7 @@ x_{(i+k-1),j,m} &amp;amp; x_{(i+k-1),(j+1),m} &amp;amp; \cdots &amp;amp; x_{(i+k
     0 &amp;amp; 1 \\
     1 &amp;amp; 0
 \end{bmatrix}
-\end{bmatrix} \bigg) = 2 + 1 + 6 + 3 + 1 + 1 + 1 = 15
+\end{bmatrix} \bigg) = 15
 }\]
 
 \[{\small
@@ -766,7 +766,7 @@ x_{(i+k-1),j,m} &amp;amp; x_{(i+k-1),(j+1),m} &amp;amp; \cdots &amp;amp; x_{(i+k
     0 &amp;amp; -2 \\
     3 &amp;amp; 0
 \end{bmatrix}
-\end{bmatrix} \bigg) = 1 + 4 +  2 + -1 - 2 - 2 + 3  = 5 
+\end{bmatrix} \bigg)  = 5 
 }\]
 
 &lt;p&gt;The convolution $\mathbf{X}*\mathbf{W}$ has size $2 \times 2$, since  $n - k + 1 = 3 - 2 + 1 = 2$, and $m = 3$; it is is given as&lt;/p&gt;
@@ -1062,7 +1062,8 @@ Also, note that the pooling layer don’t uses any activation function, direct r
         Constructor for the CNN class.
 
         Parameters:
-        nn_model (Model): An instance of a model that will receive the flattened features for final classification.
+        nn_model (Model): An instance of a model that will receive the flattened features 
+        for final classification.
         img_shape (tuple): The shape of the input image.
         filters (list): A list specifying the number of filters in each convolutional layer.
         filter_size (list): A list specifying the dimensions of the filters in each convolutional layer.
@@ -1160,7 +1161,8 @@ Also, note that the pooling layer don’t uses any activation function, direct r
 
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
         &lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
-        Forward pass of the network, processing the input through each hidden layer followed by the output layer.
+        Forward pass of the network, processing the input through 
+        each hidden layer followed by the output layer.
 
         Parameters:
         x (tf.Tensor): The input tensor.
