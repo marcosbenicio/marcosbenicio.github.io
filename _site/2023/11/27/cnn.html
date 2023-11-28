@@ -521,13 +521,15 @@ output X*W: [-1  7  5]
 
 <p>Then, we can define a general one dimensional convolution operation between $\mathbf{x}$ and $\mathbf{w}$, denoted by the asterisk symbol $\ast$, as</p>
 
-\[\mathbf{x} \ast \mathbf{w} = \left( \begin{array}{c}
+\[{\small
+\mathbf{x} \ast \mathbf{w} = \left( \begin{array}{c}
 \text{Sum}(\mathbf{x}_k(1) \odot \mathbf{w})\\
 \vdots\\
 \text{Sum}(\mathbf{x}_k(i) \odot \mathbf{w})\\
 \vdots\\
 \text{Sum}(\mathbf{x}_k(n-k+1) \odot \mathbf{w})
-\end{array} \right).\]
+\end{array} \right).
+}\]
 
 <p>The convolution of $\mathbf{x} \in \mathbf{R}^{n}$ and $\mathbf{W} \in \mathbf{R}^{k}$ results in a vector of size $n-k+1$. The i-th element from this output vector can be decomposed as</p>
 
@@ -711,7 +713,8 @@ w_{k,1,r} &amp; w_{k,2,r} &amp; \cdots &amp; w_{k,k,m}
 
 <p>When defining a sub-tensor from the input tensor $\mathbf{X}$, let $\mathbf{X}_k(i,j)$ denote a $k \times k \times m$ sub-tensor of $\mathbf{X}$ that starts at row $i$, column $j$, and encompasses the full depth $m$ of the input. In the context where the filter spans the entire depth of the input (i.e., the number of channels $r$ in the filter is equal to the depth $m$ of the input), the depth index $q$ is not needed because the filter processes all depth layers simultaneously. Therefore, the sub-tensor $\mathbf{X}_k(i,j)$ is defined as follows:</p>
 
-\[\mathbf{X}_k(i,j,q = m)= \mathbf{X}_k(i,j) =
+\[{\small
+\mathbf{X}_k(i,j,q = m)= \mathbf{X}_k(i,j) =
 \begin{bmatrix}
 \begin{bmatrix}
 x_{i,j,1} &amp; x_{i,(j+1),1} &amp; \cdots &amp; x_{i,(j+k-1),1} \\
@@ -736,7 +739,8 @@ x_{(i+1),j,m} &amp; x_{(i+1),(j+1),m} &amp; \cdots &amp; x_{2,n,m} \\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
 x_{(i+k-1),j,m} &amp; x_{(i+k-1),(j+1),m} &amp; \cdots &amp; x_{(i+k-1),(j+k-1),m}
 \end{bmatrix}
-\end{bmatrix}\]
+\end{bmatrix}
+}\]
 
 <p>The indices from the subtensor for rows and columns range from $1 \leq (i,j) \leq n-k+1$, where $n$ is the dimension of the input $\mathbf{X}$ and $k$ is the window size of the filter $\mathbf{W}$, consistent with two-dimensional convolutions. The depth dimension is fixed at $m$, so it’s redundant carrying $q = m$ in our notation.</p>
 
@@ -1083,7 +1087,8 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
 
 <p>Let’s incorporate the bias terms $b_1, b_2 \in \mathbb{R}$ corresponding to each filter $\mathbf{W}_1$ and $\mathbf{W}_2$, and a activation function $f(~ . ~)$. We represent a single  forward step in our simplified visualization of a CNN, going from input to the subsequent layer as:</p>
 
-\[{\mathbf{net}^1}  = 
+\[{\small
+{\mathbf{net}^1}  = 
 \begin{bmatrix}
     \begin{bmatrix}
         \text{Sum}(X_2(1,1) \odot \mathbf{W}_1)+b_1&amp; \text{Sum}(X_2(1,2) \odot \mathbf{W}_1) +b_1
@@ -1099,11 +1104,13 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
     \\
     \text{Sum}(X_2(2,1) \odot \mathbf{W}_2)+b_2&amp; \text{Sum}(X_2(2,2) \odot \mathbf{W}_2)+b_2
     \end{bmatrix}
-\end{bmatrix}\]
+\end{bmatrix}
+}\]
 
 <p>The net signal after convolution is followed by the activation function to introduce non-linearity:</p>
 
-\[{\mathbf{Z}^1} = f(\mathbf{net}^1) = 
+\[{\small
+{\mathbf{Z}^1} = f(\mathbf{net}^1) = 
 \begin{bmatrix}
 \\
     \begin{bmatrix}
@@ -1120,7 +1127,8 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
     \\
     f(\text{Sum}(X_2(2,1) \odot \mathbf{W}_2)+ b_2)&amp; f(\text{Sum}(X_2(2,2) \odot \mathbf{W}_2)+ b_2)
     \end{bmatrix}
-\end{bmatrix}.\]
+\end{bmatrix}.
+}\]
 
 <p>Resulting in the feature map, which represents the actual output of the layer after applying the activation function to the net signal. The activation function can be one commonly used in neural networks, such as identity, sigmoid, tanh, or ReLU. In the language of convolutions, this is simplified as:</p>
 
