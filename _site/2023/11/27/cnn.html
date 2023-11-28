@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1>
     
-    <meta property="og:image" content="/assets/img/post2/conv-layer-multiples-filters.png"/>
+    <meta property="og:image" content="/assets/img/post2/conv-layers-general.png"/>
     
     
     <link rel="stylesheet" type="text/css" href="/assets/css/syntax_highlight.css">
@@ -399,7 +399,7 @@
 
 <p>
 <center>
-<img src="/assets/img/post2/digit-9.png" alt="intersection" width="280" height="280" /> 
+<img src="/assets/img/post2/outputs/digit-9.png" alt="intersection" width="280" height="280" /> 
 </center>
 </p>
 
@@ -569,14 +569,14 @@ x_{(i+k-1), ~j} &amp; x_{(i+1),(j+1)} &amp; \cdots &amp; x_{(i+k-1),(j+k-1)}
 
 \[\text{Sum}(\mathbf{A}) = \sum_{i=1}^{k}\sum_{j=1}^{k} a_{i,j}\]
 
-<p>Then, we can define  a general two dimensional convolution operation between matrices $\mathbf{X}$ and $\mathbf{W}$, as</p>
+<p>Then, we can define a general two dimensional convolution operation between matrices $\mathbf{X}$ and $\mathbf{W}$, as</p>
 
 \[{\small
 \mathbf{X} \ast \mathbf{W} = \begin{bmatrix}
-\text{Sum}(x_k(1,1) \odot \mathbf{W}) &amp;\text{Sum}(x_k(1,2) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(x_k(1,n-k+1) \odot \mathbf{W}) \\
-\text{Sum}(x_k(2,1) \odot \mathbf{W}) &amp; \text{Sum}(x_k(2,2) \odot \mathbf{W}) &amp; \cdots &amp;\text{Sum}(x_k(2,n-k+1) \odot \mathbf{W})\\
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\text{Sum}(x_k(n-k+1,1) \odot \mathbf{W}) &amp; \text{Sum}(x_k(n-k+1,2) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(x_k(n-k+1,n-k+1) \odot \mathbf{W})
+\text{Sum}(x_k(1,1) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(x_k(1,n-k+1) \odot \mathbf{W}) \\
+\text{Sum}(x_k(2,1) \odot \mathbf{W}) &amp; \cdots &amp;\text{Sum}(x_k(2,n-k+1) \odot \mathbf{W})\\
+\vdots  &amp; \ddots &amp; \vdots \\
+\text{Sum}(x_k(n-k+1,1) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(x_k(n-k+1,n-k+1) \odot \mathbf{W})
 \end{bmatrix}
 }\]
 
@@ -1223,7 +1223,7 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
 <p>The convolution of $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$ with filter $\mathbf{W} \in \mathbb{R}^{k \times k \times 1}$ using max-pooling, denoted $\mathbf{Z}^l \ast_{max} ~ \mathbf{W}$, restuls in</p>
 
 <p>\({\small
-\mathbf{Z}^{l+1} = \mathbf{Z}_k^l \ast_{max} \mathbf{W} = 
+\mathbf{Z}_k^l \ast_{max} \mathbf{W} = 
 \begin{bmatrix}
     \begin{bmatrix}
     \text{Max}(Z^l_k(1,1,1) \odot \mathbf{W})  &amp; \cdots &amp; \text{Max}(Z^l_k(1, n_l - k_p + 1,1 ) \odot \mathbf{W}) \\
@@ -1239,7 +1239,7 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
     \end{bmatrix}\\
 \end{bmatrix}
 }\)
-Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1}$.</p>
+Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1} = \mathbf{Z}<em>k^l \ast</em>{max} \mathbf{W}$.</p>
 
 <p><strong>Example</strong></p>
 
@@ -1425,7 +1425,7 @@ _________________________________________________________________
 
 <p>
 <center>
-<img src="/assets/img/post2/diagram-layres.png" alt="intersection" width="300" height="400" /> 
+<img src="/assets/img/post2/outputs/diagram-layres.png" alt="intersection" width="300" height="400" /> 
 </center>
 </p>
 
@@ -1556,7 +1556,7 @@ Epoch 5/5
 
 <p>
 <center>
-<img src="/assets/img/post2/model-prediction.png" alt="intersection" width="500" height="300" /> 
+<img src="/assets/img/post2/outputs/model-prediction.png" alt="intersection" width="500" height="300" /> 
 </center>
 </p>
 

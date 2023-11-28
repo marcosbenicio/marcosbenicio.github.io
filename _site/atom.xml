@@ -4,7 +4,7 @@
 	<title>Marcos Benício</title>
 	<link href="http://localhost:4000/atom.xml" rel="self"/>
 	<link href="http://localhost:4000"/>
-	<updated>2023-11-28T07:37:51-03:00</updated>
+	<updated>2023-11-28T08:49:30-03:00</updated>
 	<id>http://localhost:4000/blog</id>
 	<author>
 		<name>Marcos Benício</name>
@@ -198,7 +198,7 @@
 
 &lt;p&gt;
 &lt;center&gt;
-&lt;img src=&quot;/assets/img/post2/digit-9.png&quot; alt=&quot;intersection&quot; width=&quot;280&quot; height=&quot;280&quot; /&gt; 
+&lt;img src=&quot;/assets/img/post2/outputs/digit-9.png&quot; alt=&quot;intersection&quot; width=&quot;280&quot; height=&quot;280&quot; /&gt; 
 &lt;/center&gt;
 &lt;/p&gt;
 
@@ -368,14 +368,14 @@ x_{(i+k-1), ~j} &amp;amp; x_{(i+1),(j+1)} &amp;amp; \cdots &amp;amp; x_{(i+k-1),
 
 \[\text{Sum}(\mathbf{A}) = \sum_{i=1}^{k}\sum_{j=1}^{k} a_{i,j}\]
 
-&lt;p&gt;Then, we can define  a general two dimensional convolution operation between matrices $\mathbf{X}$ and $\mathbf{W}$, as&lt;/p&gt;
+&lt;p&gt;Then, we can define a general two dimensional convolution operation between matrices $\mathbf{X}$ and $\mathbf{W}$, as&lt;/p&gt;
 
 \[{\small
 \mathbf{X} \ast \mathbf{W} = \begin{bmatrix}
-\text{Sum}(x_k(1,1) \odot \mathbf{W}) &amp;amp;\text{Sum}(x_k(1,2) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(x_k(1,n-k+1) \odot \mathbf{W}) \\
-\text{Sum}(x_k(2,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(x_k(2,2) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp;\text{Sum}(x_k(2,n-k+1) \odot \mathbf{W})\\
-\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
-\text{Sum}(x_k(n-k+1,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(x_k(n-k+1,2) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(x_k(n-k+1,n-k+1) \odot \mathbf{W})
+\text{Sum}(x_k(1,1) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(x_k(1,n-k+1) \odot \mathbf{W}) \\
+\text{Sum}(x_k(2,1) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp;\text{Sum}(x_k(2,n-k+1) \odot \mathbf{W})\\
+\vdots  &amp;amp; \ddots &amp;amp; \vdots \\
+\text{Sum}(x_k(n-k+1,1) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(x_k(n-k+1,n-k+1) \odot \mathbf{W})
 \end{bmatrix}
 }\]
 
@@ -1022,7 +1022,7 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
 &lt;p&gt;The convolution of $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$ with filter $\mathbf{W} \in \mathbb{R}^{k \times k \times 1}$ using max-pooling, denoted $\mathbf{Z}^l \ast_{max} ~ \mathbf{W}$, restuls in&lt;/p&gt;
 
 &lt;p&gt;\({\small
-\mathbf{Z}^{l+1} = \mathbf{Z}_k^l \ast_{max} \mathbf{W} = 
+\mathbf{Z}_k^l \ast_{max} \mathbf{W} = 
 \begin{bmatrix}
     \begin{bmatrix}
     \text{Max}(Z^l_k(1,1,1) \odot \mathbf{W})  &amp;amp; \cdots &amp;amp; \text{Max}(Z^l_k(1, n_l - k_p + 1,1 ) \odot \mathbf{W}) \\
@@ -1038,7 +1038,7 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
     \end{bmatrix}\\
 \end{bmatrix}
 }\)
-Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1}$.&lt;/p&gt;
+Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1} = \mathbf{Z}&lt;em&gt;k^l \ast&lt;/em&gt;{max} \mathbf{W}$.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
 
@@ -1224,7 +1224,7 @@ _________________________________________________________________
 
 &lt;p&gt;
 &lt;center&gt;
-&lt;img src=&quot;/assets/img/post2/diagram-layres.png&quot; alt=&quot;intersection&quot; width=&quot;300&quot; height=&quot;400&quot; /&gt; 
+&lt;img src=&quot;/assets/img/post2/outputs/diagram-layres.png&quot; alt=&quot;intersection&quot; width=&quot;300&quot; height=&quot;400&quot; /&gt; 
 &lt;/center&gt;
 &lt;/p&gt;
 
@@ -1355,7 +1355,7 @@ Epoch 5/5
 
 &lt;p&gt;
 &lt;center&gt;
-&lt;img src=&quot;/assets/img/post2/model-prediction.png&quot; alt=&quot;intersection&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt; 
+&lt;img src=&quot;/assets/img/post2/outputs/model-prediction.png&quot; alt=&quot;intersection&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt; 
 &lt;/center&gt;
 &lt;/p&gt;
 
