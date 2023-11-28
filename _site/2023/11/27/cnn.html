@@ -236,23 +236,23 @@
 <div class="post">
   <h1 id="outline"><strong>Outline</strong></h1>
 <ul>
-  <li><a href="##Convolutions">Convolutions</a>
+  <li><a href="#convolutions">Convolutions</a>
     <ul>
-      <li><a href="##One-Dimensional-Convolutions">One Dimensional Convolutions</a></li>
-      <li><a href="##Two-Dimensional-Convolutions">Two Dimensional Convolutions</a></li>
+      <li><a href="#one-dimensional-convolutions">One Dimensional Convolutions</a></li>
+      <li><a href="#two-dimensional-convolutions">Two Dimensional Convolutions</a></li>
     </ul>
   </li>
-  <li><a href="#Three-Dimensional-on-CNNs">Three Dimensional Convolutions on CNNs</a>
+  <li><a href="#three-dimensional-on-cnns">Three Dimensional Convolutions on CNNs</a>
     <ul>
-      <li><a href="##Convolutional-Layer">Convolutional Layer</a>
+      <li><a href="#convolutional-layer">Convolutional Layer</a>
         <ul>
-          <li><a href="###Padding-and-Striding">Padding and Striding</a></li>
+          <li><a href="#padding-and-striding">Padding and Striding</a></li>
         </ul>
       </li>
-      <li><a href="##Max-pooling-Layer">Max-pooling Layer</a></li>
+      <li><a href="#max-pooling-layer">Max-pooling Layer</a></li>
     </ul>
   </li>
-  <li><a href="#Convolutional-Neural-Network-for-Classification">Convolutional Neural Network for Classification</a></li>
+  <li><a href="#convolutional-neural-network-for-classification">Convolutional Neural Network for Classification</a></li>
 </ul>
 
 <h1 id="data"><strong>Data</strong></h1>
@@ -1222,7 +1222,7 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
 
 <p>The convolution of $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$ with filter $\mathbf{W} \in \mathbb{R}^{k \times k \times 1}$ using max-pooling, denoted $\mathbf{Z}^l \ast_{max} ~ \mathbf{W}$, restuls in</p>
 
-<p>\({\small
+\[{\small
 \mathbf{Z}_k^l \ast_{max} \mathbf{W} = 
 \begin{bmatrix}
     \begin{bmatrix}
@@ -1238,8 +1238,9 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
     \text{Max}(Z^l_k(n_l - k_p + 1,1,m_l) \odot \mathbf{W}) &amp; \cdots &amp; \text{Max}(Z^l_k(n_l - k_p + 1, n_l - k_p + 1, m_l) \odot \mathbf{W})
     \end{bmatrix}\\
 \end{bmatrix}
-}\)
-Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1} = \mathbf{Z}<em>k^l \ast</em>{max} \mathbf{W}$.</p>
+}\]
+
+<p>Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1} = \mathbf{Z_k}^l \ast_{max} \mathbf{W}$.</p>
 
 <p><strong>Example</strong></p>
 

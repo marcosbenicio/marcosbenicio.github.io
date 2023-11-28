@@ -4,7 +4,7 @@
 	<title>Marcos Benício</title>
 	<link href="http://localhost:4000/atom.xml" rel="self"/>
 	<link href="http://localhost:4000"/>
-	<updated>2023-11-28T09:14:53-03:00</updated>
+	<updated>2023-11-28T11:43:33-03:00</updated>
 	<id>http://localhost:4000/blog</id>
 	<author>
 		<name>Marcos Benício</name>
@@ -35,23 +35,23 @@
 		<id>http://localhost:4000/2023/11/27/cnn</id>
 		<content type="html">&lt;h1 id=&quot;outline&quot;&gt;&lt;strong&gt;Outline&lt;/strong&gt;&lt;/h1&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;##Convolutions&quot;&gt;Convolutions&lt;/a&gt;
+  &lt;li&gt;&lt;a href=&quot;#convolutions&quot;&gt;Convolutions&lt;/a&gt;
     &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;##One-Dimensional-Convolutions&quot;&gt;One Dimensional Convolutions&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;##Two-Dimensional-Convolutions&quot;&gt;Two Dimensional Convolutions&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#one-dimensional-convolutions&quot;&gt;One Dimensional Convolutions&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#two-dimensional-convolutions&quot;&gt;Two Dimensional Convolutions&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#Three-Dimensional-on-CNNs&quot;&gt;Three Dimensional Convolutions on CNNs&lt;/a&gt;
+  &lt;li&gt;&lt;a href=&quot;#three-dimensional-on-cnns&quot;&gt;Three Dimensional Convolutions on CNNs&lt;/a&gt;
     &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;##Convolutional-Layer&quot;&gt;Convolutional Layer&lt;/a&gt;
+      &lt;li&gt;&lt;a href=&quot;#convolutional-layer&quot;&gt;Convolutional Layer&lt;/a&gt;
         &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;###Padding-and-Striding&quot;&gt;Padding and Striding&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#padding-and-striding&quot;&gt;Padding and Striding&lt;/a&gt;&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;##Max-pooling-Layer&quot;&gt;Max-pooling Layer&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#max-pooling-layer&quot;&gt;Max-pooling Layer&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#Convolutional-Neural-Network-for-Classification&quot;&gt;Convolutional Neural Network for Classification&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#convolutional-neural-network-for-classification&quot;&gt;Convolutional Neural Network for Classification&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&quot;data&quot;&gt;&lt;strong&gt;Data&lt;/strong&gt;&lt;/h1&gt;
@@ -1021,7 +1021,7 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
 
 &lt;p&gt;The convolution of $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$ with filter $\mathbf{W} \in \mathbb{R}^{k \times k \times 1}$ using max-pooling, denoted $\mathbf{Z}^l \ast_{max} ~ \mathbf{W}$, restuls in&lt;/p&gt;
 
-&lt;p&gt;\({\small
+\[{\small
 \mathbf{Z}_k^l \ast_{max} \mathbf{W} = 
 \begin{bmatrix}
     \begin{bmatrix}
@@ -1037,8 +1037,9 @@ $(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \tim
     \text{Max}(Z^l_k(n_l - k_p + 1,1,m_l) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Max}(Z^l_k(n_l - k_p + 1, n_l - k_p + 1, m_l) \odot \mathbf{W})
     \end{bmatrix}\\
 \end{bmatrix}
-}\)
-Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1} = \mathbf{Z}&lt;em&gt;k^l \ast&lt;/em&gt;{max} \mathbf{W}$.&lt;/p&gt;
+}\]
+
+&lt;p&gt;Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1} = \mathbf{Z_k}^l \ast_{max} \mathbf{W}$.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
 
