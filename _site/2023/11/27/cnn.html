@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+
+
+
+
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1>
+    
+    <meta property="og:image" content="/assets/img/post2/conv-layer-multiples-filters.png"/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/assets/css/syntax_highlight.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="atom.xml" />
+
+    <!-- MathJax Configuration -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {
+            inlineMath: [['$','$'], ['\\(','\\)']],
+            displayMath: [['$$','$$'], ['\\[','\\]']],
+            processEscapes: true
+          }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+    <script>
+      function show_tag_section(tag) {
+        // Hide all other tag divs
+        document.getElementById('all_posts').style.display = 'none';
+        var tag_divs = document.getElementsByClassName('by_tag');
+        var i;
+        for (var i = 0; i < tag_divs.length; i++) {
+          tag_divs[i].style.display = 'none';
+        }
+        // Show the one we want
+        document.getElementById(tag).style.display = 'block';
+      }
+    </script>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Understanding Convolutional Layers in a Convolutional Neural Network | Marcos Benício</title>
+<meta name="generator" content="Jekyll v4.3.2" />
+<meta property="og:title" content="Understanding Convolutional Layers in a Convolutional Neural Network" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A Convolutional Neural Network (CNN) is essentially a feedforward Multi-Layer Perceptron (MLP) that is designed to recognize local patterns and sparsity (not all connections between neurons are active or significant) in input data. Like the MLP, each neuron is connected to others through learnable weights. These weights are adjusted during training to optimize the network’s performance for a specific task. The main difference between MLPs and CNNs is that the latter is developed for processing multidimensional data, such as images or videos. Also, CNNs have a more diverse set of specialized layers, including convolutional layers, pooling layers, and upsampling layers, which are optimized for processing spatial (image) and temporal data (video). In this article, we will focus on the convolutional layer and the max pooling layers, which are the core of CNNs." />
+<meta property="og:description" content="A Convolutional Neural Network (CNN) is essentially a feedforward Multi-Layer Perceptron (MLP) that is designed to recognize local patterns and sparsity (not all connections between neurons are active or significant) in input data. Like the MLP, each neuron is connected to others through learnable weights. These weights are adjusted during training to optimize the network’s performance for a specific task. The main difference between MLPs and CNNs is that the latter is developed for processing multidimensional data, such as images or videos. Also, CNNs have a more diverse set of specialized layers, including convolutional layers, pooling layers, and upsampling layers, which are optimized for processing spatial (image) and temporal data (video). In this article, we will focus on the convolutional layer and the max pooling layers, which are the core of CNNs." />
+<link rel="canonical" href="http://localhost:4000/2023/11/27/cnn.html" />
+<meta property="og:url" content="http://localhost:4000/2023/11/27/cnn.html" />
+<meta property="og:site_name" content="Marcos Benício" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2023-11-27T00:00:00-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Understanding Convolutional Layers in a Convolutional Neural Network" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-11-27T00:00:00-03:00","datePublished":"2023-11-27T00:00:00-03:00","description":"A Convolutional Neural Network (CNN) is essentially a feedforward Multi-Layer Perceptron (MLP) that is designed to recognize local patterns and sparsity (not all connections between neurons are active or significant) in input data. Like the MLP, each neuron is connected to others through learnable weights. These weights are adjusted during training to optimize the network’s performance for a specific task. The main difference between MLPs and CNNs is that the latter is developed for processing multidimensional data, such as images or videos. Also, CNNs have a more diverse set of specialized layers, including convolutional layers, pooling layers, and upsampling layers, which are optimized for processing spatial (image) and temporal data (video). In this article, we will focus on the convolutional layer and the max pooling layers, which are the core of CNNs.","headline":"Understanding Convolutional Layers in a Convolutional Neural Network","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2023/11/27/cnn.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/img/profile_photo.png"}},"url":"http://localhost:4000/2023/11/27/cnn.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body onload="show_tag_section('all_posts')">
+
+    <div class="header">
+
+      <!-- Large header banner on left for large display widths -->
+      <div class="big_header">
+
+        <!-- Name -->
+        <div class="name_group">
+          <h1><a href="/">Marcos Benício</a></h1>
+        </div>
+
+        <!-- <a href=""><img src="/assets/img/profile_photo.png" alt="Logo" class="center_img" ></a>-->
+        <a href="/"><img src="/assets/img/profile_photo.png" alt="Logo" class="center_img" ></a>
+        <!--<a href=""><img src="/assets/img/profile_photo.png" alt="Logo" class="center_img" ></a>-->
+
+
+
+        <!-- Position + company -->
+        <div class="link_group">
+
+          <div class="row">
+              <div class="col1">
+                <span> M.sc in Physics</span>
+              </div>
+          </div>
+
+          <div class="row">
+            <!-- <a href=""-->
+              <div class="col1">
+                <img src="/assets/img/brazil_icon.png" height="30" width="30">
+                <!-- <span>  </span>-->
+              </div>
+            </a>
+          </div>
+
+          <div class="row">
+            <div class="col1">
+              <img src="/assets/img/place_icon_light.png" height="16" width="16">
+              <span> Niterói, RJ </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Badges/links -->
+        <div class="link_group">
+
+          <div class="row">
+            <a href="https://github.com/marcosbenicio">
+              <div class="col2">
+                <img src="/assets/img/github_icon_light.png" height="16" width="16">
+                <span> Github </span>
+              </div>
+            </a>
+            <a href="https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b">
+              <div class="col2">
+                <img src="/assets/img/linkedin_icon_light.png" height="16" width="16">
+                <span> LinkedIn </span>
+              </div>
+            </a>
+          </div>
+
+          <div class="row">
+            <a href="mailto:marcosbenicio0102@gmail.com">
+              <div class="col2">
+                <img src="/assets/img/email_icon_light.png" height="16" width="16">
+                <span> Email </span>
+              </div>
+            </a>
+            <a href="/assets/files/resume.pdf">
+              <div class="col2">
+                <img src="/assets/img/cv_icon_light.png" height="16" width="16">
+                <span> Resume </span>
+              </div>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Smaller header banner on top for small display widths -->
+      <div class="small_header">
+
+        <!-- Name -->
+        <div class="small_header_box">
+          <div class="name_header_box">
+            <div class="name_header_img">
+              <a href="/">
+                <img src="/assets/img/profile_photo.png" alt="Logo" height="60">
+              </a>
+            </div>
+            <div class="name_header_name">
+              <h1><a href="/">Marcos Benício</a></h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- Position + Company -->
+        <div class="small_header_box">
+          <div class="row">
+            <div class="col1">
+              <span> M.sc in Physics </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col1">
+             <!-- <a href=""> -->
+                  <img src="/assets/img/brazil_icon.png" height="30" width="30">
+                  <!-- <span>  </span> -->
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges/links -->
+        <div class="small_header_box">
+                <div class="row">
+                  <a href="https://github.com/marcosbenicio">
+                    <div class="col2">
+                      <img src="/assets/img/github_icon_light.png" height="16" width="16">
+                      <span> Github </span>
+                    </div>
+                  </a>
+                  <a href="https://linkedin.com/in/marcos-benício-de-andrade-alonso-415a5b16b">
+                    <div class="col2">
+                      <img src="/assets/img/linkedin_icon_light.png" height="16" width="16">
+                      <span> LinkedIn </span>
+                    </div>
+                  </a>
+                </div>
+
+                <div class="row">
+                  <a href="mailto:marcosbenicio0102@gmail.com">
+                    <div class="col2">
+                      <img src="/assets/img/email_icon_light.png" height="16" width="16">
+                      <span> Email </span>
+                    </div>
+                  </a>
+                  <a href="/assets/files/resume.pdf">
+                    <div class="col2">
+                      <img src="/assets/img/cv_icon_light.png" height="16" width="16">
+                      <span> Resume </span>
+                    </div>
+                  </a>
+                </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Page content -->
+    <div class="content">
+
+      <h1>Understanding Convolutional Layers in a Convolutional Neural Network</h1>
+<p class="meta">27 Nov 2023 - Tags: Convolutional Neural Network and Classification</p>
+
+<div class="button_container">
+  
+  
+  
+</div>
+
+
+<div class="post">
+  <h1 id="outline"><strong>Outline</strong></h1>
+<ul>
+  <li><a href="##Convolutions">Convolutions</a>
+    <ul>
+      <li><a href="##One-Dimensional-Convolutions">One Dimensional Convolutions</a></li>
+      <li><a href="##Two-Dimensional-Convolutions">Two Dimensional Convolutions</a></li>
+    </ul>
+  </li>
+  <li><a href="#Three-Dimensional-on-CNNs">Three Dimensional Convolutions on CNNs</a>
+    <ul>
+      <li><a href="##Convolutional-Layer">Convolutional Layer</a>
+        <ul>
+          <li><a href="###Padding-and-Striding">Padding and Striding</a></li>
+        </ul>
+      </li>
+      <li><a href="##Max-pooling-Layer">Max-pooling Layer</a></li>
+    </ul>
+  </li>
+  <li><a href="#Convolutional-Neural-Network-for-Classification">Convolutional Neural Network for Classification</a></li>
+</ul>
+
+<h1 id="data"><strong>Data</strong></h1>
+
+<p>First let’s import the necessaries packages and download the dataset:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">'</span><span class="s">TF_CPP_MIN_LOG_LEVEL</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">2</span><span class="sh">'</span> 
+<span class="c1"># 0 = all messages are logged (default behavior)
+# 1 = INFO messages are not printed
+# 2 = INFO and WARNING messages are not printed
+# 3 = INFO, WARNING, and ERROR messages are not printed
+</span>
+<span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">from</span> <span class="n">tensorflow.keras.utils</span> <span class="kn">import</span> <span class="n">to_categorical</span><span class="p">,</span> <span class="n">plot_model</span>
+<span class="kn">from</span> <span class="n">scipy.ndimage</span> <span class="kn">import</span> <span class="n">convolve</span>
+<span class="kn">from</span> <span class="n">keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="n">keras.layers</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">MaxPool2D</span><span class="p">,</span> <span class="n">Flatten</span>
+<span class="kn">from</span> <span class="n">keras.losses</span> <span class="kn">import</span> <span class="n">Loss</span>
+</code></pre></div></div>
+
+<p>Here I use the MNIST dataset, which contains images of handwritten digits from 0 to 9. The first column of the dataset contains the label of the image (i.e., the digit it represents), and the remaining 784 columns (28 x 28 pixels) contain the pixel values of the image.</p>
+
+<p>To visualize the images, we need to reshape the 784 columns into a 28 x 28 matrix and plot:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show_img</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># show figures in the dataset
+</span>    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">24</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span><span class="mi">28</span><span class="p">)</span> <span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="nf">get_cmap</span><span class="p">(</span><span class="sh">'</span><span class="s">gray</span><span class="sh">'</span><span class="p">))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="sh">'</span><span class="s">data/mnist_train_small.csv</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">train</span><span class="p">.</span><span class="nf">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div>
+<style scoped="">
+  .dataframe tbody tr th:only-of-type {
+      vertical-align: middle;
+  }
+  .dataframe tbody tr th {
+      vertical-align: top;
+      padding: 10px; /* Increase padding for more space within cells */
+  }
+  .dataframe thead th {
+      text-align: center; /* Change to center if that's your preference */
+      padding: 10px; /* Consistent padding with tbody cells */
+  }
+  .dataframe td, .dataframe th {
+      border: 1px solid #ddd; /* Optional: adds a border to each cell */
+      padding: 10px; /* Increase padding for more space within cells */
+  }
+  /* Optional: Add more spacing between rows for clarity */
+  .dataframe tr {
+      height: 50px; /* Adjust the height to give more space between rows */
+  }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>1x1</th>
+      <th>1x2</th>
+      <th>1x3</th>
+      <th>1x4</th>
+      <th>1x5</th>
+      <th>1x6</th>
+      <th>...</th>
+      <th>28x24</th>
+      <th>28x25</th>
+      <th>28x26</th>
+      <th>28x27</th>
+      <th>28x28</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>6</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>5</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>7</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>3 rows × 785 columns</p>
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># drop label column and select a row
+</span><span class="n">img</span> <span class="o">=</span> <span class="n">train</span><span class="p">.</span><span class="nf">drop</span><span class="p">(</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">).</span><span class="n">iloc</span><span class="p">[</span><span class="mi">80</span><span class="p">]</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<span class="nf">show_img</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>
+<center>
+<img src="/assets/img/post2/digit-9.png" alt="intersection" width="280" height="280" /> 
+</center>
+</p>
+
+<h1 id="convolutions"><strong>Convolutions</strong></h1>
+
+<p>First, let’s understand what is Convolutions. Convolution is a mathematical operation that involves sliding a small matrix, known as a kernel or filter, across a larger matrix representing the input data, such as an image. During this process, the element-wise product $\odot$ is computed between the kernel and each local region (sub-matrix) it covers on the input data matrix. The result of this operation is a new matrix, called a feature map, which encodes information about the presence, absence, or strength of specific features in the input data.</p>
+
+<p>Let’s examine the following convolutional operations to illustrate this concept.</p>
+
+<h2 id="one-dimensional-convolutions"><strong>One Dimensional Convolutions</strong></h2>
+
+<p>Let’s consider $\mathbf{x}$ as an input vector with $n$ elements and $\mathbf{w}$ as a weight vector, also known as a  <strong>filter</strong>, with $k \leq n$.</p>
+
+\[\mathbf{x} =
+\left( \begin{array}{c}
+x_{1}\\
+x_{2}\\
+\vdots\\
+x_{n}
+\end{array} \right), ~~~~
+\mathbf{w} =
+\left( \begin{array}{c}
+w_{1}\\
+w_{2}\\
+\vdots\\
+w_{k}
+\end{array} \right)\]
+
+<p>Here $k$  is known as the  <strong>window size</strong> and indicates the size of the filter applied to the input vector $\mathbf{x}$. It defines the region of the local neighborhood within the input vector $\mathbf{x}$ used for computing output values. To proceed, we define a subvector of $\mathbf{x}$ with the same size as the filter vector. Let $\mathbf{x}_k(i)$ denote the window of $\mathbf{x}$  of size $k$ starting at position $i$:</p>
+
+\[\mathbf{x}_k(i) = \left( \begin{array}{c}
+x_i \\
+x_{i+1} \\
+\vdots\\
+x_{i+k-1} 
+\end{array} \right).\]
+
+<p>For $k \leq n$, it must be that $i+k-1 \leq n$, implying $1 \leq i \leq n-k+1$. As a validity test, if we start at $i =  n-k+1$, then the end position is $i+k-1 = n$. If we calculate the total number of elements by the difference in position provides the window size $k$, confirmed by $n - i = n - (n-k+1) = k$. For example, with $n = 5$ and $k = 3$:</p>
+
+\[\mathbf{x} =
+\left( \begin{array}{c}
+x_{1}\\
+x_{2}\\
+x_{3}\\
+x_{4}\\
+x_{5}
+\end{array} \right), ~~~~
+\mathbf{w} =
+\left( \begin{array}{c}
+w_{1}\\
+w_{2}\\
+w_{3}
+\end{array} \right)\]
+
+<p>the window of $\mathbf{x}$ from $i = 2$ to $i+k-1 = 4$ is:</p>
+
+\[\mathbf{x}_3(2) = \left( \begin{array}{c}
+x_2 \\
+x_{3}\\
+x_{4}
+\end{array} \right)\]
+
+<p><strong>Example</strong></p>
+
+<p>Let’s first consider a particular example with input vector $\mathbf{x}$ of size $n = 5$ and a weight vector with window size $k = 3$. The vectors are illustrated in the following figure:</p>
+
+<p>
+<center>
+<img src="/assets/img/post2/1d-conv.png" alt="intersection" width="700" height="400" /> 
+</center>
+</p>
+
+<p>The convolution steps for the sliding windows of $\mathbf{x}$ with the filter $\mathbf{w}$ are:</p>
+
+\[\sum \mathbf{x}_3(1) \odot \mathbf{w} = \sum (1, 3, -1)^T \odot (1, 0, 2)^T = \sum  (1 \cdot 1, 3 \cdot 0, -1 \cdot 2) = 1 + 0 - 2 = -1,\]
+
+\[\sum \mathbf{x}_3(2) \odot \mathbf{w} = \sum (3, -1, 2)^T \odot (1, 0, 2)^T = \sum  (3 \cdot 1, -1 \cdot 0, 2 \cdot 2) = 3 + 0 + 4 = 7,\]
+
+\[\sum \mathbf{x}_3(3) \odot \mathbf{w} = \sum (-1, 2, 3)^T \odot (1, 0, 2)^T = \sum  (-1 \cdot 1, 2 \cdot 0, 3 \cdot 2) = -1 + 0 + 6 = 5.\]
+
+<p>The element-wise product $\odot$  , also known as the Hadamard product, multiplies corresponding elements in two vectors. Unlike the typical inner product, which multiplies an element by a column, this operation multiplies an element by its corresponding element in another vector. This steps provide the convolution between the two vectors resulting in a vector of size n-k+1 = 3. Thus, the convolution $\mathbf{x} * \mathbf{w}$ is:</p>
+
+\[\mathbf{x} * \mathbf{w} =
+\left( \begin{array}{c}
+-1\\
+7\\
+5
+\end{array} \right)\]
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Code for the example
+</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="c1"># flip the filter W to use the convolve function
+# as expected in machine learning and deep learning context
+</span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">flip</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+
+<span class="c1"># perform 1D convolution
+</span><span class="n">output</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">convolve</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="sh">'</span><span class="s">valid</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Input vector X:</span><span class="sh">"</span><span class="p">,</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">filter W:</span><span class="sh">"</span><span class="p">,</span> <span class="n">W</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">output X*W:</span><span class="sh">"</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input vector X: (5,)
+filter W: (3,)
+output X*W: [-1  7  5]
+</code></pre></div></div>
+
+<p>This demonstrates that convolution is an element-wise product between a subvector and a weight vector of the same size, providing a scalar value when summed, which forms the result of the convolution operation.</p>
+
+<p>To simplify the notation, let’s adopt the convention that for a vector $\mathbf{a} \in \mathbb{R}^k$, define the summation operator as one that adds all elements of the vector. That is,</p>
+
+\[\text{Sum}(\mathbf{a}) = \sum_{i=1}^{k} a_{i}.\]
+
+<p>From the example, we would have</p>
+
+\[\sum \mathbf{x}_3(1) \odot \mathbf{w} = \text{Sum}\bigg( \mathbf{x}_3(1) \odot \mathbf{w} \bigg)= 1 + 0 - 2 = -1.\]
+
+<p>Then, we can define a general one dimensional convolution operation between $\mathbf{x}$ and $\mathbf{w}$, denoted by the asterisk symbol $\ast$, as</p>
+
+\[\mathbf{x} \ast \mathbf{w} = \left( \begin{array}{c}
+\text{Sum}(\mathbf{x}_k(1) \odot \mathbf{w})\\
+\vdots\\
+\text{Sum}(\mathbf{x}_k(i) \odot \mathbf{w})\\
+\vdots\\
+\text{Sum}(\mathbf{x}_k(n-k+1) \odot \mathbf{w})
+\end{array} \right).\]
+
+<p>The convolution of $\mathbf{x} \in \mathbf{R}^{n}$ and $\mathbf{W} \in \mathbf{R}^{k}$ results in a vector of size $n-k+1$. The i-th element from this output vector can be decomposed as</p>
+
+\[\text{Sum}(\mathbf{x_k}(i) \odot \mathbf{w}) = x_{i}w_1 + x_{i+1}w_2 + \cdots + x_{(i+k-1)}w_k =  \sum_{j=1}^{k} x_{(i+j-1)}w_j.\]
+
+<p>This shows that the sum is over all elements of the subvector $\mathbf{x}_k(i)$, so the last element of this sum must coincide with the last elements of $\mathbf{x}_k(i)$ and $\mathbf{w}$. This results in the convolution of $\mathbf{x}$ with $\mathbf{w}$ over the window defined by $k$.</p>
+
+<h2 id="two-dimensional-convolutions"><strong>Two Dimensional Convolutions</strong></h2>
+
+<p>We can extend the convolution operation to an matrix input instead of a vector. Let $\mathbf{X}$ be an input matrix with $n \times n$ elements and $\mathbf{W}$ be the weight matrix, also known as a  <strong>filter</strong>, with $k \leq n$.</p>
+
+\[\mathbf{X} = \begin{bmatrix}
+x_{1,1} &amp; x_{1,2} &amp; \cdots &amp; x_{1,n} \\
+x_{2,1} &amp; x_{2,2} &amp; \cdots &amp; x_{2,n} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+x_{n,1} &amp; x_{n,2} &amp; \cdots &amp; x_{n,n}
+\end{bmatrix},~~
+\mathbf{W}=\begin{bmatrix}
+w_{1,1} &amp; w_{1,2} &amp; \cdots &amp; w_{1,k} \\
+w_{2,1} &amp; w_{2,2} &amp; \cdots &amp; w_{2,k} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+w_{k,1} &amp; w_{k,2} &amp; \cdots &amp; w_{k,k}
+\end{bmatrix}\]
+
+<p>Here, similar to the one dimensional case,  $k$ is the window size and indicates the size of the filter applied to the input matrix $\mathbf{X}$. From the one dimensional case we can extend the notion of a sub vector to a sub matrix. Let $\mathbf{X}_k(i,j)$ denote the $k \times k$ submatrix of $\mathbf{X}$ starting at row $i$ and column $j$ as</p>
+
+\[\mathbf{X}_k(i,j) = \begin{bmatrix}
+x_{i,j} &amp; x_{i,~(j+1)} &amp; \cdots &amp; x_{i,~(j+k-1)} \\
+x_{(i+1),~j} &amp; x_{(i+2),~j} &amp; \cdots &amp; x_{(i+1), (j+k-1)} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+x_{(i+k-1), ~j} &amp; x_{(i+1),(j+1)} &amp; \cdots &amp; x_{(i+k-1),(j+k-1)}
+\end{bmatrix}\]
+
+<p>where for two indices, give that this is a square matrix, the range is simple $1 \leq (i,j) \leq n-k+1$.</p>
+
+<p>As for the one dimensional case, to simplify the notation, we adopt the convention that for a matrix $\mathbf{A} \in \mathbb{R}^{k \times k}$ define the summation operator as one that adds all elements of the matrix.</p>
+
+\[\text{Sum}(\mathbf{A}) = \sum_{i=1}^{k}\sum_{j=1}^{k} a_{i,j}\]
+
+<p>Then, we can define  a general two dimensional convolution operation between matrices $\mathbf{X}$ and $\mathbf{W}$, as</p>
+
+\[{\small
+\mathbf{X} \ast \mathbf{W} = \begin{bmatrix}
+\text{Sum}(x_k(1,1) \odot \mathbf{W}) &amp;\text{Sum}(x_k(1,2) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(x_k(1,n-k+1) \odot \mathbf{W}) \\
+\text{Sum}(x_k(2,1) \odot \mathbf{W}) &amp; \text{Sum}(x_k(2,2) \odot \mathbf{W}) &amp; \cdots &amp;\text{Sum}(x_k(2,n-k+1) \odot \mathbf{W})\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\text{Sum}(x_k(n-k+1,1) \odot \mathbf{W}) &amp; \text{Sum}(x_k(n-k+1,2) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(x_k(n-k+1,n-k+1) \odot \mathbf{W})
+\end{bmatrix}
+}\]
+
+<p>where</p>
+
+\[\text{Sum}(\mathbf{X}_k(i,j) \odot \mathbf{W})=\sum_{a=1}^{k}\sum_{b=1}^{k} x_{(i+a-1),(j+b-1)} w_{a,b}\]
+
+<p>The convolution of $\mathbf{X} \in \mathbf{R}^{n \times n}$ and $\mathbf{W} \in \mathbf{R}^{k \times k}$ results in a $(n-k+1) \times (n-k+1)$ matrix.</p>
+
+<p><strong>Example</strong></p>
+
+<p>Let’s consider a particular example with input matrix $\mathbf{X}$ with dimension  $3 \times 3$ (n = 3) and a weight matrix with dimension  $2 \times 2$ (k = 2). The matrices are illustrated in the following figure:</p>
+
+<p>
+<center>
+<img src="/assets/img/post2/2d-conv.png" alt="intersection" width="700" height="400" /> 
+</center>
+</p>
+
+<p>The convolution steps for the sliding windows of $\mathbf{X}$ with the filter $\mathbf{W}$ illustrated in the figure are mathematically translated to:</p>
+
+\[\text{Sum}(\mathbf{X}_k(1,1) \odot \mathbf{W})=\text{Sum}\bigg(
+    \begin{bmatrix} 
+    1 &amp; 2 \\
+    3 &amp; 1 
+    \end{bmatrix} 
+    \odot 
+    \begin{bmatrix} 
+    1 &amp; 0 \\
+    0 &amp; 1
+    \end{bmatrix} \bigg) =  2\]
+
+\[\text{Sum}(\mathbf{X}_2(1,2) \odot \mathbf{W}) = \text{Sum}\bigg(
+    \begin{bmatrix} 
+    2 &amp; 2 \\
+    1 &amp; 4
+    \end{bmatrix} 
+    \odot
+    \begin{bmatrix}
+    1 &amp; 0 \\
+    0 &amp; 1
+    \end{bmatrix} \bigg)= 6\]
+
+\[\text{Sum}(\mathbf{X}_2(2,1) \odot \mathbf{W}) = \text{Sum}\bigg( 
+    \begin{bmatrix} 
+    3 &amp; 1 \\ 
+    2 &amp; 1 \end{bmatrix} 
+    \odot \begin{bmatrix} 
+    1 &amp; 0 \\ 
+    0 &amp; 1 
+    \end{bmatrix} \bigg)= 4\]
+
+\[\text{Sum}(\mathbf{X}_2(2,2) \odot \mathbf{W}) = \text{Sum}\bigg( 
+    \begin{bmatrix} 
+    1 &amp; 4 \\
+    3 &amp; 3 \end{bmatrix}
+    \odot
+    \begin{bmatrix}
+    1 &amp; 0 \\ 
+    0 &amp; 1
+    \end{bmatrix} \bigg) = 4\]
+
+<p>The convolution $\mathbf{X}*\mathbf{W}$ has size $2 \times 2$, since  $n - k + 1 = 3 - 2 + 1 = 2$, and is given by</p>
+
+\[\mathbf{X}*\mathbf{W} = 
+    \begin{bmatrix} 
+        \text{Sum}(\mathbf{X}_2(1,1) \odot \mathbf{W}) &amp; \text{Sum}(\mathbf{X}_2(1,2) \odot \mathbf{W}) \\
+        \\
+        \text{Sum}(\mathbf{X}_2(2,1) \odot \mathbf{W}) &amp; \text{Sum}(\mathbf{X}_2(2,2) \odot \mathbf{W}) 
+    \end{bmatrix} = 
+    \begin{bmatrix} 
+        2 &amp; 6 \\
+        4 &amp; 4 
+    \end{bmatrix}\]
+
+<h1 id="three-dimensional-convolution-on-cnns"><strong>Three dimensional Convolution on CNNs</strong></h1>
+
+<p>We now extend the convolution operation to a three-dimensional matrix, also called a rank-3 tensor. The first dimension comprises the rows (height), second dimension the columns (width) and the third dimension the channels (number of 2D slices stacked along the depth axis). Typically in CNNs, we use a 3D filter $\mathbf{W} \in \mathbb{R}^{k \times k \times m}$, with the number of channels equal to the number of channels of the input tensor $\mathbf{X} \in \mathbb{R}^{n \times n \times m}$, in this case with $m$ channels each. Mathematically we represent as:</p>
+
+\[\mathbf{X}=
+\begin{bmatrix}
+\begin{bmatrix}
+x_{1,1,1} &amp; x_{1,2,1} &amp; \cdots &amp; x_{1,n,1} \\
+x_{2,1,1} &amp; x_{2,2,1} &amp; \cdots &amp; x_{2,n,1} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+x_{n,1,1} &amp; x_{n,2,1} &amp; \cdots &amp; x_{n,n,1}
+\end{bmatrix}\\
+\\
+\begin{bmatrix}
+x_{1,1,2} &amp; x_{1,2,2} &amp; \cdots &amp; x_{1,n,2} \\
+x_{2,1,2} &amp; x_{2,2,2} &amp; \cdots &amp; x_{2,n,2} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+x_{n,1,2} &amp; x_{n,2,2} &amp; \cdots &amp; x_{n,n,2}
+\end{bmatrix}\\
+\\
+\vdots\\
+\\
+\begin{bmatrix}
+x_{1,1,m} &amp; x_{1,2,m} &amp; \cdots &amp; x_{1,n,m} \\
+x_{2,1,m} &amp; x_{2,2,m} &amp; \cdots &amp; x_{2,n,m} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+x_{n,1,m} &amp; x_{n,2,m} &amp; \cdots &amp; x_{n,n,m}
+\end{bmatrix}
+\end{bmatrix},~~
+
+
+\mathbf{W}= \begin{bmatrix}
+\begin{bmatrix}
+w_{1,1,1} &amp; w_{1,2,1} &amp; \cdots &amp; w_{1,k,1} \\
+w_{2,1,1} &amp; w_{2,2,1} &amp; \cdots &amp; w_{2,k,1} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+w_{k,1,1} &amp; w_{k,2,1} &amp; \cdots &amp; w_{k,k,1}
+\end{bmatrix}\\
+\\
+\begin{bmatrix}
+w_{1,1,2} &amp; w_{1,2,2} &amp; \cdots &amp; w_{1,k,2} \\
+w_{2,1,2} &amp; w_{2,2,2} &amp; \cdots &amp; w_{2,k,2} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+w_{k,1,2} &amp; w_{k,2,2} &amp; \cdots &amp; w_{k,k,2}
+\end{bmatrix}
+\\
+\vdots\\
+\\
+\begin{bmatrix}
+w_{1,1,r} &amp; w_{1,2,r} &amp; \cdots &amp; w_{1,k,m} \\
+w_{2,1,r} &amp; w_{2,2,r} &amp; \cdots &amp; w_{2,k,m} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+w_{k,1,r} &amp; w_{k,2,r} &amp; \cdots &amp; w_{k,k,m}
+
+\end{bmatrix}
+\end{bmatrix}\]
+
+<p>Similar to convolutions in other dimensions, the window size must satisfy $k \leq n$, and the total number of slice matrices along the depth of the filter and input tensor are fixed as $m$. This mathematical representation of a tensor may seem complex at first, but <strong>it closely resembles how Python libraries like NumPy represent a tensor</strong>, with exception of the order of rows, columns and depth.</p>
+
+<p>When defining a sub-tensor from the input tensor $\mathbf{X}$, let $\mathbf{X}_k(i,j)$ denote a $k \times k \times m$ sub-tensor of $\mathbf{X}$ that starts at row $i$, column $j$, and encompasses the full depth $m$ of the input. In the context where the filter spans the entire depth of the input (i.e., the number of channels $r$ in the filter is equal to the depth $m$ of the input), the depth index $q$ is not needed because the filter processes all depth layers simultaneously. Therefore, the sub-tensor $\mathbf{X}_k(i,j)$ is defined as follows:</p>
+
+\[\mathbf{X}_k(i,j,q = m)= \mathbf{X}_k(i,j) =
+\begin{bmatrix}
+\begin{bmatrix}
+x_{i,j,1} &amp; x_{i,(j+1),1} &amp; \cdots &amp; x_{i,(j+k-1),1} \\
+x_{(i+1),j,1} &amp; x_{(i+1),(j+1),1} &amp; \cdots &amp; x_{(i+1),(j+k-1),1} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+x_{(i+k-1),j,1} &amp; x_{(i+k-1),(j+1),1} &amp; \cdots &amp; x_{(i+k-1),(j+k-1),1}
+\end{bmatrix}\\
+\\
+\\
+\begin{bmatrix}
+x_{i,j,2} &amp; x_{i,(j+1),2} &amp; \cdots &amp; x_{i,(j+k-1),2} \\
+x_{(i+1),j,2} &amp; x_{(i+1),(j+1),2} &amp; \cdots &amp; x_{(i+1),(j+k-1),2} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+x_{(i+k-1),j,2} &amp; x_{(i+k-1),(j+1),2} &amp; \cdots &amp; x_{(i+k-1),(j+k-1),2}
+\end{bmatrix}\\
+\\
+\vdots\\
+\\
+\begin{bmatrix}
+x_{i,j,m} &amp; x_{i,(j+1),m} &amp; \cdots &amp; x_{i,(j+k-1),m} \\
+x_{(i+1),j,m} &amp; x_{(i+1),(j+1),m} &amp; \cdots &amp; x_{2,n,m} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+x_{(i+k-1),j,m} &amp; x_{(i+k-1),(j+1),m} &amp; \cdots &amp; x_{(i+k-1),(j+k-1),m}
+\end{bmatrix}
+\end{bmatrix}\]
+
+<p>The indices from the subtensor for rows and columns range from $1 \leq (i,j) \leq n-k+1$, where $n$ is the dimension of the input $\mathbf{X}$ and $k$ is the window size of the filter $\mathbf{W}$, consistent with two-dimensional convolutions. The depth dimension is fixed at $m$, so it’s redundant carrying $q = m$ in our notation.</p>
+
+<p>As in the case of convolution in lower dimensions, we define the summation operator as one that adds all elements within the tensor. Therefore, given a tensor $\mathbf{A} \in \mathbb{R}^{k \times k \times m}$, the summation operation is defined as:</p>
+
+\[\text{Sum}(\mathbf{A}) = \sum_{a=1}^{k}\sum_{b=1}^{k}\sum_{q=1}^{m}a_{ijq}\]
+
+<p>This summation adds up all the elements in the tensor $\mathbf{A}$, where $a_{ijq}$ denotes the element located at the $i$-th row, $j$-th column, and $q$-th depth layer.</p>
+
+<p>Before we generalize the convolution operation to three dimensions, let’s consider an example to illustrate the logic behind this mathematical notation and how it translates to the operations performed in a CNN.</p>
+
+<p><strong>Example</strong></p>
+
+<p>Consider a input tensor $\mathbf{X}$ with dimension  $3 \times 3 \times 3$ (n = 3 and m = 3 channels) and a filter with dimension  $2 \times 2 \times 3$ ( windows size with k = 2 and m = 3 channels). The tensors are illustrated in the following figure:</p>
+
+<p>
+<center>
+<img src="/assets/img/post2/3d-conv.png" alt="intersection" width="800" height="500" /> 
+</center>
+</p>
+
+<p>The convolution steps for the sliding windows of $\mathbf{X}$ with the filter $\mathbf{W}$ illustrated in the figure are:</p>
+
+\[{\small
+\text{Sum}(\mathbf{X}_2(1,1) \odot \mathbf{W}) = \text{Sum}\bigg( 
+\begin{bmatrix} 
+    \begin{bmatrix} 
+        1 &amp; -1 \\ 
+        2 &amp; 1 
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        2 &amp; 1 \\
+        3 &amp; -1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        1 &amp; -2 \\ 
+        2 &amp; 1 
+    \end{bmatrix} 
+\end{bmatrix} 
+\odot 
+\begin{bmatrix} 
+    \begin{bmatrix} 
+        1 &amp; 1 \\
+        2 &amp; 0 
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        1 &amp; 0 \\ 
+        0 &amp; 1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        0 &amp; 1 \\
+        1 &amp; 0 
+    \end{bmatrix} 
+\end{bmatrix} \bigg) = \text{Sum}\bigg(   
+    \begin{bmatrix} 
+    \begin{bmatrix} 
+        1  &amp; -1  \\ 
+        4 &amp; 0 
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        2 &amp; 0 \\
+        0 &amp; -1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        0 &amp; -2 \\ 
+        2 &amp; 0 
+    \end{bmatrix} 
+\end{bmatrix} \bigg) = 1 - 1 + 4 +2 -1 -2+ 2 = 5 
+}\]
+
+\[{\small
+\text{Sum}(\mathbf{X}_2(1,2) \odot \mathbf{W}) = \text{Sum}\bigg(
+\begin{bmatrix}
+    \begin{bmatrix}
+        -1 &amp; 3 \\
+        1 &amp; -4
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        1 &amp; 3 \\
+        -1 &amp; 1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        -2 &amp; 4 \\
+        1 &amp; -2
+    \end{bmatrix}
+\end{bmatrix}
+\odot
+\begin{bmatrix}
+    \begin{bmatrix}
+        1 &amp; 1 \\
+        2 &amp; 0
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        1 &amp; 0 \\
+        0 &amp; 1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        0 &amp; 1 \\
+        1 &amp; 0
+    \end{bmatrix}
+\end{bmatrix} \bigg) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    -1 &amp; 3 \\
+    2 &amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    1 &amp; 0 \\
+    0 &amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp; 4 \\
+    1 &amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = -1 + 3 + 2 + 1 + 1 + 4 + 1 = 11 
+}\]
+
+\[{\small
+\text{Sum}(\mathbf{X}_2(2,1) \odot \mathbf{W}) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    2 &amp; 1 \\
+    3 &amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    3 &amp; -1 \\
+    1 &amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    2 &amp; 1 \\
+    1 &amp; 3
+\end{bmatrix}
+\end{bmatrix}
+\odot
+\begin{bmatrix}
+\begin{bmatrix}
+    1 &amp; 1 \\
+    2 &amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    1 &amp; 0 \\
+    0 &amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    2 &amp; 1 \\
+    6 &amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    3 &amp; 0 \\
+    0 &amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = 2 + 1 + 6 + 3 + 1 + 1 + 1 = 15
+}\]
+
+\[{\small
+\text{Sum}(\mathbf{X}_2(2,2) \odot \mathbf{W}) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    1 &amp; 4 \\
+    1 &amp; 2
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    -1 &amp; 1 \\
+    1 &amp; -2
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    1 &amp; -2 \\
+    3 &amp; -1
+    \end{bmatrix}
+\end{bmatrix}
+\odot
+\begin{bmatrix}
+\begin{bmatrix}
+    1 &amp; 1 \\
+    2 &amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    1 &amp; 0 \\
+    0 &amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp; 1 \\
+    1 &amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    1 &amp; 4 \\
+    2 &amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    -1 &amp; 0 \\
+    0 &amp; -2
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp; -2 \\
+    3 &amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = 1 + 4 +  2 + -1 - 2 - 2 + 3  = 5 
+}\]
+
+<p>The convolution $\mathbf{X}*\mathbf{W}$ has size $2 \times 2$, since  $n - k + 1 = 3 - 2 + 1 = 2$, and $m = 3$; it is is given as</p>
+
+\[\mathbf{X}*\mathbf{W} = 
+ \begin{bmatrix}
+    \text{Sum}(\mathbf{X}_2(1,1) \odot \mathbf{W}) &amp; \text{Sum}(\mathbf{X}_2(1,2) \odot \mathbf{W}) \\
+    \\
+    \text{Sum}(\mathbf{X}_2(2,1) \odot \mathbf{W}) &amp; \text{Sum}(\mathbf{X}_2(2,2) \odot \mathbf{W})
+\end{bmatrix}
+=
+\begin{bmatrix}
+    5 &amp; 11 \\
+    15 &amp; 5
+\end{bmatrix}\]
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span>
+
+    <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]],</span>
+
+    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># TensorFlow expects the input to have a shape of [batch, (depth, height, width), channels]
+# Add a batch dimension and a channel dimension to X
+</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+<span class="c1"># create a simple 3D kernel
+</span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span>
+    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span>
+
+    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+
+    <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># TensorFlow expects the filter to have a shape of [(depth, height, width), in_channels = 1, out_channels = 1]
+# Since our input has a single channel (in_channels = 1) and we want a single output channel ( out_channels = 1),
+# Add those dimensions to W
+</span><span class="n">W</span> <span class="o">=</span> <span class="n">W</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">W</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> 
+
+<span class="c1"># 3D convolution
+</span><span class="n">output</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="nf">conv3d</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">W</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">padding</span><span class="o">=</span><span class="sh">"</span><span class="s">VALID</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># squeeze to remove the redundant dimensions of batch and channel
+</span><span class="n">output_2d</span> <span class="o">=</span> <span class="n">output</span><span class="p">.</span><span class="nf">numpy</span><span class="p">().</span><span class="nf">squeeze</span><span class="p">()</span>    
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Shape of input tensor X:</span><span class="se">\n</span><span class="sh">"</span><span class="p">,</span> <span class="n">X</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Shape of filter tensor W:</span><span class="se">\n</span><span class="sh">"</span><span class="p">,</span> <span class="n">W</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Convolved output shape with channel and batch dimension:</span><span class="se">\n</span><span class="sh">"</span><span class="p">,</span> <span class="n">output</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Convolved output:</span><span class="se">\n</span><span class="sh">"</span><span class="p">,</span> <span class="n">output_2d</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Shape of input tensor X:
+ (1, 3, 3, 3, 1)
+Shape of filter tensor W:
+ (3, 2, 2, 1, 1)
+Convolved output shape with channel and batch dimension:
+ (1, 1, 2, 2, 1)
+Convolved output:
+ [[ 5. 11.]
+ [15.  5.]]
+</code></pre></div></div>
+
+<p>When the number of channels is fixed for both tensors the result of the convolution is a matrix of two dimension, and not a tensor. The matrix from the convolution has dimension $(n-k+1) \times (n-k+1)$ and can be represented as:</p>
+
+\[\mathbf{X} \ast \mathbf{W} = 
+\begin{bmatrix}
+\text{Sum}(X_k(1,1) \odot \mathbf{W})  &amp; \cdots &amp; \text{Sum}(X_k(1,n-k+1) \odot \mathbf{W}) \\
+\vdots  &amp; \ddots &amp; \vdots \\
+\text{Sum}(X_k(n-k+1,1) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(X_k(n-k+1,n-k+1) \odot \mathbf{W})
+\end{bmatrix}\]
+
+<p>where</p>
+
+\[\begin{align*}
+\text{Sum}(\mathbf{X}_k(i,j) \odot \mathbf{W}) = \sum_{a=1}^{k}\sum_{b=1}^{k}\sum_{c=1}^{m}x_{(i+a-1),(j+b-1),~c}~w_{a,b,c}
+\end{align*}\]
+
+<p>for $(i,j) = 1,2, \cdots, n-k+1$.</p>
+
+<p>This process can be visualized as each slice of the filter $\mathbf{W}$ matching with a corresponding slice in $\mathbf{X}$, aggregating information across all channels to form a 2D matrix that represents the features extracted from the input tensor $\mathbf{X}$.</p>
+
+<p>In conclusion, the channels of the input tensor $\mathbf{X}$ represent various features of the input data, and the filter $\mathbf{W}$ is used to extract these features by convolving it with $\mathbf{X}$. By using a filter with the same number of channels as the input, each channel’s features are processed, allowing the network to learn from each aspect of the input data separately.</p>
+
+<h2 id="convolutional-layer"><strong>Convolutional Layer</strong></h2>
+
+<p>In a CNN, the input tensor is generally denoted as $\mathbf{X} \in \mathbb{R}^{n_0 \times n_0 \times m_0}$, where  $n_0 \times n_0$ represents the spatial dimensions of a 2D input image (e.g., pixels), and $ m_0$ represents the depth, such as 1 for grayscale images or 3 for RGB color images. This input tensor is convolved with multiple filters designed to extract relevant information or features. After convolution, these feature are passed through activation functions within the convolutional layer  $\mathbf{Z}^1$, which introduce non-linear properties to the model. The process then repeat itself for the subsequent convolutional layers.</p>
+
+<p>To exemplify this process, consider two filters $\mathbf{W}_1$ and $\mathbf{W}_2$, which convolve with the input tensor $\mathbf{X}$ to pass the extracted features to the the convolutional layer  $\mathbf{Z}^1 \in \mathbb{R}^{n_1 \times n_1 \times m_1}$:</p>
+
+<p>
+<center>
+<img src="/assets/img/post2/conv-input-first-layer-two-filters.png" alt="intersection" width="700" height="400" /> 
+</center>
+</p>
+
+<p>Considering a input tensor $\mathbf{X}$ with spatial dimension $n_0 = 3$ and $m_0 = 3$ channels convolved with two filters $\mathbf{W}_1$ and $\mathbf{W}_2$ with window size  $k = 2$, we obtain the output tensor at layer $\mathbf{Z}^1$. the dimension of $\mathbf{Z}^1$ is 
+$(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \times 2$ tensor, where $m_1 = 2$ corresponding to the number of filters applied.</p>
+
+<p>Let’s incorporate the bias terms $b_1, b_2 \in \mathbb{R}$ corresponding to each filter $\mathbf{W}_1$ and $\mathbf{W}_2$, and a activation function $f(~ . ~)$. We represent a single  forward step in our simplified visualization of a CNN, going from input to the subsequent layer as:</p>
+
+\[{\mathbf{net}^1}  = 
+\begin{bmatrix}
+    \begin{bmatrix}
+        \text{Sum}(X_2(1,1) \odot \mathbf{W}_1)+b_1&amp; \text{Sum}(X_2(1,2) \odot \mathbf{W}_1) +b_1
+        \\
+        \\
+        \text{Sum}(X_2(2,1) \odot \mathbf{W}_1)+b_1&amp; \text{Sum}(X_2(2,2) \odot \mathbf{W}_1)+b_1
+    \end{bmatrix}\\
+    \\
+    \\
+    \begin{bmatrix}
+    \text{Sum}(X_2(1,1)  \odot \mathbf{W}_2)+b_2&amp; \text{Sum}(X_2(1,2) \odot \mathbf{W}_2) +b_2
+    \\
+    \\
+    \text{Sum}(X_2(2,1) \odot \mathbf{W}_2)+b_2&amp; \text{Sum}(X_2(2,2) \odot \mathbf{W}_2)+b_2
+    \end{bmatrix}
+\end{bmatrix}\]
+
+<p>The net signal after convolution is followed by the activation function to introduce non-linearity:</p>
+
+\[{\mathbf{Z}^1} = f(\mathbf{net}^1) = 
+\begin{bmatrix}
+\\
+    \begin{bmatrix}
+        f(\text{Sum}(X_2(1,1) \odot \mathbf{W}_1) +b_1)&amp; f(\text{Sum}(X_2(1,2) \odot \mathbf{W}_1)+b_1) 
+        \\
+        \\
+        f(\text{Sum}(X_2(2,1) \odot \mathbf{W}_1)+b_1)&amp; f(\text{Sum}(X_2(2,2) \odot \mathbf{W}_1)+b_1)
+    \end{bmatrix}\\
+    \\
+    \\
+    \begin{bmatrix}
+    f(\text{Sum}(X_2(1,1) \odot \mathbf{W}_2) + b_2)&amp; f(\text{Sum}(X_2(1,2) \odot \mathbf{W}_2) + b_2)
+    \\
+    \\
+    f(\text{Sum}(X_2(2,1) \odot \mathbf{W}_2)+ b_2)&amp; f(\text{Sum}(X_2(2,2) \odot \mathbf{W}_2)+ b_2)
+    \end{bmatrix}
+\end{bmatrix}.\]
+
+<p>Resulting in the feature map, which represents the actual output of the layer after applying the activation function to the net signal. The activation function can be one commonly used in neural networks, such as identity, sigmoid, tanh, or ReLU. In the language of convolutions, this is simplified as:</p>
+
+\[{ \mathbf{Z}^1 } = 
+\begin{bmatrix}
+    f(\mathbf{X} * \mathbf{W}_1 \oplus b_1)\\
+    \\
+    f(\mathbf{X} * \mathbf{W}_2 \oplus b_2)
+\end{bmatrix},\]
+
+<p>where $\oplus$ denotes the addition of the bias term to each element of the feature maps produced by $\mathbf{X} * \mathbf{W}_1$ and $\mathbf{X} * \mathbf{W}_2$. For a compact representation:</p>
+
+\[\large\boxed{ {\mathbf{Z}^1} = f(\mathbf{X} * \mathbf{W}_1 \oplus b_1,  \mathbf{X} * \mathbf{W}_2 \oplus b_2)}\]
+
+<p><strong>More general case</strong></p>
+
+<p>Extending this concept to a more general and formal case, from the $l$-th layer to the $l+1$-th layer with multiple filters, we denote the tensor at layer $l$ as $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l} $. Each element $Z_{i,j,q}^l$ of the tensor represents the output value of a neuron located at row $i$, column $j$, and channel $q$ for layer $l$, where $1 \leq (i,j) \leq n_l$ and $1 \leq q \leq m_l = 3$. Assuming we have $m_{l+1}$ filters $ \{ \mathbf{W_1}, \cdots, \mathbf{W_{m_{l+1}}} \} $, the output feature map passed through the next layer will have $m_{l+1}$ channels. Consider the following figure:</p>
+
+<p>
+<center>
+<img src="/assets/img/post2/conv-layer-multiples-filters.png" alt="intersection" width="700" height="400" /> 
+</center>
+</p>
+
+<p>The convolution $f(\mathbf{Z}^l * \mathbf{W_q} \oplus b_q)$ for a given filter $q$ produces a feature map matrix of dimension $(n_l-k+1) \times (n_l-k+1)$, where each element of this feature map corresponds to a neuron’s output at layer $l+1$. Convolving $\mathbf{Z}^l$ with all $m_{l+1}$ filters, we form the tensor $\mathbf{Z}^{l+1}$ for layer $l+1$ with dimensions $(n_l-k+1) \times (n_l-k+1) \times m_{l+1}$. The result for this tensor at layer $l+1$ is:</p>
+
+\[\large\boxed{ {\mathbf{Z}^{l+1}} = f\bigg(\big(\mathbf{Z}^l * \mathbf{W}_1 \oplus b_1\big), \cdots,\big(\mathbf{Z}^l * \mathbf{W}_q \oplus b_q\big), \cdots, \big( \mathbf{Z}^l * \mathbf{W}_{m_{l+1}} \oplus b_{m_{l+1}}\big)\bigg)}\]
+
+<p>In summary, a Convolutional Layer accepts an $n_l \times n_l \times 3$ tensor, denoted as $\mathbf{Z}^l$, from layer $l$. It proceeds to compute the tensor $\mathbf{Z}^{l+1}$, which has dimensions $n_{l+1} \times n_{l+1} \times m_{l+1}$, where $n_{l+1} = n_l - k + 1$. This computation for the subsequent layer $l+1$ involves convolving $\mathbf{Z}^l$ with $m_{l+1}$ distinct filters, each of dimension $k \times k \times 3$. Following the convolution, a bias term is added, and a nonlinear activation function $f(~.~)$ is applied to introduce nonlinearity into the model.</p>
+
+<h3 id="padding-and-striding"><strong>Padding and Striding</strong></h3>
+
+<p>One of the problem with the convolution operation is that the size of the tensor will decrease in each successive layer. If a tensor $\mathbf{Z}^l$ at layer $l$ has size $n_l \times n_l \times m_l$, and  we use filters of size $k \times k \times m_l$, then each channel in a layer $l+1$ will have size $(n_l - (k - 1)) \times (n_l-(k -1))$. That is, the number of rows and columns for each successive tensor will shrink by $k-1$.</p>
+
+<p><strong>Padding</strong></p>
+
+<p>Padding involves adding zeros or other values around the edges of the input data before applying a convolutional filter. The purpose of padding is to preserve the spatial dimensions of the input data in the output feature map. Without padding, the spatial dimensions of the output feature map would be reduced after each convolutional layer, leading to the loss of important spatial information. By adding padding, the spatial dimensions of the output feature map can be preserved or even increased.</p>
+
+<p>Assume that we add $p$ rows and columns of zeros. With padding $p$, the new dimension of tensor $\mathbf{Z}^l$ at layer $l$ is $(n_l + 2p) \times (n_l +2p) \times m_l$. Assuming that each filter is of size $k \times k \times m_l$, and that there are $m_{l+1}$ filters, then the size of tensor $\mathbf{Z}^{l+1}$ at layer $l+1$ will be $(n_l + 2p -(k-1)) \times (n_l + 2p-(k-1)) \times m_{l+1}$. Since we want to preserve or increase the size of the resulting tensor, we need to have the following lower bound when choosing the padding:</p>
+
+\[n_l +2p - k + 1  \geq n_l\]
+
+<p>which implies $p \geq \frac{k-1}{2}$. So the result size after convolution with padding $p$ will be</p>
+
+\[\large\boxed{Dim(\mathbf{Z}^{l+1}) = (n_l + 2p - (k - 1)) \times (n_l + 2p - (k - 1)) \times m_{l+1}}\]
+
+<p><strong>Striding</strong></p>
+
+<p>Striding, on the other hand, involves controls the slide size steps of the filter channels across the sub tensor (or window) of  $\mathbf{Z}^l$ in the convolution operation. Until now we implicitly use a stride of size $s = 1$ as</p>
+
+\[\begin{align*}
+\text{Sum}(\mathbf{Z}^l_k(i,j) \odot \mathbf{W})
+\end{align*}\]
+
+<p>for $(i,j) = 1,2, \cdots, n_l-k+1$, where the indices $i$ and $j$ increase by $s = 1$ at each step. For a given stride $s$, the set of indices $(i,j)$ can be written as:</p>
+
+\[\text{for stride } s, \quad (i,j) = 1 + 0\cdot s,1+1 \cdot s,1+2\cdot s, \cdots,1 + t\cdot s\]
+
+<p>where $t$ is the largest integer such that $1 + ts \leq n_l - k + 1$. This ensures that the applied filter starting from the first element and slide it over the matrix by $s$ elements each time, stopping at the correct boundary without exceeding the size of the window matrix. this results in</p>
+
+\[t \leq \left\lfloor \frac{n_l - k}{s} \right\rfloor\]
+
+<p>the symbol $\lfloor ~ \rfloor$ means rounding down to the nearest whole number (since we cannot have a fraction of a step).</p>
+
+<p>Taking the convolution of $\mathbf{Z}^l$ with size $n_l \times n_l \times m_l$ with a filter $\mathbf{W}$ of size $k \times k \times m_l$ and stride $s \geq 1$ would give:</p>
+
+\[{\small
+\mathbf{Z}^l\ast \mathbf{W} = \begin{bmatrix}
+\text{Sum}(\mathbf{Z}^l_k(1,1) \odot \mathbf{W}) &amp;\text{Sum}(\mathbf{Z}^l_k(1,1+s) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(\mathbf{Z}^l_k(1,1+t.s) \odot \mathbf{W}) \\
+\text{Sum}(\mathbf{Z}^l_k(1+s,1) \odot \mathbf{W}) &amp; \text{Sum}(\mathbf{Z}^l_k(1+s,1+s) \odot \mathbf{W}) &amp; \cdots &amp;\text{Sum}(\mathbf{Z}^l_k(1+s,1+t.s) \odot \mathbf{W})\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\text{Sum}(\mathbf{Z}^l_k(1+t.s,1) \odot \mathbf{W}) &amp; \text{Sum}(\mathbf{Z}^l_k(1+t.s,1+s) \odot \mathbf{W}) &amp; \cdots &amp; \text{Sum}(\mathbf{Z}^l_k(1+t.s,1+t.s) \odot \mathbf{W})
+\end{bmatrix}
+}\]
+
+<p>where $t \leq \left\lfloor \frac{n_l - k}{s} \right\rfloor$. So, the result dimension after convolution with striding $s$ for a set of $m_{l+1}$ filters will be</p>
+
+\[\large\boxed{Dim(\mathbf{Z}^{l+1})= \bigg(\left\lfloor \frac{n_l - k}{s} \right\rfloor + 1\bigg) \times \bigg(\left\lfloor \frac{n_l - k}{s} \right\rfloor + 1\bigg) \times m_{l+1}.}\]
+
+<h2 id="max-pooling-layer"><strong>Max-pooling Layer</strong></h2>
+
+<p>The max pooling layer is used to reduce spatial dimensions of the feature maps within a convolutional neural network. Let’s Consider the tensor $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$, which represents the output of a convolutional layer preceding the max pooling layer. Following the max pooling operation, the new tensor $\mathbf{Z}^{l+1} \in \mathbb{R}^{n_{l+1} \times n_{l+1} \times m_{l}}$ is created by selecting the maximum value across each individual channel within the designated pooling windows $k_p \times k_p$. This operation reduces data dimensionality and also ensures that the precise spatial location of the highest activations is less important, adding a small degree of translation invariance to the internal representation of each feature map channel.</p>
+
+<p>In max pooling layer, a filter $\mathbf{W}$ is by default a $k_p \times k_p \times 1$ tensor of fixed value of ones, so that $\mathbf{W} = \mathbf{1}_{k_p \times k_p \times 1} $. This means that the filters will not be updated during the backpropagation of the network. Also, the filters has no bias term ($\mathbf{b} = 0$). The convolution of $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$ with  $\mathbf{W} \in \mathbb{R}^{k_p \times k_p \times 1}$, results in a tensor $\mathbf{Z}^{l+1}$ of size $(n_l - k_p + 1) \times (n_l - k_p + 1) \times m_l$.</p>
+
+<p>If we replace the summation with the maximum value over the element-wise product of $\mathbf{ {Z}_k^l}$ and $\mathbf{W}$, we get</p>
+
+\[\begin{align*}
+\text{Sum}(\mathbf{Z}^l_k(i,j, q) \odot \mathbf{W}) \longrightarrow \text{Max}(\mathbf{Z}^l_k(i,j, q))
+\end{align*}\]
+
+<p>The convolution of $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$ with filter $\mathbf{W} \in \mathbb{R}^{k \times k \times 1}$ using max-pooling, denoted $\mathbf{Z}^l \ast_{max} ~ \mathbf{W}$, restuls in</p>
+
+<p>\({\small
+\mathbf{Z}^{l+1} = \mathbf{Z}_k^l \ast_{max} \mathbf{W} = 
+\begin{bmatrix}
+    \begin{bmatrix}
+    \text{Max}(Z^l_k(1,1,1) \odot \mathbf{W})  &amp; \cdots &amp; \text{Max}(Z^l_k(1, n_l - k_p + 1,1 ) \odot \mathbf{W}) \\
+    \vdots  &amp; \ddots &amp; \vdots \\
+    \text{Max}(Z^l_k(n_l - k_p + 1,1,1) \odot \mathbf{W}) &amp; \cdots &amp; \text{Max}(Z^l_k(n_l - k_p + 1, n_l - k_p + 1, 1) \odot \mathbf{W})
+    \end{bmatrix}\\
+    \vdots\\
+    \\
+    \begin{bmatrix}
+    \text{Max}(Z^l_k(1,1,m_l) \odot \mathbf{W})  &amp; \cdots &amp; \text{Max}(Z^l_k(1, n_l - k_p + 1,m_l ) \odot \mathbf{W}) \\
+    \vdots  &amp; \ddots &amp; \vdots \\
+    \text{Max}(Z^l_k(n_l - k_p + 1,1,m_l) \odot \mathbf{W}) &amp; \cdots &amp; \text{Max}(Z^l_k(n_l - k_p + 1, n_l - k_p + 1, m_l) \odot \mathbf{W})
+    \end{bmatrix}\\
+\end{bmatrix}
+}\)
+Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1}$.</p>
+
+<p><strong>Example</strong></p>
+
+<p>Consider a tensor $\mathbf{Z}^l$ with dimension  $3 \times 3 \times 3$ ($n_l = 3$ and $m_l = 3$ channels) and window pool size  $2 \times 2$. Applying the max pooling layer we will get the tensor $\mathbf{Z}^{l+1}$ of dimension $2 \times 2 \times 3$, as illustrated in the following image:</p>
+
+<p>
+<center>
+<img src="/assets/img/post2/3d-max-pooling.png" alt="intersection" width="700" height="400" /> 
+</center>
+</p>
+
+<h1 id="convolutional-neural-network-for-classification"><strong>Convolutional Neural Network for Classification</strong></h1>
+
+<p>Let’s create a classification model for the MNIST dataset to illustrate all the theory explained before. One possible approach for this classification model is to create two subclasses from the <code class="language-plaintext highlighter-rouge">Model</code> class: one for the convolutional and pooling layers, and another for the fully connected neural network layers. This modular design makes easier the customization of the CNN architecture to use with other kind of input images.</p>
+
+<p>We can alternate <code class="language-plaintext highlighter-rouge">Conv2D</code> layers with <code class="language-plaintext highlighter-rouge">MaxPool2D</code> layers. This arrangement enables the network to learn hierarchical features of increasing complexity and abstraction. It also reduces the spatial dimensionality of the feature maps, thereby improving the network’s computational efficiency.</p>
+
+<p>Remember, the filter size in a <code class="language-plaintext highlighter-rouge">Conv2D</code> layer is a hyperparameter that determines the spatial extent of the filter kernel as it slides over the input image. Typically, the filter size is a small matrix, such as 3x3 or 5x5, which defines the receptive field size of the neurons in the layer. In contrast, the pool size in a <code class="language-plaintext highlighter-rouge">MaxPooling2D</code> layer specifies the dimensions of the pooling window, which moves over the input feature map in two dimensions and outputs the maximum value of each window.</p>
+
+<p>Now, let’s code the classification model in a modular fashion, using the <code class="language-plaintext highlighter-rouge">Model</code> class from <code class="language-plaintext highlighter-rouge">tf.keras</code>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CNN</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> 
+                 <span class="n">nn_model</span><span class="p">,</span> 
+                 <span class="n">img_shape</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> 
+                 <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">],</span> 
+                 <span class="n">filter_size</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)],</span> 
+                 <span class="n">pool_sizes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span> 
+                 <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">'</span><span class="s">relu</span><span class="sh">'</span><span class="p">,</span> 
+                 <span class="n">filter_initializer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">'</span><span class="s">glorot_uniform</span><span class="sh">'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">
+        Constructor for the CNN class.
+
+        Parameters:
+        nn_model (Model): An instance of a model that will receive the flattened features for final classification.
+        img_shape (tuple): The shape of the input image.
+        filters (list): A list specifying the number of filters in each convolutional layer.
+        filter_size (list): A list specifying the dimensions of the filters in each convolutional layer.
+        pool_sizes (list): A list specifying the dimensions of the pooling window for each maxpooling layer.
+        activation (str): The activation function applied to each convolutional layer.
+        filter_initializer (str): The initializer for the filters of the convolutional layers.
+        </span><span class="sh">"""</span>
+        <span class="nf">super</span><span class="p">(</span><span class="n">CNN</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">()</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">nn_model</span> <span class="o">=</span> <span class="n">nn_model</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">img_shape</span> <span class="o">=</span> <span class="n">img_shape</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">filters</span> <span class="o">=</span> <span class="n">filters</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">filter_size</span> <span class="o">=</span> <span class="n">filter_size</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">pool_sizes</span> <span class="o">=</span> <span class="n">pool_sizes</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">filter_initializer</span> <span class="o">=</span> <span class="n">filter_initializer</span>
+
+        <span class="c1"># create convolutional layers
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">conv2d</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">filters</span><span class="p">)):</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">conv2d</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span> <span class="nc">Conv2D</span><span class="p">(</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">filters</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> 
+                                        <span class="n">kernel_size</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">filter_size</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> 
+                                        <span class="n">kernel_initializer</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">filter_initializer</span><span class="p">,</span>
+                                        <span class="n">input_shape</span> <span class="o">=</span> <span class="n">img_shape</span><span class="p">,</span> 
+                                        <span class="n">activation</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">activation</span><span class="p">,</span> 
+                                        <span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">Conv2D_{}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
+
+        <span class="c1"># create maxpooling layers
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">maxpool</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">pool_sizes</span><span class="p">)):</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">maxpool</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span> <span class="nc">MaxPool2D</span><span class="p">(</span> <span class="n">pool_size</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">pool_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">MaxPool_{}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
+
+
+        <span class="c1"># create flatten layer to feed into the dense layer 
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">flatten</span> <span class="o">=</span> <span class="nc">Flatten</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">Flatten</span><span class="sh">'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sh">"""</span><span class="s">
+        Forward pass of the network.
+
+        Parameters:
+        x (Tensor): The input tensor containing the image data.
+
+        Returns:
+        Tensor: The output tensor after applying the convolutional and pooling layers, and the final model.
+        </span><span class="sh">"""</span>
+        <span class="k">for</span> <span class="n">conv_layer</span><span class="p">,</span> <span class="n">maxpool_layer</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">conv2d</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">maxpool</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nf">conv_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nf">maxpool_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">flatten</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">nn_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">NN</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="n">self</span><span class="p">,</span>
+        <span class="n">layer_sizes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">],</span>
+        <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">output_activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">softmax</span><span class="sh">"</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">relu</span><span class="sh">"</span><span class="p">,</span>
+        <span class="n">weight_initializer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">glorot_uniform</span><span class="sh">"</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">
+        Constructor for the NN class.
+
+        Parameters:
+        layer_sizes (list): A list indicating the size of each dense layer.
+        output_size (int): The number of units in the output layer.
+        output_activation (str): The activation function for the output layer.
+        activation (str): The activation function for all hidden layers.
+        initializer (str): The initializer for the weights in all layers.
+        </span><span class="sh">"""</span>
+        <span class="nf">super</span><span class="p">(</span><span class="n">NN</span><span class="p">,</span> <span class="n">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">'</span><span class="s">Dense</span><span class="sh">'</span><span class="p">)</span>
+
+        <span class="n">self</span><span class="p">.</span><span class="n">layer_sizes</span> <span class="o">=</span> <span class="n">layer_sizes</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">output_size</span> <span class="o">=</span> <span class="n">output_size</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">activation_func</span> <span class="o">=</span> <span class="n">activation</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">output_activation</span> <span class="o">=</span> <span class="n">output_activation</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">weight_initializer</span> <span class="o">=</span> <span class="n">weight_initializer</span>
+
+        <span class="c1"># Hidden Layers
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">hidden_layer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">layer_sizes</span><span class="p">)):</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">hidden_layer</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="nc">Dense</span><span class="p">(</span> <span class="n">units</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">layer_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> 
+                                            <span class="n">kernel_initializer</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">weight_initializer</span><span class="p">,</span>
+                                            <span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">,</span> 
+                                            <span class="n">name</span><span class="o">=</span><span class="sh">'</span><span class="s">Dense_{}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span>
+
+        <span class="c1"># Output Layer
+</span>        <span class="n">self</span><span class="p">.</span><span class="n">output_layer</span> <span class="o">=</span> <span class="nc">Dense</span><span class="p">(</span> <span class="n">units</span><span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">output_size</span><span class="p">,</span>
+                                    <span class="n">kernel_initializer</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">weight_initializer</span><span class="p">,</span>
+                                    <span class="n">activation</span><span class="o">=</span><span class="n">output_activation</span><span class="p">,</span>
+                                    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">Output</span><span class="sh">"</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">tf</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tf</span><span class="p">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sh">"""</span><span class="s">
+        Forward pass of the network, processing the input through each hidden layer followed by the output layer.
+
+        Parameters:
+        x (tf.Tensor): The input tensor.
+
+        Returns:
+        tf.Tensor: The resulting tensor after passing through all layers of the network.
+        </span><span class="sh">"""</span>
+        <span class="k">for</span> <span class="n">hidden</span> <span class="ow">in</span> <span class="n">self</span><span class="p">.</span><span class="n">hidden_layer</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nf">hidden</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="nf">output_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+</code></pre></div></div>
+
+<p>We can use the class Input as a placeholder to build a model and access its summary using the <code class="language-plaintext highlighter-rouge">summary()</code> method, as well as plot a diagram of the layers presented in this model:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="nc">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span> <span class="p">(</span><span class="mi">28</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">Input</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">nn_model</span> <span class="o">=</span> <span class="nc">NN</span><span class="p">()</span>
+<span class="n">cnn_model</span> <span class="o">=</span> <span class="nc">CNN</span><span class="p">(</span><span class="n">nn_model</span><span class="p">)</span>
+<span class="n">summary_model</span> <span class="o">=</span> <span class="nc">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">outputs</span> <span class="o">=</span> <span class="n">cnn_model</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">CNN-Classification</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="n">summary_model</span><span class="p">.</span><span class="nf">summary</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Model: "CNN-Classification"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ Input (InputLayer)          [(None, 28, 28, 1)]       0         
+                                                                 
+ Conv2D_0 (Conv2D)           (None, 26, 26, 32)        320       
+                                                                 
+ MaxPool_0 (MaxPooling2D)    (None, 13, 13, 32)        0         
+                                                                 
+ Flatten (Flatten)           (None, 5408)              0         
+                                                                 
+ Dense (NN)                  (None, 10)                693642    
+                                                                 
+=================================================================
+Total params: 693962 (2.65 MB)
+Trainable params: 693962 (2.65 MB)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">plot_model</span><span class="p">(</span><span class="n">summary_model</span><span class="p">,</span> <span class="n">show_shapes</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">show_layer_names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>
+<center>
+<img src="/assets/img/post2/diagram-layres.png" alt="intersection" width="300" height="400" /> 
+</center>
+</p>
+
+<p>Let’s create a function to prepare and load our dataset with the digits from MNIST dataset:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">load_data</span><span class="p">():</span>
+    
+    <span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="sh">'</span><span class="s">data/mnist_train_small.csv</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="sh">'</span><span class="s">data/mnist_test_small.csv</span><span class="sh">'</span><span class="p">)</span>
+
+    <span class="n">y_train</span> <span class="o">=</span> <span class="n">train</span><span class="p">[</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">].</span><span class="nf">to_numpy</span><span class="p">()</span>
+    <span class="n">x_train</span> <span class="o">=</span> <span class="n">train</span><span class="p">.</span><span class="nf">drop</span><span class="p">(</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">).</span><span class="nf">to_numpy</span><span class="p">()</span>
+    <span class="n">y_test</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">].</span><span class="nf">to_numpy</span><span class="p">()</span>
+    <span class="n">x_test</span> <span class="o">=</span> <span class="n">test</span><span class="p">.</span><span class="nf">drop</span><span class="p">(</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">).</span><span class="nf">to_numpy</span><span class="p">()</span>
+    
+    <span class="c1"># reshape dataset to have a single channel
+</span>    <span class="c1"># Reshape (20000,784) -&gt;  (2000,     28,     28,     1)
+</span>    <span class="n">x_test</span> <span class="o">=</span> <span class="n">x_test</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">x_test</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">28</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">x_train</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="n">x_train</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">28</span><span class="p">,</span><span class="mi">28</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># one hot encode target values
+</span>    <span class="n">y_test</span> <span class="o">=</span> <span class="nf">to_categorical</span><span class="p">(</span><span class="n">y_test</span><span class="p">)</span>
+    <span class="n">y_train</span> <span class="o">=</span> <span class="nf">to_categorical</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
+
+    <span class="nf">return </span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">scale_pixels</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">):</span>
+    <span class="c1"># normalize the data to a range of [0, 1] and convert to float
+</span>    <span class="n">train_norm</span> <span class="o">=</span> <span class="n">train</span><span class="p">.</span><span class="nf">astype</span><span class="p">(</span><span class="sh">'</span><span class="s">float32</span><span class="sh">'</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+    <span class="n">test_norm</span> <span class="o">=</span> <span class="n">test</span><span class="p">.</span><span class="nf">astype</span><span class="p">(</span><span class="sh">'</span><span class="s">float32</span><span class="sh">'</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+
+    <span class="k">return</span> <span class="n">train_norm</span><span class="p">,</span> <span class="n">test_norm</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Data Pre-Processing
+</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="nf">load_data</span><span class="p">()</span>
+<span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span> <span class="o">=</span> <span class="nf">scale_pixels</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">)</span>
+
+<span class="c1"># Model
+</span><span class="n">nn_model</span> <span class="o">=</span> <span class="nc">NN</span><span class="p">()</span>
+<span class="n">classification_model</span> <span class="o">=</span> <span class="nc">CNN</span><span class="p">(</span><span class="n">nn_model</span><span class="p">)</span>
+
+<span class="c1"># Compile and fit
+</span><span class="n">classification_model</span><span class="p">.</span><span class="nf">compile</span><span class="p">(</span> <span class="n">loss</span> <span class="o">=</span> <span class="sh">'</span><span class="s">categorical_crossentropy</span><span class="sh">'</span><span class="p">,</span> 
+                              <span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">optimizers</span><span class="p">.</span><span class="nc">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span> 
+                              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">accuracy</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">classification_model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">epochs</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Epoch 1/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.2674 - accuracy: 0.9186
+Epoch 2/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.0869 - accuracy: 0.9739
+Epoch 3/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.0530 - accuracy: 0.9837
+Epoch 4/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.0320 - accuracy: 0.9900
+Epoch 5/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.0216 - accuracy: 0.9931
+
+
+
+
+
+&lt;keras.src.callbacks.History at 0x7f20a01cdae0&gt;
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">single_img</span><span class="p">(</span><span class="n">img_array</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">
+    Reshape a single image array for prediction.
+    
+    This function takes an image array, adds a batch dimension to it, 
+    and returns the new array that is suitable for prediction with 
+    models that expect batches of images.
+    
+    Parameters:
+    img_array (np.array): The image array to be reshaped. 
+                          It should be a 2D array for a grayscale image.
+    
+    Returns:
+    np.array: A new array with an added batch dimension.
+    </span><span class="sh">"""</span>
+    <span class="n">img_batch</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">expand_dims</span><span class="p">(</span><span class="n">img_array</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img_batch</span>
+
+<span class="k">def</span> <span class="nf">plot_single_img</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)):</span>
+    <span class="sh">"""</span><span class="s">
+    Plot an image and its prediction probability distribution.
+    
+    This function takes an image and a prediction array, and plots the image 
+    and a bar chart representing the prediction probabilities for each class.
+    
+    Parameters:
+    img (np.array): The image data to be plotted. It should be a 2D array.
+    prediction (np.array): The prediction data, where prediction[0] contains 
+                           the probability distribution across classes.
+    figsize (tuple): Optional. The size of the figure to be created.
+    
+    Returns:
+    None: This function does not return a value but shows a matplotlib plot.
+    </span><span class="sh">"""</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="nf">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="nf">reshape</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="sh">'</span><span class="s">gray</span><span class="sh">'</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">bar</span><span class="p">(</span><span class="nf">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">prediction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="sh">'</span><span class="s">black</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">set_xlabel</span><span class="p">(</span><span class="sh">'</span><span class="s">Numbers</span><span class="sh">'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sh">"</span><span class="s">gray</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">set_ylabel</span><span class="p">(</span><span class="sh">'</span><span class="s">Probability</span><span class="sh">'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sh">"</span><span class="s">gray</span><span class="sh">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">set_title</span><span class="p">(</span><span class="sh">'</span><span class="s">Probability of Correct Number</span><span class="sh">'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sh">'</span><span class="s">gray</span><span class="sh">'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">set_xticks</span><span class="p">(</span><span class="nf">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">set_yticks</span><span class="p">([])</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="sh">'</span><span class="s">x</span><span class="sh">'</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="sh">'</span><span class="s">gray</span><span class="sh">'</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="p">.</span><span class="nf">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">img_batch</span> <span class="o">=</span> <span class="nf">single_img</span><span class="p">(</span><span class="n">x_test</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">classification_model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">img_batch</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+
+<span class="nf">plot_single_img</span><span class="p">(</span><span class="n">img_batch</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1/1 [==============================] - 0s 45ms/step
+[[2.9586372e-11 1.2202437e-09 3.5340349e-11 9.1771851e-12 9.9999654e-01
+  8.1947343e-10 3.6685540e-11 8.9030500e-08 3.1797342e-06 1.2824634e-07]]
+</code></pre></div></div>
+
+<p>
+<center>
+<img src="/assets/img/post2/model-prediction.png" alt="intersection" width="500" height="300" /> 
+</center>
+</p>
+
+<h1 id="references">References</h1>
+
+<ul>
+  <li><a href="https://books.google.com/books/about/Data_Mining_and_Machine_Learning.html?id=oafDDwAAQBAJ&amp;printsec=frontcover&amp;source=kp_read_button&amp;hl=en&amp;newbks=1&amp;newbks_redir=1">Zaki, M. J., &amp; Meira Jr, W. (2020). Data mining and machine learning: fundamental concepts and algorithms. Cambridge University Press.</a></li>
+</ul>
+
+
+
+  
+    
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://https-marcosbenicio-github-io-1.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+</div>
+
+
+    </div>
+
+  </body>
+</html>

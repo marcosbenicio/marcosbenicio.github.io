@@ -4,7 +4,7 @@
 	<title>Marcos Benício</title>
 	<link href="http://localhost:4000/atom.xml" rel="self"/>
 	<link href="http://localhost:4000"/>
-	<updated>2023-11-25T19:13:45-03:00</updated>
+	<updated>2023-11-27T23:03:21-03:00</updated>
 	<id>http://localhost:4000/blog</id>
 	<author>
 		<name>Marcos Benício</name>
@@ -14,6 +14,12 @@
 	<!-- Debugging section -->
 	
 	<!--<debug> -->
+		<post_title>Understanding Convolutional Layers in a Convolutional Neural Network</post_title>
+		<raw_date>2023-11-27 00:00:00 -0300</raw_date>
+		<date_xmlschema>2023-11-27T00:00:00-03:00</date_xmlschema>
+	<!--</debug> -->
+	
+	<!--<debug> -->
 		<post_title>Probabilities and Bayes Rule</post_title>
 		<raw_date>2023-11-22 00:00:00 -0300</raw_date>
 		<date_xmlschema>2023-11-22T00:00:00-03:00</date_xmlschema>
@@ -21,6 +27,1332 @@
 	
 	<!-- End Debugging section -->
 
+	
+	<entry>
+		<title>Understanding Convolutional Layers in a Convolutional Neural Network</title>
+		<link href="http://localhost:4000/2023/11/27/cnn.html"/>
+		<updated>2023-11-27T00:00:00-03:00</updated>
+		<id>http://localhost:4000/2023/11/27/cnn</id>
+		<content type="html">&lt;h1 id=&quot;outline&quot;&gt;&lt;strong&gt;Outline&lt;/strong&gt;&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;##Convolutions&quot;&gt;Convolutions&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;##One-Dimensional-Convolutions&quot;&gt;One Dimensional Convolutions&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;##Two-Dimensional-Convolutions&quot;&gt;Two Dimensional Convolutions&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#Three-Dimensional-on-CNNs&quot;&gt;Three Dimensional Convolutions on CNNs&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;##Convolutional-Layer&quot;&gt;Convolutional Layer&lt;/a&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;###Padding-and-Striding&quot;&gt;Padding and Striding&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;##Max-pooling-Layer&quot;&gt;Max-pooling Layer&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#Convolutional-Neural-Network-for-Classification&quot;&gt;Convolutional Neural Network for Classification&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;data&quot;&gt;&lt;strong&gt;Data&lt;/strong&gt;&lt;/h1&gt;
+
+&lt;p&gt;First let’s import the necessaries packages and download the dataset:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;environ&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;TF_CPP_MIN_LOG_LEVEL&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt; 
+&lt;span class=&quot;c1&quot;&gt;# 0 = all messages are logged (default behavior)
+# 1 = INFO messages are not printed
+# 2 = INFO and WARNING messages are not printed
+# 3 = INFO, WARNING, and ERROR messages are not printed
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensorflow&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tensorflow.keras.utils&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_categorical&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plot_model&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;scipy.ndimage&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;convolve&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;keras.models&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;keras.layers&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Dense&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Layer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Conv2D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MaxPool2D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Flatten&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;keras.losses&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Loss&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here I use the MNIST dataset, which contains images of handwritten digits from 0 to 9. The first column of the dataset contains the label of the image (i.e., the digit it represents), and the remaining 784 columns (28 x 28 pixels) contain the pixel values of the image.&lt;/p&gt;
+
+&lt;p&gt;To visualize the images, we need to reshape the 784 columns into a 28 x 28 matrix and plot:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;show_img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# show figures in the dataset
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;figure&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;figsize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;imshow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cmap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;get_cmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;gray&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;train&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;data/mnist_train_small.csv&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div&gt;
+&lt;style scoped=&quot;&quot;&gt;
+  .dataframe tbody tr th:only-of-type {
+      vertical-align: middle;
+  }
+  .dataframe tbody tr th {
+      vertical-align: top;
+      padding: 10px; /* Increase padding for more space within cells */
+  }
+  .dataframe thead th {
+      text-align: center; /* Change to center if that&apos;s your preference */
+      padding: 10px; /* Consistent padding with tbody cells */
+  }
+  .dataframe td, .dataframe th {
+      border: 1px solid #ddd; /* Optional: adds a border to each cell */
+      padding: 10px; /* Increase padding for more space within cells */
+  }
+  /* Optional: Add more spacing between rows for clarity */
+  .dataframe tr {
+      height: 50px; /* Adjust the height to give more space between rows */
+  }
+&lt;/style&gt;
+&lt;table border=&quot;1&quot; class=&quot;dataframe&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&quot;text-align: right;&quot;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;label&lt;/th&gt;
+      &lt;th&gt;1x1&lt;/th&gt;
+      &lt;th&gt;1x2&lt;/th&gt;
+      &lt;th&gt;1x3&lt;/th&gt;
+      &lt;th&gt;1x4&lt;/th&gt;
+      &lt;th&gt;1x5&lt;/th&gt;
+      &lt;th&gt;1x6&lt;/th&gt;
+      &lt;th&gt;...&lt;/th&gt;
+      &lt;th&gt;28x24&lt;/th&gt;
+      &lt;th&gt;28x25&lt;/th&gt;
+      &lt;th&gt;28x26&lt;/th&gt;
+      &lt;th&gt;28x27&lt;/th&gt;
+      &lt;th&gt;28x28&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th&gt;0&lt;/th&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;1&lt;/th&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th&gt;2&lt;/th&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;3 rows × 785 columns&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# drop label column and select a row
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;iloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;nf&quot;&gt;show_img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/digit-9.png&quot; alt=&quot;intersection&quot; width=&quot;280&quot; height=&quot;280&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&quot;convolutions&quot;&gt;&lt;strong&gt;Convolutions&lt;/strong&gt;&lt;/h1&gt;
+
+&lt;p&gt;First, let’s understand what is Convolutions. Convolution is a mathematical operation that involves sliding a small matrix, known as a kernel or filter, across a larger matrix representing the input data, such as an image. During this process, the element-wise product $\odot$ is computed between the kernel and each local region (sub-matrix) it covers on the input data matrix. The result of this operation is a new matrix, called a feature map, which encodes information about the presence, absence, or strength of specific features in the input data.&lt;/p&gt;
+
+&lt;p&gt;Let’s examine the following convolutional operations to illustrate this concept.&lt;/p&gt;
+
+&lt;h2 id=&quot;one-dimensional-convolutions&quot;&gt;&lt;strong&gt;One Dimensional Convolutions&lt;/strong&gt;&lt;/h2&gt;
+
+&lt;p&gt;Let’s consider $\mathbf{x}$ as an input vector with $n$ elements and $\mathbf{w}$ as a weight vector, also known as a  &lt;strong&gt;filter&lt;/strong&gt;, with $k \leq n$.&lt;/p&gt;
+
+\[\mathbf{x} =
+\left( \begin{array}{c}
+x_{1}\\
+x_{2}\\
+\vdots\\
+x_{n}
+\end{array} \right), ~~~~
+\mathbf{w} =
+\left( \begin{array}{c}
+w_{1}\\
+w_{2}\\
+\vdots\\
+w_{k}
+\end{array} \right)\]
+
+&lt;p&gt;Here $k$  is known as the  &lt;strong&gt;window size&lt;/strong&gt; and indicates the size of the filter applied to the input vector $\mathbf{x}$. It defines the region of the local neighborhood within the input vector $\mathbf{x}$ used for computing output values. To proceed, we define a subvector of $\mathbf{x}$ with the same size as the filter vector. Let $\mathbf{x}_k(i)$ denote the window of $\mathbf{x}$  of size $k$ starting at position $i$:&lt;/p&gt;
+
+\[\mathbf{x}_k(i) = \left( \begin{array}{c}
+x_i \\
+x_{i+1} \\
+\vdots\\
+x_{i+k-1} 
+\end{array} \right).\]
+
+&lt;p&gt;For $k \leq n$, it must be that $i+k-1 \leq n$, implying $1 \leq i \leq n-k+1$. As a validity test, if we start at $i =  n-k+1$, then the end position is $i+k-1 = n$. If we calculate the total number of elements by the difference in position provides the window size $k$, confirmed by $n - i = n - (n-k+1) = k$. For example, with $n = 5$ and $k = 3$:&lt;/p&gt;
+
+\[\mathbf{x} =
+\left( \begin{array}{c}
+x_{1}\\
+x_{2}\\
+x_{3}\\
+x_{4}\\
+x_{5}
+\end{array} \right), ~~~~
+\mathbf{w} =
+\left( \begin{array}{c}
+w_{1}\\
+w_{2}\\
+w_{3}
+\end{array} \right)\]
+
+&lt;p&gt;the window of $\mathbf{x}$ from $i = 2$ to $i+k-1 = 4$ is:&lt;/p&gt;
+
+\[\mathbf{x}_3(2) = \left( \begin{array}{c}
+x_2 \\
+x_{3}\\
+x_{4}
+\end{array} \right)\]
+
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s first consider a particular example with input vector $\mathbf{x}$ of size $n = 5$ and a weight vector with window size $k = 3$. The vectors are illustrated in the following figure:&lt;/p&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/1d-conv.png&quot; alt=&quot;intersection&quot; width=&quot;700&quot; height=&quot;400&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The convolution steps for the sliding windows of $\mathbf{x}$ with the filter $\mathbf{w}$ are:&lt;/p&gt;
+
+\[\sum \mathbf{x}_3(1) \odot \mathbf{w} = \sum (1, 3, -1)^T \odot (1, 0, 2)^T = \sum  (1 \cdot 1, 3 \cdot 0, -1 \cdot 2) = 1 + 0 - 2 = -1,\]
+
+\[\sum \mathbf{x}_3(2) \odot \mathbf{w} = \sum (3, -1, 2)^T \odot (1, 0, 2)^T = \sum  (3 \cdot 1, -1 \cdot 0, 2 \cdot 2) = 3 + 0 + 4 = 7,\]
+
+\[\sum \mathbf{x}_3(3) \odot \mathbf{w} = \sum (-1, 2, 3)^T \odot (1, 0, 2)^T = \sum  (-1 \cdot 1, 2 \cdot 0, 3 \cdot 2) = -1 + 0 + 6 = 5.\]
+
+&lt;p&gt;The element-wise product $\odot$  , also known as the Hadamard product, multiplies corresponding elements in two vectors. Unlike the typical inner product, which multiplies an element by a column, this operation multiplies an element by its corresponding element in another vector. This steps provide the convolution between the two vectors resulting in a vector of size n-k+1 = 3. Thus, the convolution $\mathbf{x} * \mathbf{w}$ is:&lt;/p&gt;
+
+\[\mathbf{x} * \mathbf{w} =
+\left( \begin{array}{c}
+-1\\
+7\\
+5
+\end{array} \right)\]
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# Code for the example
+&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# flip the filter W to use the convolve function
+# as expected in machine learning and deep learning context
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;W&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;flip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]))&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# perform 1D convolution
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;convolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;W&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mode&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;valid&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Input vector X:&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;filter W:&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;W&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;output X*W:&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Input vector X: (5,)
+filter W: (3,)
+output X*W: [-1  7  5]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This demonstrates that convolution is an element-wise product between a subvector and a weight vector of the same size, providing a scalar value when summed, which forms the result of the convolution operation.&lt;/p&gt;
+
+&lt;p&gt;To simplify the notation, let’s adopt the convention that for a vector $\mathbf{a} \in \mathbb{R}^k$, define the summation operator as one that adds all elements of the vector. That is,&lt;/p&gt;
+
+\[\text{Sum}(\mathbf{a}) = \sum_{i=1}^{k} a_{i}.\]
+
+&lt;p&gt;From the example, we would have&lt;/p&gt;
+
+\[\sum \mathbf{x}_3(1) \odot \mathbf{w} = \text{Sum}\bigg( \mathbf{x}_3(1) \odot \mathbf{w} \bigg)= 1 + 0 - 2 = -1.\]
+
+&lt;p&gt;Then, we can define a general one dimensional convolution operation between $\mathbf{x}$ and $\mathbf{w}$, denoted by the asterisk symbol $\ast$, as&lt;/p&gt;
+
+\[\mathbf{x} \ast \mathbf{w} = \left( \begin{array}{c}
+\text{Sum}(\mathbf{x}_k(1) \odot \mathbf{w})\\
+\vdots\\
+\text{Sum}(\mathbf{x}_k(i) \odot \mathbf{w})\\
+\vdots\\
+\text{Sum}(\mathbf{x}_k(n-k+1) \odot \mathbf{w})
+\end{array} \right).\]
+
+&lt;p&gt;The convolution of $\mathbf{x} \in \mathbf{R}^{n}$ and $\mathbf{W} \in \mathbf{R}^{k}$ results in a vector of size $n-k+1$. The i-th element from this output vector can be decomposed as&lt;/p&gt;
+
+\[\text{Sum}(\mathbf{x_k}(i) \odot \mathbf{w}) = x_{i}w_1 + x_{i+1}w_2 + \cdots + x_{(i+k-1)}w_k =  \sum_{j=1}^{k} x_{(i+j-1)}w_j.\]
+
+&lt;p&gt;This shows that the sum is over all elements of the subvector $\mathbf{x}_k(i)$, so the last element of this sum must coincide with the last elements of $\mathbf{x}_k(i)$ and $\mathbf{w}$. This results in the convolution of $\mathbf{x}$ with $\mathbf{w}$ over the window defined by $k$.&lt;/p&gt;
+
+&lt;h2 id=&quot;two-dimensional-convolutions&quot;&gt;&lt;strong&gt;Two Dimensional Convolutions&lt;/strong&gt;&lt;/h2&gt;
+
+&lt;p&gt;We can extend the convolution operation to an matrix input instead of a vector. Let $\mathbf{X}$ be an input matrix with $n \times n$ elements and $\mathbf{W}$ be the weight matrix, also known as a  &lt;strong&gt;filter&lt;/strong&gt;, with $k \leq n$.&lt;/p&gt;
+
+\[\mathbf{X} = \begin{bmatrix}
+x_{1,1} &amp;amp; x_{1,2} &amp;amp; \cdots &amp;amp; x_{1,n} \\
+x_{2,1} &amp;amp; x_{2,2} &amp;amp; \cdots &amp;amp; x_{2,n} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+x_{n,1} &amp;amp; x_{n,2} &amp;amp; \cdots &amp;amp; x_{n,n}
+\end{bmatrix},~~
+\mathbf{W}=\begin{bmatrix}
+w_{1,1} &amp;amp; w_{1,2} &amp;amp; \cdots &amp;amp; w_{1,k} \\
+w_{2,1} &amp;amp; w_{2,2} &amp;amp; \cdots &amp;amp; w_{2,k} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+w_{k,1} &amp;amp; w_{k,2} &amp;amp; \cdots &amp;amp; w_{k,k}
+\end{bmatrix}\]
+
+&lt;p&gt;Here, similar to the one dimensional case,  $k$ is the window size and indicates the size of the filter applied to the input matrix $\mathbf{X}$. From the one dimensional case we can extend the notion of a sub vector to a sub matrix. Let $\mathbf{X}_k(i,j)$ denote the $k \times k$ submatrix of $\mathbf{X}$ starting at row $i$ and column $j$ as&lt;/p&gt;
+
+\[\mathbf{X}_k(i,j) = \begin{bmatrix}
+x_{i,j} &amp;amp; x_{i,~(j+1)} &amp;amp; \cdots &amp;amp; x_{i,~(j+k-1)} \\
+x_{(i+1),~j} &amp;amp; x_{(i+2),~j} &amp;amp; \cdots &amp;amp; x_{(i+1), (j+k-1)} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+x_{(i+k-1), ~j} &amp;amp; x_{(i+1),(j+1)} &amp;amp; \cdots &amp;amp; x_{(i+k-1),(j+k-1)}
+\end{bmatrix}\]
+
+&lt;p&gt;where for two indices, give that this is a square matrix, the range is simple $1 \leq (i,j) \leq n-k+1$.&lt;/p&gt;
+
+&lt;p&gt;As for the one dimensional case, to simplify the notation, we adopt the convention that for a matrix $\mathbf{A} \in \mathbb{R}^{k \times k}$ define the summation operator as one that adds all elements of the matrix.&lt;/p&gt;
+
+\[\text{Sum}(\mathbf{A}) = \sum_{i=1}^{k}\sum_{j=1}^{k} a_{i,j}\]
+
+&lt;p&gt;Then, we can define  a general two dimensional convolution operation between matrices $\mathbf{X}$ and $\mathbf{W}$, as&lt;/p&gt;
+
+\[{\small
+\mathbf{X} \ast \mathbf{W} = \begin{bmatrix}
+\text{Sum}(x_k(1,1) \odot \mathbf{W}) &amp;amp;\text{Sum}(x_k(1,2) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(x_k(1,n-k+1) \odot \mathbf{W}) \\
+\text{Sum}(x_k(2,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(x_k(2,2) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp;\text{Sum}(x_k(2,n-k+1) \odot \mathbf{W})\\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+\text{Sum}(x_k(n-k+1,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(x_k(n-k+1,2) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(x_k(n-k+1,n-k+1) \odot \mathbf{W})
+\end{bmatrix}
+}\]
+
+&lt;p&gt;where&lt;/p&gt;
+
+\[\text{Sum}(\mathbf{X}_k(i,j) \odot \mathbf{W})=\sum_{a=1}^{k}\sum_{b=1}^{k} x_{(i+a-1),(j+b-1)} w_{a,b}\]
+
+&lt;p&gt;The convolution of $\mathbf{X} \in \mathbf{R}^{n \times n}$ and $\mathbf{W} \in \mathbf{R}^{k \times k}$ results in a $(n-k+1) \times (n-k+1)$ matrix.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s consider a particular example with input matrix $\mathbf{X}$ with dimension  $3 \times 3$ (n = 3) and a weight matrix with dimension  $2 \times 2$ (k = 2). The matrices are illustrated in the following figure:&lt;/p&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/2d-conv.png&quot; alt=&quot;intersection&quot; width=&quot;700&quot; height=&quot;400&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The convolution steps for the sliding windows of $\mathbf{X}$ with the filter $\mathbf{W}$ illustrated in the figure are mathematically translated to:&lt;/p&gt;
+
+\[\text{Sum}(\mathbf{X}_k(1,1) \odot \mathbf{W})=\text{Sum}\bigg(
+    \begin{bmatrix} 
+    1 &amp;amp; 2 \\
+    3 &amp;amp; 1 
+    \end{bmatrix} 
+    \odot 
+    \begin{bmatrix} 
+    1 &amp;amp; 0 \\
+    0 &amp;amp; 1
+    \end{bmatrix} \bigg) =  2\]
+
+\[\text{Sum}(\mathbf{X}_2(1,2) \odot \mathbf{W}) = \text{Sum}\bigg(
+    \begin{bmatrix} 
+    2 &amp;amp; 2 \\
+    1 &amp;amp; 4
+    \end{bmatrix} 
+    \odot
+    \begin{bmatrix}
+    1 &amp;amp; 0 \\
+    0 &amp;amp; 1
+    \end{bmatrix} \bigg)= 6\]
+
+\[\text{Sum}(\mathbf{X}_2(2,1) \odot \mathbf{W}) = \text{Sum}\bigg( 
+    \begin{bmatrix} 
+    3 &amp;amp; 1 \\ 
+    2 &amp;amp; 1 \end{bmatrix} 
+    \odot \begin{bmatrix} 
+    1 &amp;amp; 0 \\ 
+    0 &amp;amp; 1 
+    \end{bmatrix} \bigg)= 4\]
+
+\[\text{Sum}(\mathbf{X}_2(2,2) \odot \mathbf{W}) = \text{Sum}\bigg( 
+    \begin{bmatrix} 
+    1 &amp;amp; 4 \\
+    3 &amp;amp; 3 \end{bmatrix}
+    \odot
+    \begin{bmatrix}
+    1 &amp;amp; 0 \\ 
+    0 &amp;amp; 1
+    \end{bmatrix} \bigg) = 4\]
+
+&lt;p&gt;The convolution $\mathbf{X}*\mathbf{W}$ has size $2 \times 2$, since  $n - k + 1 = 3 - 2 + 1 = 2$, and is given by&lt;/p&gt;
+
+\[\mathbf{X}*\mathbf{W} = 
+    \begin{bmatrix} 
+        \text{Sum}(\mathbf{X}_2(1,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(\mathbf{X}_2(1,2) \odot \mathbf{W}) \\
+        \\
+        \text{Sum}(\mathbf{X}_2(2,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(\mathbf{X}_2(2,2) \odot \mathbf{W}) 
+    \end{bmatrix} = 
+    \begin{bmatrix} 
+        2 &amp;amp; 6 \\
+        4 &amp;amp; 4 
+    \end{bmatrix}\]
+
+&lt;h1 id=&quot;three-dimensional-convolution-on-cnns&quot;&gt;&lt;strong&gt;Three dimensional Convolution on CNNs&lt;/strong&gt;&lt;/h1&gt;
+
+&lt;p&gt;We now extend the convolution operation to a three-dimensional matrix, also called a rank-3 tensor. The first dimension comprises the rows (height), second dimension the columns (width) and the third dimension the channels (number of 2D slices stacked along the depth axis). Typically in CNNs, we use a 3D filter $\mathbf{W} \in \mathbb{R}^{k \times k \times m}$, with the number of channels equal to the number of channels of the input tensor $\mathbf{X} \in \mathbb{R}^{n \times n \times m}$, in this case with $m$ channels each. Mathematically we represent as:&lt;/p&gt;
+
+\[\mathbf{X}=
+\begin{bmatrix}
+\begin{bmatrix}
+x_{1,1,1} &amp;amp; x_{1,2,1} &amp;amp; \cdots &amp;amp; x_{1,n,1} \\
+x_{2,1,1} &amp;amp; x_{2,2,1} &amp;amp; \cdots &amp;amp; x_{2,n,1} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+x_{n,1,1} &amp;amp; x_{n,2,1} &amp;amp; \cdots &amp;amp; x_{n,n,1}
+\end{bmatrix}\\
+\\
+\begin{bmatrix}
+x_{1,1,2} &amp;amp; x_{1,2,2} &amp;amp; \cdots &amp;amp; x_{1,n,2} \\
+x_{2,1,2} &amp;amp; x_{2,2,2} &amp;amp; \cdots &amp;amp; x_{2,n,2} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+x_{n,1,2} &amp;amp; x_{n,2,2} &amp;amp; \cdots &amp;amp; x_{n,n,2}
+\end{bmatrix}\\
+\\
+\vdots\\
+\\
+\begin{bmatrix}
+x_{1,1,m} &amp;amp; x_{1,2,m} &amp;amp; \cdots &amp;amp; x_{1,n,m} \\
+x_{2,1,m} &amp;amp; x_{2,2,m} &amp;amp; \cdots &amp;amp; x_{2,n,m} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+x_{n,1,m} &amp;amp; x_{n,2,m} &amp;amp; \cdots &amp;amp; x_{n,n,m}
+\end{bmatrix}
+\end{bmatrix},~~
+
+
+\mathbf{W}= \begin{bmatrix}
+\begin{bmatrix}
+w_{1,1,1} &amp;amp; w_{1,2,1} &amp;amp; \cdots &amp;amp; w_{1,k,1} \\
+w_{2,1,1} &amp;amp; w_{2,2,1} &amp;amp; \cdots &amp;amp; w_{2,k,1} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+w_{k,1,1} &amp;amp; w_{k,2,1} &amp;amp; \cdots &amp;amp; w_{k,k,1}
+\end{bmatrix}\\
+\\
+\begin{bmatrix}
+w_{1,1,2} &amp;amp; w_{1,2,2} &amp;amp; \cdots &amp;amp; w_{1,k,2} \\
+w_{2,1,2} &amp;amp; w_{2,2,2} &amp;amp; \cdots &amp;amp; w_{2,k,2} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+w_{k,1,2} &amp;amp; w_{k,2,2} &amp;amp; \cdots &amp;amp; w_{k,k,2}
+\end{bmatrix}
+\\
+\vdots\\
+\\
+\begin{bmatrix}
+w_{1,1,r} &amp;amp; w_{1,2,r} &amp;amp; \cdots &amp;amp; w_{1,k,m} \\
+w_{2,1,r} &amp;amp; w_{2,2,r} &amp;amp; \cdots &amp;amp; w_{2,k,m} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+w_{k,1,r} &amp;amp; w_{k,2,r} &amp;amp; \cdots &amp;amp; w_{k,k,m}
+
+\end{bmatrix}
+\end{bmatrix}\]
+
+&lt;p&gt;Similar to convolutions in other dimensions, the window size must satisfy $k \leq n$, and the total number of slice matrices along the depth of the filter and input tensor are fixed as $m$. This mathematical representation of a tensor may seem complex at first, but &lt;strong&gt;it closely resembles how Python libraries like NumPy represent a tensor&lt;/strong&gt;, with exception of the order of rows, columns and depth.&lt;/p&gt;
+
+&lt;p&gt;When defining a sub-tensor from the input tensor $\mathbf{X}$, let $\mathbf{X}_k(i,j)$ denote a $k \times k \times m$ sub-tensor of $\mathbf{X}$ that starts at row $i$, column $j$, and encompasses the full depth $m$ of the input. In the context where the filter spans the entire depth of the input (i.e., the number of channels $r$ in the filter is equal to the depth $m$ of the input), the depth index $q$ is not needed because the filter processes all depth layers simultaneously. Therefore, the sub-tensor $\mathbf{X}_k(i,j)$ is defined as follows:&lt;/p&gt;
+
+\[\mathbf{X}_k(i,j,q = m)= \mathbf{X}_k(i,j) =
+\begin{bmatrix}
+\begin{bmatrix}
+x_{i,j,1} &amp;amp; x_{i,(j+1),1} &amp;amp; \cdots &amp;amp; x_{i,(j+k-1),1} \\
+x_{(i+1),j,1} &amp;amp; x_{(i+1),(j+1),1} &amp;amp; \cdots &amp;amp; x_{(i+1),(j+k-1),1} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+x_{(i+k-1),j,1} &amp;amp; x_{(i+k-1),(j+1),1} &amp;amp; \cdots &amp;amp; x_{(i+k-1),(j+k-1),1}
+\end{bmatrix}\\
+\\
+\\
+\begin{bmatrix}
+x_{i,j,2} &amp;amp; x_{i,(j+1),2} &amp;amp; \cdots &amp;amp; x_{i,(j+k-1),2} \\
+x_{(i+1),j,2} &amp;amp; x_{(i+1),(j+1),2} &amp;amp; \cdots &amp;amp; x_{(i+1),(j+k-1),2} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+x_{(i+k-1),j,2} &amp;amp; x_{(i+k-1),(j+1),2} &amp;amp; \cdots &amp;amp; x_{(i+k-1),(j+k-1),2}
+\end{bmatrix}\\
+\\
+\vdots\\
+\\
+\begin{bmatrix}
+x_{i,j,m} &amp;amp; x_{i,(j+1),m} &amp;amp; \cdots &amp;amp; x_{i,(j+k-1),m} \\
+x_{(i+1),j,m} &amp;amp; x_{(i+1),(j+1),m} &amp;amp; \cdots &amp;amp; x_{2,n,m} \\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+x_{(i+k-1),j,m} &amp;amp; x_{(i+k-1),(j+1),m} &amp;amp; \cdots &amp;amp; x_{(i+k-1),(j+k-1),m}
+\end{bmatrix}
+\end{bmatrix}\]
+
+&lt;p&gt;The indices from the subtensor for rows and columns range from $1 \leq (i,j) \leq n-k+1$, where $n$ is the dimension of the input $\mathbf{X}$ and $k$ is the window size of the filter $\mathbf{W}$, consistent with two-dimensional convolutions. The depth dimension is fixed at $m$, so it’s redundant carrying $q = m$ in our notation.&lt;/p&gt;
+
+&lt;p&gt;As in the case of convolution in lower dimensions, we define the summation operator as one that adds all elements within the tensor. Therefore, given a tensor $\mathbf{A} \in \mathbb{R}^{k \times k \times m}$, the summation operation is defined as:&lt;/p&gt;
+
+\[\text{Sum}(\mathbf{A}) = \sum_{a=1}^{k}\sum_{b=1}^{k}\sum_{q=1}^{m}a_{ijq}\]
+
+&lt;p&gt;This summation adds up all the elements in the tensor $\mathbf{A}$, where $a_{ijq}$ denotes the element located at the $i$-th row, $j$-th column, and $q$-th depth layer.&lt;/p&gt;
+
+&lt;p&gt;Before we generalize the convolution operation to three dimensions, let’s consider an example to illustrate the logic behind this mathematical notation and how it translates to the operations performed in a CNN.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Consider a input tensor $\mathbf{X}$ with dimension  $3 \times 3 \times 3$ (n = 3 and m = 3 channels) and a filter with dimension  $2 \times 2 \times 3$ ( windows size with k = 2 and m = 3 channels). The tensors are illustrated in the following figure:&lt;/p&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/3d-conv.png&quot; alt=&quot;intersection&quot; width=&quot;800&quot; height=&quot;500&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The convolution steps for the sliding windows of $\mathbf{X}$ with the filter $\mathbf{W}$ illustrated in the figure are:&lt;/p&gt;
+
+\[{\small
+\text{Sum}(\mathbf{X}_2(1,1) \odot \mathbf{W}) = \text{Sum}\bigg( 
+\begin{bmatrix} 
+    \begin{bmatrix} 
+        1 &amp;amp; -1 \\ 
+        2 &amp;amp; 1 
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        2 &amp;amp; 1 \\
+        3 &amp;amp; -1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        1 &amp;amp; -2 \\ 
+        2 &amp;amp; 1 
+    \end{bmatrix} 
+\end{bmatrix} 
+\odot 
+\begin{bmatrix} 
+    \begin{bmatrix} 
+        1 &amp;amp; 1 \\
+        2 &amp;amp; 0 
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        1 &amp;amp; 0 \\ 
+        0 &amp;amp; 1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        0 &amp;amp; 1 \\
+        1 &amp;amp; 0 
+    \end{bmatrix} 
+\end{bmatrix} \bigg) = \text{Sum}\bigg(   
+    \begin{bmatrix} 
+    \begin{bmatrix} 
+        1  &amp;amp; -1  \\ 
+        4 &amp;amp; 0 
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        2 &amp;amp; 0 \\
+        0 &amp;amp; -1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix} 
+        0 &amp;amp; -2 \\ 
+        2 &amp;amp; 0 
+    \end{bmatrix} 
+\end{bmatrix} \bigg) = 1 - 1 + 4 +2 -1 -2+ 2 = 5 
+}\]
+
+\[{\small
+\text{Sum}(\mathbf{X}_2(1,2) \odot \mathbf{W}) = \text{Sum}\bigg(
+\begin{bmatrix}
+    \begin{bmatrix}
+        -1 &amp;amp; 3 \\
+        1 &amp;amp; -4
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        1 &amp;amp; 3 \\
+        -1 &amp;amp; 1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        -2 &amp;amp; 4 \\
+        1 &amp;amp; -2
+    \end{bmatrix}
+\end{bmatrix}
+\odot
+\begin{bmatrix}
+    \begin{bmatrix}
+        1 &amp;amp; 1 \\
+        2 &amp;amp; 0
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        1 &amp;amp; 0 \\
+        0 &amp;amp; 1
+    \end{bmatrix} \\
+    \\
+    \begin{bmatrix}
+        0 &amp;amp; 1 \\
+        1 &amp;amp; 0
+    \end{bmatrix}
+\end{bmatrix} \bigg) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    -1 &amp;amp; 3 \\
+    2 &amp;amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    1 &amp;amp; 0 \\
+    0 &amp;amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp;amp; 4 \\
+    1 &amp;amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = -1 + 3 + 2 + 1 + 1 + 4 + 1 = 11 
+}\]
+
+\[{\small
+\text{Sum}(\mathbf{X}_2(2,1) \odot \mathbf{W}) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    2 &amp;amp; 1 \\
+    3 &amp;amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    3 &amp;amp; -1 \\
+    1 &amp;amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    2 &amp;amp; 1 \\
+    1 &amp;amp; 3
+\end{bmatrix}
+\end{bmatrix}
+\odot
+\begin{bmatrix}
+\begin{bmatrix}
+    1 &amp;amp; 1 \\
+    2 &amp;amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    1 &amp;amp; 0 \\
+    0 &amp;amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp;amp; 1 \\
+    1 &amp;amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    2 &amp;amp; 1 \\
+    6 &amp;amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    3 &amp;amp; 0 \\
+    0 &amp;amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp;amp; 1 \\
+    1 &amp;amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = 2 + 1 + 6 + 3 + 1 + 1 + 1 = 15
+}\]
+
+\[{\small
+\text{Sum}(\mathbf{X}_2(2,2) \odot \mathbf{W}) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    1 &amp;amp; 4 \\
+    1 &amp;amp; 2
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    -1 &amp;amp; 1 \\
+    1 &amp;amp; -2
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    1 &amp;amp; -2 \\
+    3 &amp;amp; -1
+    \end{bmatrix}
+\end{bmatrix}
+\odot
+\begin{bmatrix}
+\begin{bmatrix}
+    1 &amp;amp; 1 \\
+    2 &amp;amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    1 &amp;amp; 0 \\
+    0 &amp;amp; 1
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp;amp; 1 \\
+    1 &amp;amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = \text{Sum}\bigg(
+\begin{bmatrix}
+\begin{bmatrix}
+    1 &amp;amp; 4 \\
+    2 &amp;amp; 0
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    -1 &amp;amp; 0 \\
+    0 &amp;amp; -2
+\end{bmatrix} \\
+\\
+\begin{bmatrix}
+    0 &amp;amp; -2 \\
+    3 &amp;amp; 0
+\end{bmatrix}
+\end{bmatrix} \bigg) = 1 + 4 +  2 + -1 - 2 - 2 + 3  = 5 
+}\]
+
+&lt;p&gt;The convolution $\mathbf{X}*\mathbf{W}$ has size $2 \times 2$, since  $n - k + 1 = 3 - 2 + 1 = 2$, and $m = 3$; it is is given as&lt;/p&gt;
+
+\[\mathbf{X}*\mathbf{W} = 
+ \begin{bmatrix}
+    \text{Sum}(\mathbf{X}_2(1,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(\mathbf{X}_2(1,2) \odot \mathbf{W}) \\
+    \\
+    \text{Sum}(\mathbf{X}_2(2,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(\mathbf{X}_2(2,2) \odot \mathbf{W})
+\end{bmatrix}
+=
+\begin{bmatrix}
+    5 &amp;amp; 11 \\
+    15 &amp;amp; 5
+\end{bmatrix}\]
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# TensorFlow expects the input to have a shape of [batch, (depth, height, width), channels]
+# Add a batch dimension and a channel dimension to X
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+&lt;span class=&quot;c1&quot;&gt;# create a simple 3D kernel
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;W&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+     &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# TensorFlow expects the filter to have a shape of [(depth, height, width), in_channels = 1, out_channels = 1]
+# Since our input has a single channel (in_channels = 1) and we want a single output channel ( out_channels = 1),
+# Add those dimensions to W
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;W&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;W&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;W&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+
+&lt;span class=&quot;c1&quot;&gt;# 3D convolution
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;conv3d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filters&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;W&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strides&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;padding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;VALID&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# squeeze to remove the redundant dimensions of batch and channel
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output_2d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;numpy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;squeeze&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;    
+
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Shape of input tensor X:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Shape of filter tensor W:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;W&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Convolved output shape with channel and batch dimension:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Convolved output:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;output_2d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Shape of input tensor X:
+ (1, 3, 3, 3, 1)
+Shape of filter tensor W:
+ (3, 2, 2, 1, 1)
+Convolved output shape with channel and batch dimension:
+ (1, 1, 2, 2, 1)
+Convolved output:
+ [[ 5. 11.]
+ [15.  5.]]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;When the number of channels is fixed for both tensors the result of the convolution is a matrix of two dimension, and not a tensor. The matrix from the convolution has dimension $(n-k+1) \times (n-k+1)$ and can be represented as:&lt;/p&gt;
+
+\[\mathbf{X} \ast \mathbf{W} = 
+\begin{bmatrix}
+\text{Sum}(X_k(1,1) \odot \mathbf{W})  &amp;amp; \cdots &amp;amp; \text{Sum}(X_k(1,n-k+1) \odot \mathbf{W}) \\
+\vdots  &amp;amp; \ddots &amp;amp; \vdots \\
+\text{Sum}(X_k(n-k+1,1) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(X_k(n-k+1,n-k+1) \odot \mathbf{W})
+\end{bmatrix}\]
+
+&lt;p&gt;where&lt;/p&gt;
+
+\[\begin{align*}
+\text{Sum}(\mathbf{X}_k(i,j) \odot \mathbf{W}) = \sum_{a=1}^{k}\sum_{b=1}^{k}\sum_{c=1}^{m}x_{(i+a-1),(j+b-1),~c}~w_{a,b,c}
+\end{align*}\]
+
+&lt;p&gt;for $(i,j) = 1,2, \cdots, n-k+1$.&lt;/p&gt;
+
+&lt;p&gt;This process can be visualized as each slice of the filter $\mathbf{W}$ matching with a corresponding slice in $\mathbf{X}$, aggregating information across all channels to form a 2D matrix that represents the features extracted from the input tensor $\mathbf{X}$.&lt;/p&gt;
+
+&lt;p&gt;In conclusion, the channels of the input tensor $\mathbf{X}$ represent various features of the input data, and the filter $\mathbf{W}$ is used to extract these features by convolving it with $\mathbf{X}$. By using a filter with the same number of channels as the input, each channel’s features are processed, allowing the network to learn from each aspect of the input data separately.&lt;/p&gt;
+
+&lt;h2 id=&quot;convolutional-layer&quot;&gt;&lt;strong&gt;Convolutional Layer&lt;/strong&gt;&lt;/h2&gt;
+
+&lt;p&gt;In a CNN, the input tensor is generally denoted as $\mathbf{X} \in \mathbb{R}^{n_0 \times n_0 \times m_0}$, where  $n_0 \times n_0$ represents the spatial dimensions of a 2D input image (e.g., pixels), and $ m_0$ represents the depth, such as 1 for grayscale images or 3 for RGB color images. This input tensor is convolved with multiple filters designed to extract relevant information or features. After convolution, these feature are passed through activation functions within the convolutional layer  $\mathbf{Z}^1$, which introduce non-linear properties to the model. The process then repeat itself for the subsequent convolutional layers.&lt;/p&gt;
+
+&lt;p&gt;To exemplify this process, consider two filters $\mathbf{W}_1$ and $\mathbf{W}_2$, which convolve with the input tensor $\mathbf{X}$ to pass the extracted features to the the convolutional layer  $\mathbf{Z}^1 \in \mathbb{R}^{n_1 \times n_1 \times m_1}$:&lt;/p&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/conv-input-first-layer-two-filters.png&quot; alt=&quot;intersection&quot; width=&quot;700&quot; height=&quot;400&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Considering a input tensor $\mathbf{X}$ with spatial dimension $n_0 = 3$ and $m_0 = 3$ channels convolved with two filters $\mathbf{W}_1$ and $\mathbf{W}_2$ with window size  $k = 2$, we obtain the output tensor at layer $\mathbf{Z}^1$. the dimension of $\mathbf{Z}^1$ is 
+$(n_0 - k + 1) \times (n_0 - k + 1) \times m_1$, resulting in a $2 \times 2 \times 2$ tensor, where $m_1 = 2$ corresponding to the number of filters applied.&lt;/p&gt;
+
+&lt;p&gt;Let’s incorporate the bias terms $b_1, b_2 \in \mathbb{R}$ corresponding to each filter $\mathbf{W}_1$ and $\mathbf{W}_2$, and a activation function $f(~ . ~)$. We represent a single  forward step in our simplified visualization of a CNN, going from input to the subsequent layer as:&lt;/p&gt;
+
+\[{\mathbf{net}^1}  = 
+\begin{bmatrix}
+    \begin{bmatrix}
+        \text{Sum}(X_2(1,1) \odot \mathbf{W}_1)+b_1&amp;amp; \text{Sum}(X_2(1,2) \odot \mathbf{W}_1) +b_1
+        \\
+        \\
+        \text{Sum}(X_2(2,1) \odot \mathbf{W}_1)+b_1&amp;amp; \text{Sum}(X_2(2,2) \odot \mathbf{W}_1)+b_1
+    \end{bmatrix}\\
+    \\
+    \\
+    \begin{bmatrix}
+    \text{Sum}(X_2(1,1)  \odot \mathbf{W}_2)+b_2&amp;amp; \text{Sum}(X_2(1,2) \odot \mathbf{W}_2) +b_2
+    \\
+    \\
+    \text{Sum}(X_2(2,1) \odot \mathbf{W}_2)+b_2&amp;amp; \text{Sum}(X_2(2,2) \odot \mathbf{W}_2)+b_2
+    \end{bmatrix}
+\end{bmatrix}\]
+
+&lt;p&gt;The net signal after convolution is followed by the activation function to introduce non-linearity:&lt;/p&gt;
+
+\[{\mathbf{Z}^1} = f(\mathbf{net}^1) = 
+\begin{bmatrix}
+\\
+    \begin{bmatrix}
+        f(\text{Sum}(X_2(1,1) \odot \mathbf{W}_1) +b_1)&amp;amp; f(\text{Sum}(X_2(1,2) \odot \mathbf{W}_1)+b_1) 
+        \\
+        \\
+        f(\text{Sum}(X_2(2,1) \odot \mathbf{W}_1)+b_1)&amp;amp; f(\text{Sum}(X_2(2,2) \odot \mathbf{W}_1)+b_1)
+    \end{bmatrix}\\
+    \\
+    \\
+    \begin{bmatrix}
+    f(\text{Sum}(X_2(1,1) \odot \mathbf{W}_2) + b_2)&amp;amp; f(\text{Sum}(X_2(1,2) \odot \mathbf{W}_2) + b_2)
+    \\
+    \\
+    f(\text{Sum}(X_2(2,1) \odot \mathbf{W}_2)+ b_2)&amp;amp; f(\text{Sum}(X_2(2,2) \odot \mathbf{W}_2)+ b_2)
+    \end{bmatrix}
+\end{bmatrix}.\]
+
+&lt;p&gt;Resulting in the feature map, which represents the actual output of the layer after applying the activation function to the net signal. The activation function can be one commonly used in neural networks, such as identity, sigmoid, tanh, or ReLU. In the language of convolutions, this is simplified as:&lt;/p&gt;
+
+\[{ \mathbf{Z}^1 } = 
+\begin{bmatrix}
+    f(\mathbf{X} * \mathbf{W}_1 \oplus b_1)\\
+    \\
+    f(\mathbf{X} * \mathbf{W}_2 \oplus b_2)
+\end{bmatrix},\]
+
+&lt;p&gt;where $\oplus$ denotes the addition of the bias term to each element of the feature maps produced by $\mathbf{X} * \mathbf{W}_1$ and $\mathbf{X} * \mathbf{W}_2$. For a compact representation:&lt;/p&gt;
+
+\[\large\boxed{ {\mathbf{Z}^1} = f(\mathbf{X} * \mathbf{W}_1 \oplus b_1,  \mathbf{X} * \mathbf{W}_2 \oplus b_2)}\]
+
+&lt;p&gt;&lt;strong&gt;More general case&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Extending this concept to a more general and formal case, from the $l$-th layer to the $l+1$-th layer with multiple filters, we denote the tensor at layer $l$ as $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l} $. Each element $Z_{i,j,q}^l$ of the tensor represents the output value of a neuron located at row $i$, column $j$, and channel $q$ for layer $l$, where $1 \leq (i,j) \leq n_l$ and $1 \leq q \leq m_l = 3$. Assuming we have $m_{l+1}$ filters $ \{ \mathbf{W_1}, \cdots, \mathbf{W_{m_{l+1}}} \} $, the output feature map passed through the next layer will have $m_{l+1}$ channels. Consider the following figure:&lt;/p&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/conv-layer-multiples-filters.png&quot; alt=&quot;intersection&quot; width=&quot;700&quot; height=&quot;400&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The convolution $f(\mathbf{Z}^l * \mathbf{W_q} \oplus b_q)$ for a given filter $q$ produces a feature map matrix of dimension $(n_l-k+1) \times (n_l-k+1)$, where each element of this feature map corresponds to a neuron’s output at layer $l+1$. Convolving $\mathbf{Z}^l$ with all $m_{l+1}$ filters, we form the tensor $\mathbf{Z}^{l+1}$ for layer $l+1$ with dimensions $(n_l-k+1) \times (n_l-k+1) \times m_{l+1}$. The result for this tensor at layer $l+1$ is:&lt;/p&gt;
+
+\[\large\boxed{ {\mathbf{Z}^{l+1}} = f\bigg(\big(\mathbf{Z}^l * \mathbf{W}_1 \oplus b_1\big), \cdots,\big(\mathbf{Z}^l * \mathbf{W}_q \oplus b_q\big), \cdots, \big( \mathbf{Z}^l * \mathbf{W}_{m_{l+1}} \oplus b_{m_{l+1}}\big)\bigg)}\]
+
+&lt;p&gt;In summary, a Convolutional Layer accepts an $n_l \times n_l \times 3$ tensor, denoted as $\mathbf{Z}^l$, from layer $l$. It proceeds to compute the tensor $\mathbf{Z}^{l+1}$, which has dimensions $n_{l+1} \times n_{l+1} \times m_{l+1}$, where $n_{l+1} = n_l - k + 1$. This computation for the subsequent layer $l+1$ involves convolving $\mathbf{Z}^l$ with $m_{l+1}$ distinct filters, each of dimension $k \times k \times 3$. Following the convolution, a bias term is added, and a nonlinear activation function $f(~.~)$ is applied to introduce nonlinearity into the model.&lt;/p&gt;
+
+&lt;h3 id=&quot;padding-and-striding&quot;&gt;&lt;strong&gt;Padding and Striding&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;One of the problem with the convolution operation is that the size of the tensor will decrease in each successive layer. If a tensor $\mathbf{Z}^l$ at layer $l$ has size $n_l \times n_l \times m_l$, and  we use filters of size $k \times k \times m_l$, then each channel in a layer $l+1$ will have size $(n_l - (k - 1)) \times (n_l-(k -1))$. That is, the number of rows and columns for each successive tensor will shrink by $k-1$.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Padding&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Padding involves adding zeros or other values around the edges of the input data before applying a convolutional filter. The purpose of padding is to preserve the spatial dimensions of the input data in the output feature map. Without padding, the spatial dimensions of the output feature map would be reduced after each convolutional layer, leading to the loss of important spatial information. By adding padding, the spatial dimensions of the output feature map can be preserved or even increased.&lt;/p&gt;
+
+&lt;p&gt;Assume that we add $p$ rows and columns of zeros. With padding $p$, the new dimension of tensor $\mathbf{Z}^l$ at layer $l$ is $(n_l + 2p) \times (n_l +2p) \times m_l$. Assuming that each filter is of size $k \times k \times m_l$, and that there are $m_{l+1}$ filters, then the size of tensor $\mathbf{Z}^{l+1}$ at layer $l+1$ will be $(n_l + 2p -(k-1)) \times (n_l + 2p-(k-1)) \times m_{l+1}$. Since we want to preserve or increase the size of the resulting tensor, we need to have the following lower bound when choosing the padding:&lt;/p&gt;
+
+\[n_l +2p - k + 1  \geq n_l\]
+
+&lt;p&gt;which implies $p \geq \frac{k-1}{2}$. So the result size after convolution with padding $p$ will be&lt;/p&gt;
+
+\[\large\boxed{Dim(\mathbf{Z}^{l+1}) = (n_l + 2p - (k - 1)) \times (n_l + 2p - (k - 1)) \times m_{l+1}}\]
+
+&lt;p&gt;&lt;strong&gt;Striding&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Striding, on the other hand, involves controls the slide size steps of the filter channels across the sub tensor (or window) of  $\mathbf{Z}^l$ in the convolution operation. Until now we implicitly use a stride of size $s = 1$ as&lt;/p&gt;
+
+\[\begin{align*}
+\text{Sum}(\mathbf{Z}^l_k(i,j) \odot \mathbf{W})
+\end{align*}\]
+
+&lt;p&gt;for $(i,j) = 1,2, \cdots, n_l-k+1$, where the indices $i$ and $j$ increase by $s = 1$ at each step. For a given stride $s$, the set of indices $(i,j)$ can be written as:&lt;/p&gt;
+
+\[\text{for stride } s, \quad (i,j) = 1 + 0\cdot s,1+1 \cdot s,1+2\cdot s, \cdots,1 + t\cdot s\]
+
+&lt;p&gt;where $t$ is the largest integer such that $1 + ts \leq n_l - k + 1$. This ensures that the applied filter starting from the first element and slide it over the matrix by $s$ elements each time, stopping at the correct boundary without exceeding the size of the window matrix. this results in&lt;/p&gt;
+
+\[t \leq \left\lfloor \frac{n_l - k}{s} \right\rfloor\]
+
+&lt;p&gt;the symbol $\lfloor ~ \rfloor$ means rounding down to the nearest whole number (since we cannot have a fraction of a step).&lt;/p&gt;
+
+&lt;p&gt;Taking the convolution of $\mathbf{Z}^l$ with size $n_l \times n_l \times m_l$ with a filter $\mathbf{W}$ of size $k \times k \times m_l$ and stride $s \geq 1$ would give:&lt;/p&gt;
+
+\[{\small
+\mathbf{Z}^l\ast \mathbf{W} = \begin{bmatrix}
+\text{Sum}(\mathbf{Z}^l_k(1,1) \odot \mathbf{W}) &amp;amp;\text{Sum}(\mathbf{Z}^l_k(1,1+s) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(\mathbf{Z}^l_k(1,1+t.s) \odot \mathbf{W}) \\
+\text{Sum}(\mathbf{Z}^l_k(1+s,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(\mathbf{Z}^l_k(1+s,1+s) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp;\text{Sum}(\mathbf{Z}^l_k(1+s,1+t.s) \odot \mathbf{W})\\
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \\
+\text{Sum}(\mathbf{Z}^l_k(1+t.s,1) \odot \mathbf{W}) &amp;amp; \text{Sum}(\mathbf{Z}^l_k(1+t.s,1+s) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Sum}(\mathbf{Z}^l_k(1+t.s,1+t.s) \odot \mathbf{W})
+\end{bmatrix}
+}\]
+
+&lt;p&gt;where $t \leq \left\lfloor \frac{n_l - k}{s} \right\rfloor$. So, the result dimension after convolution with striding $s$ for a set of $m_{l+1}$ filters will be&lt;/p&gt;
+
+\[\large\boxed{Dim(\mathbf{Z}^{l+1})= \bigg(\left\lfloor \frac{n_l - k}{s} \right\rfloor + 1\bigg) \times \bigg(\left\lfloor \frac{n_l - k}{s} \right\rfloor + 1\bigg) \times m_{l+1}.}\]
+
+&lt;h2 id=&quot;max-pooling-layer&quot;&gt;&lt;strong&gt;Max-pooling Layer&lt;/strong&gt;&lt;/h2&gt;
+
+&lt;p&gt;The max pooling layer is used to reduce spatial dimensions of the feature maps within a convolutional neural network. Let’s Consider the tensor $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$, which represents the output of a convolutional layer preceding the max pooling layer. Following the max pooling operation, the new tensor $\mathbf{Z}^{l+1} \in \mathbb{R}^{n_{l+1} \times n_{l+1} \times m_{l}}$ is created by selecting the maximum value across each individual channel within the designated pooling windows $k_p \times k_p$. This operation reduces data dimensionality and also ensures that the precise spatial location of the highest activations is less important, adding a small degree of translation invariance to the internal representation of each feature map channel.&lt;/p&gt;
+
+&lt;p&gt;In max pooling layer, a filter $\mathbf{W}$ is by default a $k_p \times k_p \times 1$ tensor of fixed value of ones, so that $\mathbf{W} = \mathbf{1}_{k_p \times k_p \times 1} $. This means that the filters will not be updated during the backpropagation of the network. Also, the filters has no bias term ($\mathbf{b} = 0$). The convolution of $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$ with  $\mathbf{W} \in \mathbb{R}^{k_p \times k_p \times 1}$, results in a tensor $\mathbf{Z}^{l+1}$ of size $(n_l - k_p + 1) \times (n_l - k_p + 1) \times m_l$.&lt;/p&gt;
+
+&lt;p&gt;If we replace the summation with the maximum value over the element-wise product of $\mathbf{ {Z}_k^l}$ and $\mathbf{W}$, we get&lt;/p&gt;
+
+\[\begin{align*}
+\text{Sum}(\mathbf{Z}^l_k(i,j, q) \odot \mathbf{W}) \longrightarrow \text{Max}(\mathbf{Z}^l_k(i,j, q))
+\end{align*}\]
+
+&lt;p&gt;The convolution of $\mathbf{Z}^l \in \mathbb{R}^{n_l \times n_l \times m_l}$ with filter $\mathbf{W} \in \mathbb{R}^{k \times k \times 1}$ using max-pooling, denoted $\mathbf{Z}^l \ast_{max} ~ \mathbf{W}$, restuls in&lt;/p&gt;
+
+&lt;p&gt;\({\small
+\mathbf{Z}^{l+1} = \mathbf{Z}_k^l \ast_{max} \mathbf{W} = 
+\begin{bmatrix}
+    \begin{bmatrix}
+    \text{Max}(Z^l_k(1,1,1) \odot \mathbf{W})  &amp;amp; \cdots &amp;amp; \text{Max}(Z^l_k(1, n_l - k_p + 1,1 ) \odot \mathbf{W}) \\
+    \vdots  &amp;amp; \ddots &amp;amp; \vdots \\
+    \text{Max}(Z^l_k(n_l - k_p + 1,1,1) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Max}(Z^l_k(n_l - k_p + 1, n_l - k_p + 1, 1) \odot \mathbf{W})
+    \end{bmatrix}\\
+    \vdots\\
+    \\
+    \begin{bmatrix}
+    \text{Max}(Z^l_k(1,1,m_l) \odot \mathbf{W})  &amp;amp; \cdots &amp;amp; \text{Max}(Z^l_k(1, n_l - k_p + 1,m_l ) \odot \mathbf{W}) \\
+    \vdots  &amp;amp; \ddots &amp;amp; \vdots \\
+    \text{Max}(Z^l_k(n_l - k_p + 1,1,m_l) \odot \mathbf{W}) &amp;amp; \cdots &amp;amp; \text{Max}(Z^l_k(n_l - k_p + 1, n_l - k_p + 1, m_l) \odot \mathbf{W})
+    \end{bmatrix}\\
+\end{bmatrix}
+}\)
+Also, note that the pooling layer don’t uses any activation function, direct resulting in the tensor $\mathbf{Z}^{l+1}$.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Consider a tensor $\mathbf{Z}^l$ with dimension  $3 \times 3 \times 3$ ($n_l = 3$ and $m_l = 3$ channels) and window pool size  $2 \times 2$. Applying the max pooling layer we will get the tensor $\mathbf{Z}^{l+1}$ of dimension $2 \times 2 \times 3$, as illustrated in the following image:&lt;/p&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/3d-max-pooling.png&quot; alt=&quot;intersection&quot; width=&quot;700&quot; height=&quot;400&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&quot;convolutional-neural-network-for-classification&quot;&gt;&lt;strong&gt;Convolutional Neural Network for Classification&lt;/strong&gt;&lt;/h1&gt;
+
+&lt;p&gt;Let’s create a classification model for the MNIST dataset to illustrate all the theory explained before. One possible approach for this classification model is to create two subclasses from the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Model&lt;/code&gt; class: one for the convolutional and pooling layers, and another for the fully connected neural network layers. This modular design makes easier the customization of the CNN architecture to use with other kind of input images.&lt;/p&gt;
+
+&lt;p&gt;We can alternate &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Conv2D&lt;/code&gt; layers with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MaxPool2D&lt;/code&gt; layers. This arrangement enables the network to learn hierarchical features of increasing complexity and abstraction. It also reduces the spatial dimensionality of the feature maps, thereby improving the network’s computational efficiency.&lt;/p&gt;
+
+&lt;p&gt;Remember, the filter size in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Conv2D&lt;/code&gt; layer is a hyperparameter that determines the spatial extent of the filter kernel as it slides over the input image. Typically, the filter size is a small matrix, such as 3x3 or 5x5, which defines the receptive field size of the neurons in the layer. In contrast, the pool size in a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MaxPooling2D&lt;/code&gt; layer specifies the dimensions of the pooling window, which moves over the input feature map in two dimensions and outputs the maximum value of each window.&lt;/p&gt;
+
+&lt;p&gt;Now, let’s code the classification model in a modular fashion, using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Model&lt;/code&gt; class from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tf.keras&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;CNN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                 &lt;span class=&quot;n&quot;&gt;nn_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                 &lt;span class=&quot;n&quot;&gt;img_shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;tuple&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; 
+                 &lt;span class=&quot;n&quot;&gt;filters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; 
+                 &lt;span class=&quot;n&quot;&gt;filter_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)],&lt;/span&gt; 
+                 &lt;span class=&quot;n&quot;&gt;pool_sizes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)],&lt;/span&gt; 
+                 &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;relu&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                 &lt;span class=&quot;n&quot;&gt;filter_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;glorot_uniform&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+        Constructor for the CNN class.
+
+        Parameters:
+        nn_model (Model): An instance of a model that will receive the flattened features for final classification.
+        img_shape (tuple): The shape of the input image.
+        filters (list): A list specifying the number of filters in each convolutional layer.
+        filter_size (list): A list specifying the dimensions of the filters in each convolutional layer.
+        pool_sizes (list): A list specifying the dimensions of the pooling window for each maxpooling layer.
+        activation (str): The activation function applied to each convolutional layer.
+        filter_initializer (str): The initializer for the filters of the convolutional layers.
+        &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CNN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nn_model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nn_model&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img_shape&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;img_shape&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filters&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filters&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filter_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filter_size&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pool_sizes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pool_sizes&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filter_initializer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filter_initializer&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# create convolutional layers
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conv2d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conv2d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Conv2D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filters&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; 
+                                        &lt;span class=&quot;n&quot;&gt;kernel_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filter_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; 
+                                        &lt;span class=&quot;n&quot;&gt;kernel_initializer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filter_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                        &lt;span class=&quot;n&quot;&gt;input_shape&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;img_shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                                        &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                                        &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Conv2D_{}&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# create maxpooling layers
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maxpool&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pool_sizes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maxpool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MaxPool2D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pool_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pool_sizes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+                                            &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;MaxPool_{}&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+
+
+        &lt;span class=&quot;c1&quot;&gt;# create flatten layer to feed into the dense layer 
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flatten&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Flatten&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Flatten&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+        Forward pass of the network.
+
+        Parameters:
+        x (Tensor): The input tensor containing the image data.
+
+        Returns:
+        Tensor: The output tensor after applying the convolutional and pooling layers, and the final model.
+        &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;conv_layer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maxpool_layer&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conv2d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maxpool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;conv_layer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;maxpool_layer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;flatten&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;nn_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;layer_sizes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;output_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;output_activation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;softmax&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;relu&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;weight_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;glorot_uniform&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+        Constructor for the NN class.
+
+        Parameters:
+        layer_sizes (list): A list indicating the size of each dense layer.
+        output_size (int): The number of units in the output layer.
+        output_activation (str): The activation function for the output layer.
+        activation (str): The activation function for all hidden layers.
+        initializer (str): The initializer for the weights in all layers.
+        &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Dense&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;layer_sizes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;layer_sizes&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output_size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;output_size&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;activation_func&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output_activation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;output_activation&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;weight_initializer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;weight_initializer&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# Hidden Layers
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hidden_layer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;layer_sizes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hidden_layer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Dense&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;units&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;layer_sizes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; 
+                                            &lt;span class=&quot;n&quot;&gt;kernel_initializer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;weight_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                            &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                                            &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Dense_{}&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# Output Layer
+&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output_layer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Dense&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;units&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output_size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                    &lt;span class=&quot;n&quot;&gt;kernel_initializer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;weight_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                    &lt;span class=&quot;n&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output_activation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                                    &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Output&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Tensor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+        Forward pass of the network, processing the input through each hidden layer followed by the output layer.
+
+        Parameters:
+        x (tf.Tensor): The input tensor.
+
+        Returns:
+        tf.Tensor: The resulting tensor after passing through all layers of the network.
+        &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hidden&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hidden_layer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;hidden&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;output_layer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can use the class Input as a placeholder to build a model and access its summary using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;summary()&lt;/code&gt; method, as well as plot a diagram of the layers presented in this model:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Input&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;nn_model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cnn_model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;CNN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nn_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;summary_model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inputs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outputs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cnn_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;CNN-Classification&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;summary_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;summary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Model: &quot;CNN-Classification&quot;
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ Input (InputLayer)          [(None, 28, 28, 1)]       0         
+                                                                 
+ Conv2D_0 (Conv2D)           (None, 26, 26, 32)        320       
+                                                                 
+ MaxPool_0 (MaxPooling2D)    (None, 13, 13, 32)        0         
+                                                                 
+ Flatten (Flatten)           (None, 5408)              0         
+                                                                 
+ Dense (NN)                  (None, 10)                693642    
+                                                                 
+=================================================================
+Total params: 693962 (2.65 MB)
+Trainable params: 693962 (2.65 MB)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;plot_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;summary_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;show_shapes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;show_layer_names&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/diagram-layres.png&quot; alt=&quot;intersection&quot; width=&quot;300&quot; height=&quot;400&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Let’s create a function to prepare and load our dataset with the digits from MNIST dataset:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;load_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;train&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;data/mnist_train_small.csv&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;data/mnist_test_small.csv&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;y_train&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_numpy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_numpy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;y_test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_numpy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to_numpy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    
+    &lt;span class=&quot;c1&quot;&gt;# reshape dataset to have a single channel
+&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# Reshape (20000,784) -&amp;gt;  (2000,     28,     28,     1)
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# one hot encode target values
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;y_test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;to_categorical&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;y_train&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;to_categorical&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;nf&quot;&gt;return &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;scale_pixels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# normalize the data to a range of [0, 1] and convert to float
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;train_norm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;astype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;255.0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;test_norm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;astype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;255.0&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;train_norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;test_norm&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# Data Pre-Processing
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;load_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;scale_pixels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Model
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nn_model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;classification_model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;CNN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nn_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Compile and fit
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;classification_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loss&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;categorical_crossentropy&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                              &lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optimizers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Adam&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;learning_rate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.001&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; 
+                              &lt;span class=&quot;n&quot;&gt;metrics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;accuracy&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;classification_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;fit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_train&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;epochs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;batch_size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Epoch 1/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.2674 - accuracy: 0.9186
+Epoch 2/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.0869 - accuracy: 0.9739
+Epoch 3/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.0530 - accuracy: 0.9837
+Epoch 4/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.0320 - accuracy: 0.9900
+Epoch 5/5
+625/625 [==============================] - 7s 11ms/step - loss: 0.0216 - accuracy: 0.9931
+
+
+
+
+
+&amp;lt;keras.src.callbacks.History at 0x7f20a01cdae0&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;single_img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+    Reshape a single image array for prediction.
+    
+    This function takes an image array, adds a batch dimension to it, 
+    and returns the new array that is suitable for prediction with 
+    models that expect batches of images.
+    
+    Parameters:
+    img_array (np.array): The image array to be reshaped. 
+                          It should be a 2D array for a grayscale image.
+    
+    Returns:
+    np.array: A new array with an added batch dimension.
+    &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;img_batch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;expand_dims&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;img_batch&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;plot_single_img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prediction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;figsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+    &lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+    Plot an image and its prediction probability distribution.
+    
+    This function takes an image and a prediction array, and plots the image 
+    and a bar chart representing the prediction probabilities for each class.
+    
+    Parameters:
+    img (np.array): The image data to be plotted. It should be a 2D array.
+    prediction (np.array): The prediction data, where prediction[0] contains 
+                           the probability distribution across classes.
+    figsize (tuple): Optional. The size of the figure to be created.
+    
+    Returns:
+    None: This function does not return a value but shows a matplotlib plot.
+    &lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;subplots&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;figsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;figsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;imshow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;gray&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;bar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prediction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;black&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;set_xlabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Numbers&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;gray&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fontsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;set_ylabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Probability&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;gray&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fontsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;set_title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Probability of Correct Number&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;gray&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fontsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;set_xticks&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;set_yticks&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([])&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;tick_params&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;colors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;gray&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;labelsize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;tight_layout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;img_batch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;single_img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;prediction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;classification_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img_batch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prediction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;nf&quot;&gt;plot_single_img&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;img_batch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;prediction&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1/1 [==============================] - 0s 45ms/step
+[[2.9586372e-11 1.2202437e-09 3.5340349e-11 9.1771851e-12 9.9999654e-01
+  8.1947343e-10 3.6685540e-11 8.9030500e-08 3.1797342e-06 1.2824634e-07]]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;
+&lt;center&gt;
+&lt;img src=&quot;/assets/img/post2/model-prediction.png&quot; alt=&quot;intersection&quot; width=&quot;500&quot; height=&quot;300&quot; /&gt; 
+&lt;/center&gt;
+&lt;/p&gt;
+
+&lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://books.google.com/books/about/Data_Mining_and_Machine_Learning.html?id=oafDDwAAQBAJ&amp;amp;printsec=frontcover&amp;amp;source=kp_read_button&amp;amp;hl=en&amp;amp;newbks=1&amp;amp;newbks_redir=1&quot;&gt;Zaki, M. J., &amp;amp; Meira Jr, W. (2020). Data mining and machine learning: fundamental concepts and algorithms. Cambridge University Press.&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</content>
+	</entry>
 	
 	<entry>
 		<title>Probabilities and Bayes Rule</title>
