@@ -4,7 +4,7 @@
 	<title>Marcos Benício</title>
 	<link href="http://localhost:4000/atom.xml" rel="self"/>
 	<link href="http://localhost:4000"/>
-	<updated>2024-05-01T09:49:29-03:00</updated>
+	<updated>2024-05-01T10:15:33-03:00</updated>
 	<id>http://localhost:4000/blog</id>
 	<author>
 		<name>Marcos Benício</name>
@@ -45,8 +45,8 @@
   &lt;li&gt;&lt;a href=&quot;#data-preparation&quot;&gt;&lt;strong&gt;Data preparation&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#decision-tree-theory&quot;&gt;&lt;strong&gt;Decision Tree Theory&lt;/strong&gt;&lt;/a&gt;
     &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#categorical-target-variable:-classification&quot;&gt;&lt;strong&gt;Categorical Target Variable: Classification&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#continuous-target-variable:-regression&quot;&gt;&lt;strong&gt;Continuous target Variable: Regression&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#categorical-target-variable-classification&quot;&gt;&lt;strong&gt;Categorical Target Variable: Classification&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#continuous-target-variable-regression&quot;&gt;&lt;strong&gt;Continuous target Variable: Regression&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#algorithm-for-decision-tree-regressor&quot;&gt;&lt;strong&gt;Algorithm for Decision Tree Regressor&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
