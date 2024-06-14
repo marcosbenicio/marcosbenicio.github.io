@@ -8,7 +8,7 @@ description: "Diabetes is among the most prevalent chronic diseases in the Unite
 This project uses the Diabetes Health Indicators dataset, available on kaggle. The project seeks answer the following questions: Which risk factors most strongly predict diabetes? Can a subset of the risk factors to accurately predict whether an individual has diabetes?"
 
 
-github_url: 
+github_url: https://github.com/marcosbenicio/diabetes-classification
 img_url: /assets/img/post4/bmi_distribution.png
 language: python
 comments: true
