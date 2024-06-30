@@ -220,7 +220,7 @@
 
       <div>
 
-  <p>Hello there! Welcome to my blog, where I discuss mathematics, physics, deep learning, and machine learning. You will find articles and discussions about these topics as well as projects I am actively working on. I hope you enjoy it, and please feel free to leave a reaction or a comment at the end of the posts.  This helps me to improve the content.</p>
+  <p>Welcome to my blog, where I discuss about mathematics, physics, deep learning, and machine learning. You will find articles and discussions about these topics as well as projects I am actively working on. I hope you enjoy it, and please feel free to leave a reaction or a comment at the end of the posts.  This helps me to improve the content.</p>
 
   
   
@@ -240,6 +240,8 @@
   
     <a onclick="show_tag_section('bayes')" style="cursor: pointer;" class="post_tag"> Bayes </a>
   
+    <a onclick="show_tag_section('bayesian-neural-network')" style="cursor: pointer;" class="post_tag"> Bayesian Neural Network </a>
+  
     <a onclick="show_tag_section('classification')" style="cursor: pointer;" class="post_tag"> Classification </a>
   
     <a onclick="show_tag_section('convolutional-neural-network')" style="cursor: pointer;" class="post_tag"> Convolutional Neural Network </a>
@@ -249,6 +251,8 @@
     <a onclick="show_tag_section('k-means-clustering')" style="cursor: pointer;" class="post_tag"> K-means clustering </a>
   
     <a onclick="show_tag_section('logistic-regression')" style="cursor: pointer;" class="post_tag"> Logistic Regression </a>
+  
+    <a onclick="show_tag_section('multilayer-perceptron')" style="cursor: pointer;" class="post_tag"> Multilayer Perceptron </a>
   
     <a onclick="show_tag_section('probability')" style="cursor: pointer;" class="post_tag"> Probability </a>
   
@@ -262,6 +266,20 @@
 
   <div id="all_posts">
   <h2> All Posts </h2>
+  
+    <div class="post_block">
+      <h3><a href="/2024/06/29/bnn-taxi-trip-regression.html">Uncertainty Estimation for Taxi Trip Duration Predictions in NYC</a></h3>
+      <span><strong>29 Jun 2024</strong> - Multilayer Perceptron, Bayesian Neural Network, and Regression</span>
+       
+        <p> This project aims to analyze taxi trip durations in NYC for the year 2023. The dataset contains almost 35 million records. We perform brief preprocessing to remove outliers and errors, using DuckDB and SQL to extract 2 million representative records. After preprocessing, we use this data to train three models: a simple neural network without uncertainty estimation, a Bayesian neural network (BNN), and a dual-headed Bayesian neural network (Dual BNN).
+We compare these models, highlighting that the Dual BNN can vary its uncertainty estimates based on the input data, unlike the simple BNN which estimates a constant level of uncertainty, and the simple neural network which provides only point estimates. The Dual BNN's ability to provide varying uncertainty estimates makes it particularly advantageous for predicting taxi trip durations, as it offers more informative and reliable predictions, crucial for effective decision-making in real-world applications. </p>
+      
+       
+        <a href="/2024/06/29/bnn-taxi-trip-regression.html" title="Uncertainty Estimation for Taxi Trip Duration Predictions in NYC">
+          <img src="/assets/img/post6/2head-bnn.svg" class="center_img">
+        </a>
+      
+    </div>
   
     <div class="post_block">
       <h3><a href="/2024/04/30/trees.html">The Theory Behind Tree Based Algorithms</a></h3>
@@ -347,6 +365,8 @@ The main difference between MLPs and CNNs is that the latter is developed for pr
       
     
       
+    
+      
         <div class="post_block">
           <h3><a href="/2023/11/22/probability.html">Probabilities and Bayes Rule</a></h3>
           <span><strong>22 Nov 2023</strong> - Probability and Bayes</span>
@@ -363,8 +383,41 @@ The main difference between MLPs and CNNs is that the latter is developed for pr
     
     </div>
   
+    <div id="bayesian-neural-network" class="by_tag">
+    <h2 id="bayesian-neural-network">Posts tagged "Bayesian Neural Network"</h2>
+    
+      
+        <div class="post_block">
+          <h3><a href="/2024/06/29/bnn-taxi-trip-regression.html">Uncertainty Estimation for Taxi Trip Duration Predictions in NYC</a></h3>
+          <span><strong>29 Jun 2024</strong> - Multilayer Perceptron, Bayesian Neural Network, and Regression</span>
+           
+            <p> This project aims to analyze taxi trip durations in NYC for the year 2023. The dataset contains almost 35 million records. We perform brief preprocessing to remove outliers and errors, using DuckDB and SQL to extract 2 million representative records. After preprocessing, we use this data to train three models: a simple neural network without uncertainty estimation, a Bayesian neural network (BNN), and a dual-headed Bayesian neural network (Dual BNN).
+We compare these models, highlighting that the Dual BNN can vary its uncertainty estimates based on the input data, unlike the simple BNN which estimates a constant level of uncertainty, and the simple neural network which provides only point estimates. The Dual BNN's ability to provide varying uncertainty estimates makes it particularly advantageous for predicting taxi trip durations, as it offers more informative and reliable predictions, crucial for effective decision-making in real-world applications. </p>
+          
+           
+            <a href="/2024/06/29/bnn-taxi-trip-regression.html" title="Uncertainty Estimation for Taxi Trip Duration Predictions in NYC">
+              <img src="/assets/img/post6/2head-bnn.svg" class="center_img">
+            </a>
+          
+        </div>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    </div>
+  
     <div id="classification" class="by_tag">
     <h2 id="classification">Posts tagged "Classification"</h2>
+    
+      
     
       
     
@@ -416,6 +469,8 @@ The main difference between MLPs and CNNs is that the latter is developed for pr
       
     
       
+    
+      
         <div class="post_block">
           <h3><a href="/2023/11/27/cnn.html">Understanding Convolutional Layers in a Convolutional Neural Network</a></h3>
           <span><strong>27 Nov 2023</strong> - Convolutional Neural Network and Classification</span>
@@ -437,6 +492,8 @@ The main difference between MLPs and CNNs is that the latter is developed for pr
   
     <div id="decision-tree" class="by_tag">
     <h2 id="decision-tree">Posts tagged "Decision Tree"</h2>
+    
+      
     
       
         <div class="post_block">
@@ -498,6 +555,8 @@ This project uses the Diabetes Health Indicators dataset, available on kaggle. T
       
     
       
+    
+      
         <div class="post_block">
           <h3><a href="/2024/01/22/taxi-trip-regression.html">Analysis of Taxi Trip Duration in NYC</a></h3>
           <span><strong>22 Jan 2024</strong> - Regression, XGBoost, Decision Tree, and K-means clustering</span>
@@ -529,6 +588,8 @@ The goal is to predict the trip duration of taxi trips in New York City. The eva
       
     
       
+    
+      
         <div class="post_block">
           <h3><a href="/2023/12/13/diabetes-classification.html">Analysis of Diabetes Indicators</a></h3>
           <span><strong>13 Dec 2023</strong> - Classification, Random Forest, Decision Tree, and Logistic Regression</span>
@@ -550,8 +611,41 @@ This project uses the Diabetes Health Indicators dataset, available on kaggle. T
     
     </div>
   
+    <div id="multilayer-perceptron" class="by_tag">
+    <h2 id="multilayer-perceptron">Posts tagged "Multilayer Perceptron"</h2>
+    
+      
+        <div class="post_block">
+          <h3><a href="/2024/06/29/bnn-taxi-trip-regression.html">Uncertainty Estimation for Taxi Trip Duration Predictions in NYC</a></h3>
+          <span><strong>29 Jun 2024</strong> - Multilayer Perceptron, Bayesian Neural Network, and Regression</span>
+           
+            <p> This project aims to analyze taxi trip durations in NYC for the year 2023. The dataset contains almost 35 million records. We perform brief preprocessing to remove outliers and errors, using DuckDB and SQL to extract 2 million representative records. After preprocessing, we use this data to train three models: a simple neural network without uncertainty estimation, a Bayesian neural network (BNN), and a dual-headed Bayesian neural network (Dual BNN).
+We compare these models, highlighting that the Dual BNN can vary its uncertainty estimates based on the input data, unlike the simple BNN which estimates a constant level of uncertainty, and the simple neural network which provides only point estimates. The Dual BNN's ability to provide varying uncertainty estimates makes it particularly advantageous for predicting taxi trip durations, as it offers more informative and reliable predictions, crucial for effective decision-making in real-world applications. </p>
+          
+           
+            <a href="/2024/06/29/bnn-taxi-trip-regression.html" title="Uncertainty Estimation for Taxi Trip Duration Predictions in NYC">
+              <img src="/assets/img/post6/2head-bnn.svg" class="center_img">
+            </a>
+          
+        </div>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    </div>
+  
     <div id="probability" class="by_tag">
     <h2 id="probability">Posts tagged "Probability"</h2>
+    
+      
     
       
     
@@ -580,6 +674,8 @@ This project uses the Diabetes Health Indicators dataset, available on kaggle. T
   
     <div id="random-forest" class="by_tag">
     <h2 id="random-forest">Posts tagged "Random Forest"</h2>
+    
+      
     
       
         <div class="post_block">
@@ -625,6 +721,22 @@ This project uses the Diabetes Health Indicators dataset, available on kaggle. T
     <h2 id="regression">Posts tagged "Regression"</h2>
     
       
+        <div class="post_block">
+          <h3><a href="/2024/06/29/bnn-taxi-trip-regression.html">Uncertainty Estimation for Taxi Trip Duration Predictions in NYC</a></h3>
+          <span><strong>29 Jun 2024</strong> - Multilayer Perceptron, Bayesian Neural Network, and Regression</span>
+           
+            <p> This project aims to analyze taxi trip durations in NYC for the year 2023. The dataset contains almost 35 million records. We perform brief preprocessing to remove outliers and errors, using DuckDB and SQL to extract 2 million representative records. After preprocessing, we use this data to train three models: a simple neural network without uncertainty estimation, a Bayesian neural network (BNN), and a dual-headed Bayesian neural network (Dual BNN).
+We compare these models, highlighting that the Dual BNN can vary its uncertainty estimates based on the input data, unlike the simple BNN which estimates a constant level of uncertainty, and the simple neural network which provides only point estimates. The Dual BNN's ability to provide varying uncertainty estimates makes it particularly advantageous for predicting taxi trip durations, as it offers more informative and reliable predictions, crucial for effective decision-making in real-world applications. </p>
+          
+           
+            <a href="/2024/06/29/bnn-taxi-trip-regression.html" title="Uncertainty Estimation for Taxi Trip Duration Predictions in NYC">
+              <img src="/assets/img/post6/2head-bnn.svg" class="center_img">
+            </a>
+          
+        </div>
+      
+    
+      
     
       
         <div class="post_block">
@@ -652,6 +764,8 @@ The goal is to predict the trip duration of taxi trips in New York City. The eva
   
     <div id="xgboost" class="by_tag">
     <h2 id="xgboost">Posts tagged "XGBoost"</h2>
+    
+      
     
       
     
