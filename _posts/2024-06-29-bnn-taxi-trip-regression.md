@@ -8,7 +8,7 @@ description: "This project aims to analyze taxi trip durations in NYC for the ye
 We compare these models, highlighting that the Dual BNN can vary its uncertainty estimates based on the input data, unlike the simple BNN which estimates a constant level of uncertainty, and the simple neural network which provides only point estimates. The Dual BNN's ability to provide varying uncertainty estimates makes it particularly advantageous for predicting taxi trip durations, as it offers more informative and reliable predictions, crucial for effective decision-making in real-world applications."
 
 github_url: https://github.com/marcosbenicio/bayesian-neural-network/blob/main/02-regression/bnn-regression.ipynb
-img_url: /assets/img/post6/2head-bnn.svg
+img_url: /assets/img/post6/2head-bnn.png
 language: python
 comments: true
 ---
