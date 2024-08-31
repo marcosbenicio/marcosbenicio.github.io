@@ -85,24 +85,22 @@ TAXI_TYPE=$1  # First argument: Taxi type ("yellow" or "green")
 YEAR=$2       # Second argument: Year (e.g., 2022 or 2023)
 URL_PREFIX="https://d37ci6vzurychx.cloudfront.net/trip-data"
 
-# Loop through all months of the year
+
 for MONTH in {1..12}; do
-  # Format integers to have 2 digits for month (e.g., 01, 02)
+
   FMONTH=`printf "%02d" ${MONTH}`
-  # Construct URL for the monthly data file
+
   URL="${URL_PREFIX}/${TAXI_TYPE}_tripdata_${YEAR}-${FMONTH}.parquet"
 
-  # Define local storage path structure
+
   LOCAL_PREFIX="data/raw/${TAXI_TYPE}/${YEAR}/${FMONTH}"
   LOCAL_FILE="${TAXI_TYPE}_tripdata_${YEAR}_${FMONTH}.parquet"
   LOCAL_PATH="${LOCAL_PREFIX}/${LOCAL_FILE}"
 
-  # Output the download process
+
   echo "downloading ${URL} to ${LOCAL_PATH}"
-  # Create the specified directory and any parent directories as needed
   mkdir -p ${LOCAL_PREFIX}
 
-  # Download the file from the URL to the specified local path
   wget ${URL} -O ${LOCAL_PATH}
 
 done
@@ -403,7 +401,7 @@ ORDER BY month
     └───────────────────┘
 ```
 
-Let's create a new `yellow_taxi_2023` table by selecting a random sample of 1.5 million records from the 2023 dataset, which contains more than 34.9 million records. Since the monthly data is balanced, random sampling ensures that the statistical characteristics of the entire dataset are preserved.
+Let's create a new `yellow_taxi_2023` table by selecting a random sample of 2 million records from the 2023 dataset, which contains more than 34.9 million records. Since the monthly data is balanced, random sampling ensures that the statistical characteristics of the entire dataset are preserved.
 
 To add the geographic coordinates for the dropoff and pickup locations, we use the `taxi_zone_lookup_coord` table for the `PULocationID` and `DOLocationID` with an inner join. This join allows us to append the exact latitude and longitude for both the pickup and dropoff locations.
 
@@ -451,7 +449,7 @@ FROM yellow_taxi_2023
 
 ## Feature Engineering
 
-Now that we have the dataset with just 1.5 million records and the correct pickup and dropoff coordinates for the NYC zones, it is time to create some useful features to train our neural networks. 
+Now that we have the dataset with just 2 million records and the correct pickup and dropoff coordinates for the NYC zones, it is time to create some useful features to train our neural networks. 
 
 
 First, we preprocess the datetime columns to create the `min_of_day`, `day_of_week`, `day_of_year` and `trip_duration` features. The `trip_duration` will be the target variables that we aim to predict in the regression model using a simple Neural Network and a Bayesian Neural Network. The other features are the dependent variables used as input for the models. After creating these features, we remove the original datetime columns, as they are no longer needed for training the neural network
