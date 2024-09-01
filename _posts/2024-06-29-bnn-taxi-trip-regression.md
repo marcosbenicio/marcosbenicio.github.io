@@ -945,7 +945,7 @@ df_taxi = pd.read_parquet("data/processed/yellow_taxi_2023.parquet")
 
 # Split the data into train, validation adn test
 df_train_large, df_taxi_test = train_test_split(df_taxi, test_size = 0.20, random_state=42 )
-df_taxi_train, df_taxi_val = train_test_split(df_train_large, train_size = 0.25, random_state=42)
+df_taxi_val, df_taxi_train = train_test_split(df_train_large, train_size = 0.25, random_state=42)
 
 
 print(f"Train large:{len(df_train_large)}({round(100*len(df_train_large)/ len(df_taxi), 2)}%)")
@@ -970,8 +970,8 @@ X_test = df_taxi_test.values
 
     Train large:1561769(80.0%)
     Test: 390443(20.0%)
-    Train:390442(20.0%)
-    Validation: 1171327(60.0%)
+    Train:1171327(60.0%)
+    Validation: 390442(20.0%)
 
 
 
